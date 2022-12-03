@@ -1,13 +1,15 @@
 package com.yapp.archiveServer.demo.domain;
 
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
-@Getter @Setter
+@Getter
+@Builder
+@AllArgsConstructor
 public class DemoMember {
 
     @Id

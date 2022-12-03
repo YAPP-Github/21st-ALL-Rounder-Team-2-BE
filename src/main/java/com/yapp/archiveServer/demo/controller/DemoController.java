@@ -1,19 +1,34 @@
 package com.yapp.archiveServer.demo.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.yapp.archiveServer.demo.dto.DemoSignupRequestDto;
+import com.yapp.archiveServer.demo.service.DemoService;
+import com.yapp.archiveServer.global.common.ApiResponse;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
+@RequestMapping("api/demo")
 public class DemoController {
 
-    @GetMapping("/demo")
-    public String demoGet() {
-        return "hello, world!";
+    private final DemoService demoService;
+
+    public DemoController(DemoService demoService) {
+        this.demoService = demoService;
     }
 
-    @GetMapping("/hot-reload")
-    public String hotReload() {
-        return "hotReload Okay";
+    @GetMapping("/")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse<String> demoGet() {
+        return ApiResponse.createSuccess("hello, world");
     }
+
+    @PostMapping("/join")
+    @ResponseStatus(HttpStatus.CREATED)
+        public ApiResponse<String> signup(@Valid @RequestBody DemoSignupRequestDto dto) {
+            return ApiResponse.createSuccess(demoService.join(dto));
+    }
+
 
 }
