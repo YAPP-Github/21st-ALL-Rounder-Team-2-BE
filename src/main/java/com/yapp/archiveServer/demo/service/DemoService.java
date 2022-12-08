@@ -12,7 +12,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class DemoService {
 
-    DemoRepository demoRepository;
+    private final DemoRepository demoRepository;
 
     public DemoService(DemoRepository demoRepository) {
         this.demoRepository = demoRepository;

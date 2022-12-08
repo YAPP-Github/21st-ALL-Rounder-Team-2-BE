@@ -29,6 +29,4 @@ public class DemoController {
         public ApiResponse<String> signup(@Valid @RequestBody DemoSignupRequestDto dto) {
             return ApiResponse.createSuccess(demoService.join(dto));
     }
-
-
 }

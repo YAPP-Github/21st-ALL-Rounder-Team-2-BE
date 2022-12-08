@@ -26,5 +26,4 @@ public class DemoRepository {
                 .setParameter("name", name)
                 .getResultList();
     }
-
 }
