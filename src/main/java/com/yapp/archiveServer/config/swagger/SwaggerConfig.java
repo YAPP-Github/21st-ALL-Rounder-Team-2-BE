@@ -1,71 +1,55 @@
 package com.yapp.archiveServer.config.swagger;
 
-import com.fasterxml.classmate.TypeResolver;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
-import java.util.Arrays;
-import java.util.List;
-import lombok.Data;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import lombok.RequiredArgsConstructor;
+import org.springdoc.core.GroupedOpenApi;
+import org.springdoc.core.customizers.OpenApiCustomiser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.domain.Pageable;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.schema.AlternateTypeRules;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.ApiKey;
-import springfox.documentation.service.AuthorizationScope;
-import springfox.documentation.service.SecurityReference;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spi.service.contexts.SecurityContext;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+@OpenAPIDefinition(
+        info = @Info(title = "YAPP 21st ALl2 API 명세서",
+                description = "YAPP 21st ALl2 API 명세서 입니다.",
+                version = "v1"))
 @Configuration
-@EnableSwagger2
+@RequiredArgsConstructor
 public class SwaggerConfig {
 
   @Bean
-  public Docket swggerAPI() {
-    return new Docket(DocumentationType.SWAGGER_2)
-        .select()
-        .apis(RequestHandlerSelectors.any())
-        .paths(PathSelectors.any())
-        .build();
+  public GroupedOpenApi customTestOpenAPi() {
+    // /test 로 시작하는 API 들을 테스트 관련 API 로 그룹핑
+   String[] paths = {"/test/**"};
+
+    return GroupedOpenApi
+            .builder()
+            .group("테스트 관련 API")
+            .pathsToMatch(paths)
+            .addOpenApiCustomiser(buildSecurityOpenApi()).build();
   }
 
-  private ApiKey apiKey() {
-    return new ApiKey("JWT", "Authorization", "header");
+  @Bean
+  public GroupedOpenApi userOpenApi() {
+    String[] paths = {"/user/**"};
+
+    return GroupedOpenApi
+            .builder()
+            .group("테스트 관련 API")
+            .pathsToMatch(paths)
+            .addOpenApiCustomiser(buildSecurityOpenApi()).build();
   }
 
-  private SecurityContext securityContext() {
-    return SecurityContext.builder()
-        .securityReferences(defaultAuth())
-        .build();
+  public OpenApiCustomiser buildSecurityOpenApi() {
+    // jwt token 을 한번 설정하면 header 에 값을 넣어주는 코드
+    return OpenApi -> OpenApi.addSecurityItem(new SecurityRequirement().addList("jwt token"))
+            .getComponents().addSecuritySchemes("jwt token", new SecurityScheme()
+                    .name("Authorization")
+                    .type(SecurityScheme.Type.HTTP)
+                    .in(SecurityScheme.In.HEADER)
+                    .bearerFormat("JWT")
+                    .scheme("bearer"));
   }
 
-  private List<SecurityReference> defaultAuth() {
-    AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
-    AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
-    authorizationScopes[0] = authorizationScope;
-    return Arrays.asList(new SecurityReference("JWT", authorizationScopes));
-  }
-
-  private ApiInfo apiInfo() {
-    return new ApiInfoBuilder()
-        .title("yapp-21th-all-team2 API 문서")
-        .description("yapp-21th-all-team2 API 문서입니다")
-        .version("1.0")
-        .build();
-  }
-
-  @Data
-  @ApiModel
-  static class Page {
-    @ApiModelProperty(value = "페이지 번호(0..N)")
-    private Integer page;
-    @ApiModelProperty(value = "페이지 크기")
-    private Integer size;
-  }
 }
