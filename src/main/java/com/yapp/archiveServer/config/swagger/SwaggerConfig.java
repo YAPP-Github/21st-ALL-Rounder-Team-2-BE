@@ -36,7 +36,7 @@ public class SwaggerConfig {
 
     return GroupedOpenApi
             .builder()
-            .group("테스트 관련 API")
+            .group("유저 API")
             .pathsToMatch(paths)
             .addOpenApiCustomiser(buildSecurityOpenApi()).build();
   }
