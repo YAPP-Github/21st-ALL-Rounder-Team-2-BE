@@ -1,6 +1,7 @@
-package com.yapp.archiveServer.archive.domain;
+package com.yapp.archiveServer.archive.domain.exhibit;
 
 
+import com.yapp.archiveServer.archive.domain.category.Category;
 import com.yapp.archiveServer.global.common.BaseEntity;
 import com.yapp.archiveServer.user.domain.User;
 import lombok.AccessLevel;
@@ -9,7 +10,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "post")
@@ -30,19 +30,9 @@ public class Exhibit extends BaseEntity {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
-    private boolean isDraft;
+    @Embedded
+    private ExhibitContents contents;
 
-    @Column(nullable = false)
-    private String name;
-
-    @Column(columnDefinition = "text")
-    private String review;
-
-    @Column(nullable = false)
-    private LocalDate postDate;
-
-    private String attachedLink;
-
-    private LocalDate publishedAt;
+    @Embedded
+    private Publication publication;
 }

@@ -1,4 +1,4 @@
-package com.yapp.archiveServer.archive.domain;
+package com.yapp.archiveServer.archive.domain.category;
 
 import com.yapp.archiveServer.global.common.BaseEntity;
 import com.yapp.archiveServer.user.domain.User;

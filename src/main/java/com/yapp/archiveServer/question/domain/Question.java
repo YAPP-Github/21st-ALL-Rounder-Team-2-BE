@@ -2,8 +2,7 @@ package com.yapp.archiveServer.question.domain;
 
 import com.yapp.archiveServer.global.common.BaseEntity;
 import com.yapp.archiveServer.user.domain.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,9 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Question extends BaseEntity {
 
     @Id

@@ -1,4 +1,4 @@
-package com.yapp.archiveServer.archive.domain;
+package com.yapp.archiveServer.archive.domain.category;
 
 import com.yapp.archiveServer.user.domain.User;
 import lombok.*;
@@ -23,6 +23,6 @@ public class HomeCategory {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false)
-    private int seq;
+    @Column(nullable = false, name = "seq")
+    private int sequence;
 }

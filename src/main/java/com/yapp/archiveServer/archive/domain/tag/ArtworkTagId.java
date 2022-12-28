@@ -1,4 +1,4 @@
-package com.yapp.archiveServer.archive.domain;
+package com.yapp.archiveServer.archive.domain.tag;
 
 import lombok.*;
 
@@ -10,8 +10,8 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class HomeCategoryId implements Serializable {
+public class ArtworkTagId implements Serializable {
 
-    private Long categoryId;
-    private Long userId;
+    private Long tagId;
+    private Long artworkId;
 }

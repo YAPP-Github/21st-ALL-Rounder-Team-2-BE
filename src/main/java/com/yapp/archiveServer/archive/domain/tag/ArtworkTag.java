@@ -1,5 +1,6 @@
-package com.yapp.archiveServer.archive.domain;
+package com.yapp.archiveServer.archive.domain.tag;
 
+import com.yapp.archiveServer.archive.domain.artwork.Artwork;
 import lombok.*;
 
 import javax.persistence.*;
@@ -23,6 +24,6 @@ public class ArtworkTag {
     @JoinColumn(name = "image_id")
     private Artwork artwork;
 
-    @Column(nullable = false)
-    private int seq;
+    @Column(nullable = false, name = "seq")
+    private int sequence;
 }
