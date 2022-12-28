@@ -1,30 +1,24 @@
-package com.yapp.archiveServer.image.domain;
+package com.yapp.archiveServer.archive.domain;
 
 import com.yapp.archiveServer.global.common.BaseEntity;
-import com.yapp.archiveServer.post.domain.Post;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
 
 @Entity
+@Table(name = "image")
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @DynamicInsert
-public class Image extends BaseEntity {
-
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Artwork extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
+    private Exhibit exhibit;
 
     @Column(nullable = false)
     private String url;

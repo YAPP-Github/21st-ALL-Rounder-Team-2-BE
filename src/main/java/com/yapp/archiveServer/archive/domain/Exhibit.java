@@ -1,11 +1,9 @@
-package com.yapp.archiveServer.post.domain;
+package com.yapp.archiveServer.archive.domain;
 
 
-import com.yapp.archiveServer.category.domain.Category;
 import com.yapp.archiveServer.global.common.BaseEntity;
 import com.yapp.archiveServer.user.domain.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
@@ -14,12 +12,11 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "post")
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
-public class Post extends BaseEntity {
+public class Exhibit extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,20 +1,15 @@
-package com.yapp.archiveServer.tag.domain;
+package com.yapp.archiveServer.archive.domain;
 
 import com.yapp.archiveServer.global.common.BaseEntity;
 import com.yapp.archiveServer.user.domain.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class Tag extends BaseEntity {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Category extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
