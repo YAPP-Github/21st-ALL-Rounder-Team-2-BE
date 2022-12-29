@@ -1,19 +1,13 @@
-package com.yapp.archiveServer.homecategory.domain;
+package com.yapp.archiveServer.archive.domain.category;
 
-import com.yapp.archiveServer.category.domain.Category;
 import com.yapp.archiveServer.user.domain.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class HomeCategory {
 
     @EmbeddedId
@@ -29,6 +23,6 @@ public class HomeCategory {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(nullable = false)
-    private int seq;
+    @Column(nullable = false, name = "seq")
+    private int sequence;
 }
