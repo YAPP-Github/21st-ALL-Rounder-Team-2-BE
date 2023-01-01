@@ -1,4 +1,4 @@
-# 아카이브 백엔드 서버 (all-rounder team2) 🛠
+# 아르티 백엔드 서버 (all-rounder team2) 🛠
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
