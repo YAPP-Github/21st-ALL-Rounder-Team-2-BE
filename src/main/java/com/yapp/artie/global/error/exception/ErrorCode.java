@@ -20,6 +20,7 @@ public enum ErrorCode {
   AUTH_SERVER_ERROR(401, "A001", "인증 서버와의 연동에 실패했습니다."),
   AUTH_INVALID_USERINFO(401, "A002", "유저정보가 올바르지 않습니다."),
   AUTH_ACCESS_TOKEN_EXPIRED(401, "A003", "액세스 토큰이 만료되었습니다."),
+  AUTH_TOKEN_NOT_EXISTS(401, "A004", "유효한 토큰이 존재하지 않습니다."),
 
   // User
   USER_TOKEN_EXPIRED(401, "U001", "토큰이 만료되었습니다. 재발급이 필요합니다."),

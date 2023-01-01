@@ -2,7 +2,7 @@ package com.yapp.artie.global.error.exception;
 
 public class InvalidValueException extends BusinessException {
 
-  private InvalidValueException(String value) {
+  public InvalidValueException(String value) {
     super(value, ErrorCode.INVALID_INPUT_VALUE);
   }
 
