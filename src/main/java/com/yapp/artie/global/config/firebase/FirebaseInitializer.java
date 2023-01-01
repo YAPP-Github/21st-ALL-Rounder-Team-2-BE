@@ -1,4 +1,4 @@
-package com.yapp.artie.config.firebase;
+package com.yapp.artie.global.config.firebase;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;

@@ -1,6 +1,6 @@
-package com.yapp.artie.config;
+package com.yapp.artie.global.config;
 
-import com.yapp.artie.interceptor.FirebaseAuthInterceptor;
+import com.yapp.artie.global.interceptor.FirebaseAuthInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;

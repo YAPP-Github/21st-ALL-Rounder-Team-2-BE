@@ -1,4 +1,4 @@
-package com.yapp.artie.interceptor;
+package com.yapp.artie.global.interceptor;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
