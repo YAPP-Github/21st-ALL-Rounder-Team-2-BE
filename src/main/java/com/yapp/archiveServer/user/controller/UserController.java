@@ -30,39 +30,41 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+  private final UserService userService;
 
-    @Operation(summary = "유저 생성", description = "Firebase를 통해 생성한 UID 기반 유저 생성")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "유저가 성공적으로 생성됨", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateUserResponseDto.class))),
-    })
-    @PostMapping("/{uid}")
-    public ResponseEntity<CreateUserResponseDto> createUserByUid(HttpServletRequest request,
-                                                                 @PathVariable(name = "uid") String uid) throws FirebaseAuthException {
-        if (!request.getAttribute("uid").equals(uid)) {
-            throw new InvalidUidException("uid가 일치하지 않습니다" + uid);
-        }
-
-        userService.findByUid(uid)
-                .ifPresent(existedUser -> {
-                    throw new UserExistException("user UID = " + uid);
-                });
-        User newUser = userService.createUser(uid);
-        // Firebase auth 예외 처리 필요
-
-        return ResponseEntity.ok().body(new CreateUserResponseDto(newUser.getId()));
+  @Operation(summary = "유저 생성", description = "Firebase를 통해 생성한 UID 기반 유저 생성")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "201", description = "유저가 성공적으로 생성됨", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateUserResponseDto.class))),
+  })
+  @PostMapping("/{uid}")
+  public ResponseEntity<CreateUserResponseDto> createUserByUid(HttpServletRequest request,
+      @PathVariable(name = "uid") String uid) throws FirebaseAuthException {
+    if (!request.getAttribute("uid").equals(uid)) {
+      throw new InvalidUidException("uid가 일치하지 않습니다" + uid);
     }
 
+    userService.findByUid(uid)
+        .ifPresent(existedUser -> {
+          throw new UserExistException("user UID = " + uid);
+        });
+    User newUser = userService.createUser(uid);
+    // Firebase auth 예외 처리 필요
 
-    static class InvalidUidException extends InvalidValueException {
-        public InvalidUidException(String value) {
-            super(value, ErrorCode.AUTH_INVALID_USERINFO);
-        }
-    }
+    return ResponseEntity.ok().body(new CreateUserResponseDto(newUser.getId()));
+  }
 
-    static class UserExistException extends InvalidValueException {
-        public UserExistException(String value) {
-            super(value, ErrorCode.USER_ALREADY_EXISTS);
-        }
+
+  static class InvalidUidException extends InvalidValueException {
+
+    public InvalidUidException(String value) {
+      super(value, ErrorCode.AUTH_INVALID_USERINFO);
     }
+  }
+
+  static class UserExistException extends InvalidValueException {
+
+    public UserExistException(String value) {
+      super(value, ErrorCode.USER_ALREADY_EXISTS);
+    }
+  }
 }

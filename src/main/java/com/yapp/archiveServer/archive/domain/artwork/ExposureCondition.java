@@ -15,9 +15,9 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ExposureCondition {
 
-    @Column(nullable = false, name = "seq")
-    private int sequence;
+  @Column(nullable = false, name = "seq")
+  private int sequence;
 
-    @Column(nullable = false, columnDefinition = "boolean default false", name = "is_main_image")
-    private boolean isMain;
+  @Column(nullable = false, columnDefinition = "boolean default false", name = "is_main_image")
+  private boolean isMain;
 }

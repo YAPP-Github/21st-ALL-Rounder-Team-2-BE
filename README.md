@@ -63,7 +63,7 @@ $ docker-compose down
 
 ## 6. 기여자
 
-| Avatar                                                                                         | Name | Team      | 
-|------------------------------------------------------------------------------------------------|------|-----------|
-| <img src="https://avatars.githubusercontent.com/u/42285463?v=4" width="100px" height="100px"/> | 마민지 | 올라운더 2팀   |
-| <img src="https://avatars.githubusercontent.com/u/39932141?v=4" width="100px" height="100px"/> | 이하늘 | 올라운더 2팀   | 
+| Avatar                                                                                         | Name | Team    | 
+|------------------------------------------------------------------------------------------------|------|---------|
+| <img src="https://avatars.githubusercontent.com/u/42285463?v=4" width="100px" height="100px"/> | 마민지  | 올라운더 2팀 |
+| <img src="https://avatars.githubusercontent.com/u/39932141?v=4" width="100px" height="100px"/> | 이하늘  | 올라운더 2팀 | 

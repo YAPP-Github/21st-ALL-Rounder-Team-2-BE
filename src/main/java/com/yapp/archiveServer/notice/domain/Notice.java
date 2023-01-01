@@ -13,17 +13,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notice {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(nullable = false)
-    private String title;
+  @Column(nullable = false)
+  private String title;
 
-    @Column(columnDefinition = "text")
-    private String contents;
+  @Column(columnDefinition = "text")
+  private String contents;
 
-    @Column(nullable = false, updatable = false)
-    @CreatedDate
-    private LocalDateTime createdAt;
+  @Column(nullable = false, updatable = false)
+  @CreatedDate
+  private LocalDateTime createdAt;
 }

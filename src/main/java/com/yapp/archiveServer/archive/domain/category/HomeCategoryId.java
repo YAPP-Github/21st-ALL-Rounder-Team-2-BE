@@ -12,6 +12,6 @@ import java.io.Serializable;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class HomeCategoryId implements Serializable {
 
-    private Long categoryId;
-    private Long userId;
+  private Long categoryId;
+  private Long userId;
 }

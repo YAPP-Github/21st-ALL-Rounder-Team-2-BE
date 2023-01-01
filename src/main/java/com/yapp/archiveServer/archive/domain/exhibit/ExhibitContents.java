@@ -15,14 +15,14 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ExhibitContents {
 
-    @Column(nullable = false)
-    private String name;
+  @Column(nullable = false)
+  private String name;
 
-    @Column(columnDefinition = "text")
-    private String review;
+  @Column(columnDefinition = "text")
+  private String review;
 
-    private String attachedLink;
+  private String attachedLink;
 
-    @Column(nullable = false, name = "post_date")
-    private LocalDate date;
+  @Column(nullable = false, name = "post_date")
+  private LocalDate date;
 }

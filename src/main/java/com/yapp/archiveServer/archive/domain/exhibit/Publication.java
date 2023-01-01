@@ -15,8 +15,8 @@ import java.time.LocalDate;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Publication {
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
-    private boolean isDraft;
+  @Column(nullable = false, columnDefinition = "boolean default false")
+  private boolean isDraft;
 
-    private LocalDate publishedAt;
+  private LocalDate publishedAt;
 }

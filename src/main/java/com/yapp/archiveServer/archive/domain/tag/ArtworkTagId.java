@@ -12,6 +12,6 @@ import java.io.Serializable;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ArtworkTagId implements Serializable {
 
-    private Long tagId;
-    private Long artworkId;
+  private Long tagId;
+  private Long artworkId;
 }

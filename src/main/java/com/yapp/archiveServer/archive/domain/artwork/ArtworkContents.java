@@ -14,15 +14,15 @@ import javax.persistence.Embeddable;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ArtworkContents {
 
-    @Column(nullable = false)
-    private String name;
+  @Column(nullable = false)
+  private String name;
 
-    @Column(nullable = false)
-    private String artist;
+  @Column(nullable = false)
+  private String artist;
 
-    @Column(nullable = false)
-    private String url;
+  @Column(nullable = false)
+  private String url;
 
-    @Column(columnDefinition = "text")
-    private String description;
+  @Column(columnDefinition = "text")
+  private String description;
 }

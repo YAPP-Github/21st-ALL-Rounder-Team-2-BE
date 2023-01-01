@@ -16,17 +16,17 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Artwork extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private Exhibit exhibit;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "post_id", nullable = false)
+  private Exhibit exhibit;
 
-    @Embedded
-    private ExposureCondition condition;
+  @Embedded
+  private ExposureCondition condition;
 
-    @Embedded
-    private ArtworkContents contents;
+  @Embedded
+  private ArtworkContents contents;
 }
