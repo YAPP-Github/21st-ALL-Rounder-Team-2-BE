@@ -1,18 +1,19 @@
 package com.yapp.artie.domain.user.controller;
 
 import com.google.firebase.auth.FirebaseToken;
+import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
+import com.yapp.artie.domain.user.exception.InvalidUidException;
+import com.yapp.artie.domain.user.exception.UserAlreadyExistException;
+import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
 import com.yapp.artie.global.authentication.JwtService;
-import com.yapp.artie.global.error.exception.BusinessException;
-import com.yapp.artie.global.error.exception.ErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -50,9 +51,14 @@ public class UserController {
             decodedToken.getName()));
   }
 
+
+  //TODO : 인가테스트 용, 삭제 필요
   @GetMapping("/me")
-  public ResponseEntity<String> me(Authentication authentication) {
-    return ResponseEntity.ok().body(authentication.getName());
+  public ResponseEntity<User> me(Authentication authentication) {
+    User user = userService.findById(authentication.getName())
+        .orElseThrow(UserNotFoundException::new);
+
+    return ResponseEntity.ok().body(user);
   }
 
   private void validateUidWithToken(String uid, FirebaseToken decodedToken) {
@@ -63,22 +69,8 @@ public class UserController {
 
   private void validateDuplicateUser(String uid) {
     userService.findByUid(uid)
-        .ifPresent(existedUser -> {
-          throw new UserExistException();
+        .ifPresent((existedUser) -> {
+          throw new UserAlreadyExistException();
         });
-  }
-
-  static class InvalidUidException extends BusinessException {
-
-    public InvalidUidException() {
-      super(ErrorCode.AUTH_INVALID_USERINFO);
-    }
-  }
-
-  static class UserExistException extends BusinessException {
-
-    public UserExistException() {
-      super(ErrorCode.USER_ALREADY_EXISTS);
-    }
   }
 }

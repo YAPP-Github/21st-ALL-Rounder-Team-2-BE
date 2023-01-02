@@ -1,17 +1,15 @@
 package com.yapp.artie.domain.user.service;
 
-import static org.springframework.security.core.userdetails.User.*;
+import static org.springframework.security.core.userdetails.User.builder;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
+import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +24,10 @@ public class UserService implements UserDetailsService {
     return userRepository.findByUid(uid);
   }
 
+  public Optional<User> findById(String id) {
+    return userRepository.findById(Long.parseLong(id));
+  }
+
   @Transactional
   public CreateUserResponseDto register(String uid, String username) {
     User user = User.create(uid, username);
@@ -34,12 +36,14 @@ public class UserService implements UserDetailsService {
   }
 
   @Override
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+  public UserDetails loadUserByUsername(String username) {
     User user = userRepository.findByUid(username)
-        .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 유저입니다."));
+        .orElseThrow(UserNotFoundException::new);
 
     return builder()
         .username(String.valueOf(user.getId()))
+        .password(user.getUid())
+        .authorities("user")
         .build();
   }
 }

@@ -2,6 +2,7 @@ package com.yapp.artie.global.authentication;
 
 import com.google.firebase.auth.FirebaseToken;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.NoSuchElementException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -32,14 +33,12 @@ public class JwtFilter extends OncePerRequestFilter {
     filterChain.doFilter(request, response);
   }
 
-
   private void setTokenAtSecurityContext(FirebaseToken decodedToken) throws NoSuchElementException {
     UserDetails user = userDetailsService.loadUserByUsername(decodedToken.getUid());
     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-        user, null, user.getAuthorities());
+        user, user.getPassword(), user.getAuthorities());
     SecurityContext context = SecurityContextHolder.getContext();
 
     context.setAuthentication(authenticationToken);
   }
-
 }
