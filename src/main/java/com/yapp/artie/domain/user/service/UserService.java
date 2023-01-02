@@ -1,16 +1,24 @@
 package com.yapp.artie.domain.user.service;
 
+import static org.springframework.security.core.userdetails.User.*;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
   private final UserRepository userRepository;
 
@@ -18,19 +26,20 @@ public class UserService {
     return userRepository.findByUid(uid);
   }
 
-  public User createUser(String uid) throws FirebaseAuthException {
-    // firebaseAuth를 메소드 변수가 아닌 서비스 변수로 변경 필요
-    FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-    String name = firebaseAuth.getUser(uid).getDisplayName();
-    String profileImage = firebaseAuth.getUser(uid).getPhotoUrl();
-    User newUser = new User();
-    newUser.setUid(uid);
-    if (name != null) {
-      newUser.setName(name);
-    }
-    if (profileImage != null) {
-      newUser.setProfileImage(profileImage);
-    }
-    return userRepository.save(newUser);
+  @Transactional
+  public CreateUserResponseDto register(String uid, String username) {
+    User user = User.create(uid, username);
+    userRepository.save(user);
+    return new CreateUserResponseDto(user.getId());
+  }
+
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    User user = userRepository.findByUid(username)
+        .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 유저입니다."));
+
+    return builder()
+        .username(String.valueOf(user.getId()))
+        .build();
   }
 }
