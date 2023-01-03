@@ -32,7 +32,6 @@ public class UserController {
   private final UserService userService;
   private final JwtService jwtService;
 
-
   @Operation(summary = "유저 생성", description = "Firebase를 통해 생성한 UID 기반 유저 생성")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "유저가 성공적으로 생성됨", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateUserResponseDto.class))),
@@ -48,9 +47,8 @@ public class UserController {
 
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(userService.register(decodedToken.getUid(),
-            decodedToken.getName()));
+            decodedToken.getName(), decodedToken.getPicture()));
   }
-
 
   //TODO : 인가테스트 용, 삭제 필요
   @GetMapping("/me")

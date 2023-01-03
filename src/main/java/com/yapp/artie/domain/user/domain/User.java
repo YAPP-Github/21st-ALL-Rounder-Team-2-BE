@@ -28,10 +28,11 @@ public class User extends BaseEntity {
 
   private String profileImage;
 
-  public static User create(String uid, String name) {
+  public static User create(String uid, String name, String picture) {
     User user = new User();
     user.setUid(uid);
     user.setName(name);
+    user.setProfileImage(picture);
     return user;
   }
 }

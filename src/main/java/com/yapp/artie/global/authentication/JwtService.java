@@ -27,8 +27,6 @@ public class JwtService {
     }
   }
 
-
-
   private FirebaseToken decode(String token) {
     try {
       return firebaseAuth.verifyIdToken(token);

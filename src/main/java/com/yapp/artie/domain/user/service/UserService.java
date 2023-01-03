@@ -29,8 +29,8 @@ public class UserService implements UserDetailsService {
   }
 
   @Transactional
-  public CreateUserResponseDto register(String uid, String username) {
-    User user = User.create(uid, username);
+  public CreateUserResponseDto register(String uid, String username, String picture) {
+    User user = User.create(uid, username, picture);
     userRepository.save(user);
     return new CreateUserResponseDto(user.getId());
   }
