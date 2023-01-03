@@ -3,11 +3,11 @@ package com.yapp.artie.domain.user.controller;
 import com.google.firebase.auth.FirebaseToken;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
-import com.yapp.artie.domain.user.exception.InvalidUidException;
 import com.yapp.artie.domain.user.exception.UserAlreadyExistException;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
 import com.yapp.artie.global.authentication.JwtService;
+import com.yapp.artie.global.exception.common.InvalidValueException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,20 +34,17 @@ public class UserController {
 
   @Operation(summary = "유저 생성", description = "Firebase를 통해 생성한 UID 기반 유저 생성")
   @ApiResponses(value = {
-      @ApiResponse(responseCode = "201", description = "유저가 성공적으로 생성됨", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateUserResponseDto.class))),
-  })
+      @ApiResponse(responseCode = "201", description = "유저가 성공적으로 생성됨", content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateUserResponseDto.class))),})
   @PostMapping()
   public ResponseEntity<CreateUserResponseDto> register(
-      @RequestHeader("Authorization") String authorization,
-      @RequestParam("uid") String uid
-  ) {
+      @RequestHeader("Authorization") String authorization, @RequestParam("uid") String uid) {
     FirebaseToken decodedToken = jwtService.verify(authorization);
     validateUidWithToken(uid, decodedToken);
     validateDuplicateUser(uid);
 
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(userService.register(decodedToken.getUid(),
-            decodedToken.getName(), decodedToken.getPicture()));
+    return ResponseEntity.status(HttpStatus.CREATED).body(
+        userService.register(decodedToken.getUid(), decodedToken.getName(),
+            decodedToken.getPicture()));
   }
 
   //TODO : 인가테스트 용, 삭제 필요
@@ -61,14 +58,13 @@ public class UserController {
 
   private void validateUidWithToken(String uid, FirebaseToken decodedToken) {
     if (!decodedToken.getUid().equals(uid)) {
-      throw new InvalidUidException();
+      throw new InvalidValueException();
     }
   }
 
   private void validateDuplicateUser(String uid) {
-    userService.findByUid(uid)
-        .ifPresent((existedUser) -> {
-          throw new UserAlreadyExistException();
-        });
+    userService.findByUid(uid).ifPresent((existedUser) -> {
+      throw new UserAlreadyExistException();
+    });
   }
 }

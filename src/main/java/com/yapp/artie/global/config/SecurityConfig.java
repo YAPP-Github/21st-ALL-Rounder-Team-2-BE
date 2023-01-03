@@ -1,6 +1,8 @@
 package com.yapp.artie.global.config;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yapp.artie.global.authentication.JwtExceptionHandler;
 import com.yapp.artie.global.authentication.JwtFilter;
 import com.yapp.artie.global.authentication.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .authenticated().and()
         .addFilterBefore(new JwtFilter(userDetailsService, jwtService),
             UsernamePasswordAuthenticationFilter.class)
+        .addFilterBefore(new JwtExceptionHandler(new ObjectMapper()), JwtFilter.class)
         .exceptionHandling()
         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
   }

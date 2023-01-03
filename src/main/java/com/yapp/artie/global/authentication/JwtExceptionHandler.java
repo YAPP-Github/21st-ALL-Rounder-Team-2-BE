@@ -27,7 +27,6 @@ public class JwtExceptionHandler extends OncePerRequestFilter {
     } catch (BusinessException exception) {
       sendErrorMessage(response, exception);
     }
-
   }
 
   private void sendErrorMessage(HttpServletResponse response, BusinessException exception)

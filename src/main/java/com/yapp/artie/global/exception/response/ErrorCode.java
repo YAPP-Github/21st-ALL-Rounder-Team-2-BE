@@ -15,12 +15,12 @@ public enum ErrorCode {
   INVALID_TYPE_VALUE(400, "C005", "잘못된 타입의 값입니다."),
   HANDLE_ACCESS_DENIED(403, "C006", "접근이 거부됐습니다."),
 
-  //Auth
-  FIREBASE_SERVER_ERROR(401, "A001", "인증 서버와의 연동에 실패했습니다."),
-  FIREBASE_INVALID_USERINFO(401, "A002", "유저정보가 올바르지 않습니다."),
-  FIREBASE_ACCESS_TOKEN_EXPIRED(401, "A003", "액세스 토큰이 만료되었습니다."),
-  FIREBASE_TOKEN_NOT_EXISTS(401, "A004", "유효한 토큰이 존재하지 않습니다."),
-  FIREBASE_INVALID_TOKEN(401, "A005", "JWT 토큰 파싱에 실패했습니다."),
+  // Firebase Authentication
+  FIREBASE_SERVER_ERROR(401, "F001", "인증 서버와의 연동에 실패했습니다."),
+  FIREBASE_ACCESS_TOKEN_EXPIRED(401, "F002", "액세스 토큰이 만료되었습니다."),
+  FIREBASE_TOKEN_NOT_EXISTS(401, "F003", "유효한 토큰이 존재하지 않습니다."),
+  FIREBASE_INVALID_TOKEN(401, "F004", "JWT 토큰 파싱에 실패했습니다."),
+  FIREBASE_REVOKED_TOKEN(401, "F005", "취소된 토큰입니다."),
 
   // User
   USER_NOT_FOUND(404, "U001", "회원을 찾을 수 없습니다."),

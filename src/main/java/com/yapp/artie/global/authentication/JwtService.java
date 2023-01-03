@@ -1,10 +1,14 @@
 package com.yapp.artie.global.authentication;
 
+import com.google.firebase.auth.AuthErrorCode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import com.yapp.artie.global.exception.authentication.ExpiredTokenException;
 import com.yapp.artie.global.exception.authentication.InvalidTokenException;
 import com.yapp.artie.global.exception.authentication.NotExistValidTokenException;
+import com.yapp.artie.global.exception.authentication.RevokedTokenException;
+import com.yapp.artie.global.exception.common.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -36,7 +40,18 @@ public class JwtService {
       throw new NotExistValidTokenException();
     } catch (FirebaseAuthException e) {
       // If an error occurs while parsing or validating the token.
-      throw new InvalidTokenException();
+      throw processAuthException(e);
+    }
+  }
+
+  private BusinessException processAuthException(FirebaseAuthException e) {
+    switch (e.getAuthErrorCode()) {
+      case EXPIRED_ID_TOKEN:
+        return new ExpiredTokenException();
+      case REVOKED_ID_TOKEN:
+        return new RevokedTokenException();
+      default:
+        return new InvalidTokenException();
     }
   }
 
