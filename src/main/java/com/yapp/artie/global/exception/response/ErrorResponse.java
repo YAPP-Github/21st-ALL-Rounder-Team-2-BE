@@ -1,4 +1,4 @@
-package com.yapp.artie.global.error.response;
+package com.yapp.artie.global.exception.response;
 
 import lombok.AccessLevel;
 import lombok.Getter;

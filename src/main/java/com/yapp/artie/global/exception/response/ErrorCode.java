@@ -1,0 +1,38 @@
+package com.yapp.artie.global.exception.response;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Getter;
+
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+@Getter
+public enum ErrorCode {
+
+  // Common
+  INVALID_INPUT_VALUE(400, "C001", "잘못된 입력값입니다."),
+  METHOD_NOT_ALLOWED(405, "C002", "허용하지 않는 HTTP 메서드입니다."),
+  ENTITY_NOT_FOUND(400, "C003", "엔티티를 찾을 수 없습니다."),
+  INTERNAL_SERVER_ERROR(500, "C004", "서버 오류"),
+  INVALID_TYPE_VALUE(400, "C005", "잘못된 타입의 값입니다."),
+  HANDLE_ACCESS_DENIED(403, "C006", "접근이 거부됐습니다."),
+
+  //Auth
+  FIREBASE_SERVER_ERROR(401, "A001", "인증 서버와의 연동에 실패했습니다."),
+  FIREBASE_INVALID_USERINFO(401, "A002", "유저정보가 올바르지 않습니다."),
+  FIREBASE_ACCESS_TOKEN_EXPIRED(401, "A003", "액세스 토큰이 만료되었습니다."),
+  FIREBASE_TOKEN_NOT_EXISTS(401, "A004", "유효한 토큰이 존재하지 않습니다."),
+  FIREBASE_INVALID_TOKEN(401, "A005", "JWT 토큰 파싱에 실패했습니다."),
+
+  // User
+  USER_NOT_FOUND(404, "U001", "회원을 찾을 수 없습니다."),
+  USER_ALREADY_EXISTS(409, "U002", "이미 존재하는 유저입니다.");
+
+  private final String code;
+  private final String message;
+  private final int status;
+
+  ErrorCode(final int status, final String code, final String message) {
+    this.code = code;
+    this.message = message;
+    this.status = status;
+  }
+}

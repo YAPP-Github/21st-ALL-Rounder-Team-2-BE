@@ -1,6 +1,6 @@
-package com.yapp.artie.global.error.exception.common;
+package com.yapp.artie.global.exception.common;
 
-import com.yapp.artie.global.error.response.ErrorCode;
+import com.yapp.artie.global.exception.response.ErrorCode;
 
 public class BusinessException extends RuntimeException {
 
