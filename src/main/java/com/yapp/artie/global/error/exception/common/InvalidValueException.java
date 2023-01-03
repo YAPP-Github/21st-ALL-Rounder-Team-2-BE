@@ -1,4 +1,6 @@
-package com.yapp.artie.global.error.exception;
+package com.yapp.artie.global.error.exception.common;
+
+import com.yapp.artie.global.error.response.ErrorCode;
 
 public class InvalidValueException extends BusinessException {
 

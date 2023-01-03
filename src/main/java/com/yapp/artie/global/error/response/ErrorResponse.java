@@ -1,6 +1,5 @@
-package com.yapp.artie.global.error;
+package com.yapp.artie.global.error.response;
 
-import com.yapp.artie.global.error.exception.ErrorCode;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

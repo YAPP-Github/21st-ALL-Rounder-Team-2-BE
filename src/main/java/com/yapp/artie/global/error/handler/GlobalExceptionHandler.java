@@ -1,7 +1,8 @@
-package com.yapp.artie.global.error;
+package com.yapp.artie.global.error.handler;
 
-import com.yapp.artie.global.error.exception.BusinessException;
-import com.yapp.artie.global.error.exception.ErrorCode;
+import com.yapp.artie.global.error.response.ErrorCode;
+import com.yapp.artie.global.error.response.ErrorResponse;
+import com.yapp.artie.global.error.exception.common.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,7 @@
 package com.yapp.artie.domain.user.exception;
 
-import com.yapp.artie.global.error.exception.BusinessException;
-import com.yapp.artie.global.error.exception.ErrorCode;
+import com.yapp.artie.global.error.exception.common.BusinessException;
+import com.yapp.artie.global.error.response.ErrorCode;
 
 public class InvalidUidException extends BusinessException {
 

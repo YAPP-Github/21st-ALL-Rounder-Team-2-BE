@@ -1,8 +1,8 @@
 package com.yapp.artie.domain.user.exception;
 
 
-import com.yapp.artie.global.error.exception.EntityNotFoundException;
-import com.yapp.artie.global.error.exception.ErrorCode;
+import com.yapp.artie.global.error.exception.common.EntityNotFoundException;
+import com.yapp.artie.global.error.response.ErrorCode;
 
 public class UserNotFoundException extends EntityNotFoundException {
 
