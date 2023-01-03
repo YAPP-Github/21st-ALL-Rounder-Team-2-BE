@@ -32,7 +32,6 @@ public class JwtExceptionHandler extends OncePerRequestFilter {
 
   private void sendErrorMessage(HttpServletResponse response, BusinessException exception)
       throws IOException {
-
     setHeader(response, exception);
     writeErrorResponse(response, exception);
   }

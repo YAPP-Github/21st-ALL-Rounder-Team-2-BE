@@ -2,7 +2,6 @@ package com.yapp.artie.global.authentication;
 
 import com.google.firebase.auth.FirebaseToken;
 import java.io.IOException;
-import java.security.Principal;
 import java.util.NoSuchElementException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -16,7 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 
 @Slf4j
 @RequiredArgsConstructor
