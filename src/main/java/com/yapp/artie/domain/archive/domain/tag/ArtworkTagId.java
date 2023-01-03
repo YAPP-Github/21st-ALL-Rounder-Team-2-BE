@@ -1,9 +1,12 @@
 package com.yapp.artie.domain.archive.domain.tag;
 
-import lombok.*;
-
-import javax.persistence.Embeddable;
 import java.io.Serializable;
+import javax.persistence.Embeddable;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Embeddable
