@@ -16,10 +16,4 @@ spring:
     logging.level:
         org.hibernate.SQL: debug
 
-
-    security:
-      user:
-          name: admin
-          password: admin
-          roles: admin
 # org.hibernate.type: trac

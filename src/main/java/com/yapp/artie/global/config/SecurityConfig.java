@@ -49,6 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     web.ignoring().antMatchers(HttpMethod.POST, "/user")
         .antMatchers("/")
         .antMatchers("/swagger-ui/**")
+        .antMatchers("/v3/api-docs/**")
         .antMatchers("/resources/**");
   }
 }
