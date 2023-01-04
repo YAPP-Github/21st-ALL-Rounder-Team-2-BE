@@ -34,3 +34,4 @@ out/
 ### docker mysql volume ###
 docker/.dbdata
 
+firebase.json
