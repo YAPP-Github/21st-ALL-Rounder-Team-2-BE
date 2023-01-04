@@ -25,7 +25,7 @@ public class JwtService {
   }
 
   private void validateHeader(String header) {
-    if (header == null || !header.startsWith("Bearer ")) {
+    if (header == null || !header.startsWith("Bearer ") || header.trim().equals("Bearer")) {
       throw new NotExistValidTokenException();
     }
   }
@@ -59,6 +59,7 @@ public class JwtService {
     if (header.startsWith(authType)) {
       header = header.substring(authType.length()).trim();
     }
+
     return header;
   }
 }

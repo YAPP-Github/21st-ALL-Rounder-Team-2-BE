@@ -1,6 +1,5 @@
 package com.yapp.artie.global.config;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yapp.artie.global.authentication.JwtExceptionHandler;
 import com.yapp.artie.global.authentication.JwtFilter;
@@ -14,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -34,8 +34,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .authenticated().and()
         .addFilterBefore(new JwtFilter(userDetailsService, jwtService),
             UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(new JwtExceptionHandler(new ObjectMapper()), JwtFilter.class)
-        .exceptionHandling()
+        .addFilterBefore(new JwtExceptionHandler(new ObjectMapper()), JwtFilter.class);
+
+    http.csrf().disable()
+        .sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+    http.exceptionHandling()
         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
   }
 
