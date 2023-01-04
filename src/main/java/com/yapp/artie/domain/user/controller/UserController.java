@@ -48,7 +48,7 @@ public class UserController {
   }
 
   //TODO : 인가테스트 용, 삭제 필요
-  @GetMapping("/me")
+  @GetMapping("/test/me")
   public ResponseEntity<User> me(Authentication authentication) {
     User user = userService.findById(authentication.getName())
         .orElseThrow(UserNotFoundException::new);
