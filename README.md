@@ -61,6 +61,12 @@ $ cd docker
 $ docker-compose down
 ```
 
+환경변수 설정 :
+
+1. 인텔리제이 메뉴 Run > Edit Configurations 설정 접속
+2. Modify Options > Operating Systems > Environment variables 체크
+3. Environment variables 섹션에 `profile=develop` 추가 후 ok
+
 ## 6. 기여자
 
 | Avatar                                                                                         | Name | Team    | 
