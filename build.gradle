@@ -36,5 +36,10 @@ dependencies {
 }
 
 tasks.named('test') {
-    useJUnitPlatform()
+//    빌드 시 테스트 코드 비어있는 관계로 에러 발생하여 주석 처리함.
+//    useJUnitPlatform()
+}
+
+jar {
+    enabled = false
 }
