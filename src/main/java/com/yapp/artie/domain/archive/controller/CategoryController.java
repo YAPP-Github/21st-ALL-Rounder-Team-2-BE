@@ -5,8 +5,14 @@ import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryResponseDto;
 import com.yapp.artie.domain.archive.service.CategoryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,20 +29,35 @@ public class CategoryController {
 
   private final CategoryService categoryService;
 
-  @GetMapping("/")
+
+  @Operation(summary = "카테고리 조회", description = "사용자 카테고리 목록 조회")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200",
+          description = "카테고리가 성공적으로 조회됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = CategoryDto.class))),
+  })
+  @GetMapping()
   public ResponseEntity<List<CategoryDto>> getCategories(Authentication authentication) {
     Long userId = Long.parseLong(authentication.getName());
     List<CategoryDto> categories = categoryService.categories(userId);
     return ResponseEntity.ok(categories);
   }
 
-  @PostMapping("/")
+  @Operation(summary = "카테고리 생성", description = "사용자 카테고리 생성")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "201",
+          description = "카테고리가 성공적으로 생성됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateCategoryResponseDto.class))),
+  })
+  @PostMapping()
   public ResponseEntity<CreateCategoryResponseDto> createCategories(Authentication authentication,
       @RequestBody CreateCategoryRequestDto createCategoryRequestDto) {
     Long userId = Long.parseLong(authentication.getName());
     Long id = categoryService.create(createCategoryRequestDto, userId);
 
-    return ResponseEntity.ok(new CreateCategoryResponseDto(id));
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(new CreateCategoryResponseDto(id));
   }
-
 }
