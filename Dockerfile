@@ -16,6 +16,7 @@ RUN echo Asia/Seoul > /etc/timezone
 # ARG (변수명)=(파일명)
 ARG JAR_FILE=build/libs/*.jar
 ARG FIREBASE_JSON=firebase.json
+ARG ACTIVE_PROFILE=prod
 
 # 작업 파일을 컨테이너로 복사
 # COPY (파일명 또는 ${변수명}) (복사할 파일명)
@@ -24,4 +25,4 @@ COPY ${FIREBASE_JSON} firebase.json
 
 # 컨테이너 시작 시 내릴 명령 (CMD와 ENTRYPOINT 차이 확인)
 # ENTRYPOINT [(명령),(매개변수),(매개변수),(...)]
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java","-jar","-Dspring.profiles.active=$ACTIVE_PROFILE","app.jar"]
