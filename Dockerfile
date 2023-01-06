@@ -24,4 +24,4 @@ COPY ${FIREBASE_JSON} firebase.json
 
 # 컨테이너 시작 시 내릴 명령 (CMD와 ENTRYPOINT 차이 확인)
 # ENTRYPOINT [(명령),(매개변수),(매개변수),(...)]
-ENTRYPOINT ["java","-jar","-Dspring.profiles.active=prod","app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
