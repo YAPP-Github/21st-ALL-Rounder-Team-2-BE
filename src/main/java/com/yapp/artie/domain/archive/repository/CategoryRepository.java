@@ -1,7 +1,7 @@
 package com.yapp.artie.domain.archive.repository;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
-import com.yapp.artie.domain.archive.dto.CategoryDto;
+import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

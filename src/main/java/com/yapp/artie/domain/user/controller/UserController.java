@@ -62,7 +62,7 @@ public class UserController {
   })
   @GetMapping("/me")
   public ResponseEntity<User> me(Authentication authentication) {
-    User user = userService.findById(authentication.getName())
+    User user = userService.findById((Long.parseLong(authentication.getName())))
         .orElseThrow(UserNotFoundException::new);
 
     return ResponseEntity.ok().body(user);

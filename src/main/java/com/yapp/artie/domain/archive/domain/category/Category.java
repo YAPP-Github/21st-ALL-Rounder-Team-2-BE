@@ -23,10 +23,20 @@ public class Category extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  private Category(User user, String name) {
+    this.user = user;
+    this.name = name;
+  }
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
   @Column(nullable = false)
   private String name;
+
+
+  public static Category create(User user, String name) {
+    return new Category(user, name);
+  }
 }

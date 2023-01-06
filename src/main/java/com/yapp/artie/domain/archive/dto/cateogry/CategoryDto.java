@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.archive.dto;
+package com.yapp.artie.domain.archive.dto.cateogry;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
