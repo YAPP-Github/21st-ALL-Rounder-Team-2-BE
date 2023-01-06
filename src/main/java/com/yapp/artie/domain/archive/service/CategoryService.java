@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.archive.controller;
+package com.yapp.artie.domain.archive.service;
 
 import com.yapp.artie.domain.archive.dto.CategoryDto;
 import com.yapp.artie.domain.archive.exception.NotExsistCategoryException;

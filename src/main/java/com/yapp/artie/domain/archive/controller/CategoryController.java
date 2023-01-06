@@ -2,6 +2,7 @@ package com.yapp.artie.domain.archive.controller;
 
 
 import com.yapp.artie.domain.archive.dto.CategoryDto;
+import com.yapp.artie.domain.archive.service.CategoryService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
