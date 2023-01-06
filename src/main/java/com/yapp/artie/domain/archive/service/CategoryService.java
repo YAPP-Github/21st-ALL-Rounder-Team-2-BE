@@ -4,7 +4,7 @@ import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.exception.CategoryAlreadyExistException;
-import com.yapp.artie.domain.archive.exception.NotExsistCategoryException;
+import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.service.UserService;
@@ -42,7 +42,7 @@ public class CategoryService {
 
   private void validateCategoryLength(List<CategoryDto> categories) {
     if (categories.size() == 0) {
-      throw new NotExsistCategoryException();
+      throw new CategoryNotFoundException();
     }
   }
 
