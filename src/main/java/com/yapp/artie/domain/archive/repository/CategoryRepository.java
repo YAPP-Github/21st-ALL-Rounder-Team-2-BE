@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-  @Query("select new com.yapp.artie.domain.archive.dto.CategoryDto(c.id, c.name) from Category c where c.user = :user_id")
+  @Query("select new com.yapp.artie.domain.archive.dto.cateogry.CategoryDto(c.id, c.name) from Category c where c.user = :user_id")
    List<CategoryDto> findCategoryDto(@Param("user_id") Long userId);
 }
+

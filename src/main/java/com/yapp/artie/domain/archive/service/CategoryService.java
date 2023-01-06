@@ -3,6 +3,7 @@ package com.yapp.artie.domain.archive.service;
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
+import com.yapp.artie.domain.archive.exception.CategoryAlreadyExistException;
 import com.yapp.artie.domain.archive.exception.NotExsistCategoryException;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.user.domain.User;
@@ -30,7 +31,10 @@ public class CategoryService {
   @Transactional
   public Long create(CreateCategoryRequestDto createCategoryRequestDto, Long userId) {
     User user = userService.findById(userId).get();
-    Category category = Category.create(user, createCategoryRequestDto.getName());
+    String name = createCategoryRequestDto.getName();
+    validateDuplicateCategory(name, user);
+
+    Category category = Category.create(user, name);
     categoryRepository.save(category);
 
     return category.getId();
@@ -42,4 +46,15 @@ public class CategoryService {
     }
   }
 
+  private void validateDuplicateCategory(String name, User user) {
+    Long userId = user.getId();
+    List<CategoryDto> categories = categoryRepository.findCategoryDto(userId);
+    long count = categories.stream()
+        .filter(categoryDto -> categoryDto.getName().equals(name))
+        .count();
+
+    if (count != 0) {
+      throw new CategoryAlreadyExistException();
+    }
+  }
 }

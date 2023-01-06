@@ -27,7 +27,8 @@ public enum ErrorCode {
   USER_ALREADY_EXISTS(409, "U002", "이미 존재하는 유저입니다."),
 
   // Category
-  CATEGORY_NOT_FOUND(404, "C001", "카테고리가 존재하지 않습니다.");
+  CATEGORY_NOT_FOUND(404, "CA001", "카테고리가 존재하지 않습니다."),
+  CATEGORY_ALREADY_EXISTS(409, "CA002", "이미 존재하는 카테고리입니다.");
 
   private final String code;
   private final String message;
