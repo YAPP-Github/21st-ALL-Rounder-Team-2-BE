@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpEntity;
+import org.apache.http.message.BasicHttpResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -69,15 +71,14 @@ public class CategoryController {
       @ApiResponse(
           responseCode = "201",
           description = "카테고리가 성공적으로 삭제됌",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = String.class))),
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class))),
   })
   @DeleteMapping("/{id}")
-  public ResponseEntity<String> deleteCategory(Authentication authentication,
+  public ResponseEntity<? extends HttpEntity> deleteCategory(Authentication authentication,
       @PathVariable("id") Long id) {
     Long userId = Long.parseLong(authentication.getName());
     categoryService.delete(id, userId);
 
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body("카테고리가 성공적으로 삭제됐습니다.");
+    return ResponseEntity.noContent().build();
   }
 }
