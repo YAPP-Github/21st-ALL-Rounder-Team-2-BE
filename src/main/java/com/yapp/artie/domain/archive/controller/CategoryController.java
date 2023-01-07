@@ -34,7 +34,6 @@ public class CategoryController {
 
   private final CategoryService categoryService;
 
-
   @Operation(summary = "카테고리 조회", description = "사용자 카테고리 목록 조회")
   @ApiResponses(value = {
       @ApiResponse(
