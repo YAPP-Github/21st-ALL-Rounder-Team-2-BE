@@ -3,7 +3,6 @@ package com.yapp.artie.domain.user.controller;
 import com.google.firebase.auth.FirebaseToken;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
-import com.yapp.artie.domain.user.exception.UserAlreadyExistException;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
 import com.yapp.artie.global.authentication.JwtService;
