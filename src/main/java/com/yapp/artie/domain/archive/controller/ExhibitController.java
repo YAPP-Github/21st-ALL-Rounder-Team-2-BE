@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -44,6 +45,19 @@ public class ExhibitController {
     PostInfoDto exhibitInformation = exhibitService.getExhibitInformation(id, userId);
 
     return ResponseEntity.ok().body(exhibitInformation);
+  }
+
+  @Operation(summary = "임시 저장 전시 조회", description = "임시 저장된 전시 목록 조회")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200",
+          description = "임시 저장된 전시 목록이 성공적으로 조회됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostInfoDto.class))),
+  })
+  @GetMapping("/draft")
+  public ResponseEntity<List<PostInfoDto>> getDraftPosts(Authentication authentication) {
+    Long userId = Long.parseLong(authentication.getName());
+    return ResponseEntity.ok().body(exhibitService.getDraftExhibits(userId));
   }
 
   @Operation(summary = "전시 생성", description = "전시 생성")

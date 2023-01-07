@@ -66,15 +66,6 @@ public class Exhibit extends BaseEntity {
     this.category = category;
   }
 
-  public void addArtwork(Artwork artwork) {
-    this.artworks.add(artwork);
-    artwork.display(this);
-  }
-
-  public boolean isPublished() {
-    return !publication.isDraft();
-  }
-
   public boolean ownedBy(User user) {
     return this.user.equals(user);
   }
@@ -83,17 +74,26 @@ public class Exhibit extends BaseEntity {
     return this.contents;
   }
 
-  public static Exhibit create(String name, LocalDate postDate, Category category, User user) {
-    ExhibitContents contents = new ExhibitContents(name, null, null, postDate);
-    Publication publication = new Publication();
-    return new Exhibit(user, category, contents, publication);
-  }
-
   public void persist() {
     if (isPublished()) {
       throw new ExhibitAlreadyPublishedException();
     }
 
     publication.publish();
+  }
+
+  public boolean isPublished() {
+    return publication.isPublished();
+  }
+
+  public void addArtwork(Artwork artwork) {
+    this.artworks.add(artwork);
+    artwork.display(this);
+  }
+
+  public static Exhibit create(String name, LocalDate postDate, Category category, User user) {
+    ExhibitContents contents = new ExhibitContents(name, null, null, postDate);
+    Publication publication = new Publication();
+    return new Exhibit(user, category, contents, publication);
   }
 }

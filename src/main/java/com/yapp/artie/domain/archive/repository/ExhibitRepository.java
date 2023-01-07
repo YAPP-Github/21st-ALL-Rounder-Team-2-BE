@@ -1,8 +1,13 @@
 package com.yapp.artie.domain.archive.repository;
 
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
+import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
+import com.yapp.artie.domain.user.domain.User;
+import java.util.List;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -10,4 +15,9 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
 
   @EntityGraph(attributePaths = {"user"})
   Exhibit findExhibitEntityGraphById(Long id);
+
+  @Query("select new com.yapp.artie.domain.archive.dto.exhibit."
+      + "PostInfoDto(e.id, e.contents.name, e.contents.date, e.publication.isPublished) "
+      + "from Exhibit e where e.user = :user and e.publication.isPublished = false")
+  List<PostInfoDto> findExhibitDto(@Param("user") User user);
 }

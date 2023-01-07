@@ -12,6 +12,7 @@ import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +34,10 @@ public class ExhibitService {
     ExhibitContents contents = exhibit.contents();
     return new PostInfoDto(exhibit.getId(), contents.getName(),
         contents.getDate(), exhibit.isPublished());
+  }
+
+  public List<PostInfoDto> getDraftExhibits(Long userId) {
+    return exhibitRepository.findExhibitDto(findUser(userId));
   }
 
   @Transactional
@@ -82,4 +87,5 @@ public class ExhibitService {
       throw new NotOwnerOfExhibitException();
     }
   }
+
 }
