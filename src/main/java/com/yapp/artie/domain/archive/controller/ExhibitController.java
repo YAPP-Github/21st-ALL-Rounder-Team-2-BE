@@ -14,6 +14,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -23,6 +29,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/post")
@@ -60,6 +67,21 @@ public class ExhibitController {
     Long userId = Long.parseLong(authentication.getName());
     return ResponseEntity.ok().body(exhibitService.getDraftExhibits(userId));
   }
+
+  @GetMapping("/home/{id}")
+  public ResponseEntity<Page<PostInfoDto>> getPostPage(
+      Authentication authentication,
+      @PageableDefault(
+          size = 20, sort = {"post_date"}, direction = Sort.Direction.DESC
+      )
+      Pageable pageable,
+      @PathVariable("id") Long id) {
+    Long userId = Long.parseLong(authentication.getName());
+    Page<PostInfoDto> page = exhibitService.getExhibitByPage(id, userId, pageable);
+
+    return ResponseEntity.ok().body(page);
+  }
+
 
   @Operation(summary = "전시 생성", description = "처음 전시 정보 등록시 임시 전시로 생성됨")
   @ApiResponses(value = {

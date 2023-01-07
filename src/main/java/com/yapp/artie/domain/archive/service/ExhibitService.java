@@ -15,6 +15,7 @@ import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,12 @@ public class ExhibitService {
 
   public List<PostInfoDto> getDraftExhibits(Long userId) {
     return exhibitRepository.findExhibitDto(findUser(userId));
+  }
+
+  public void getExhibitByPage(Long id, Long userId, Pageable pageable) {
+    User user = findUser(userId);
+    Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id);
+    validate(user, exhibit);
   }
 
   @Transactional
