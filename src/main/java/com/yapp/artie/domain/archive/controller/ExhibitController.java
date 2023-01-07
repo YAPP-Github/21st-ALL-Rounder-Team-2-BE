@@ -15,10 +15,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +27,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/post")
@@ -68,6 +65,13 @@ public class ExhibitController {
     return ResponseEntity.ok().body(exhibitService.getDraftExhibits(userId));
   }
 
+  @Operation(summary = "홈 화면 전시 조회", description = "저장된 전시 중 페이지네이션을 이용해 값을 가져온다.")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200",
+          description = "홈 화면 전시 목록이 성공적으로 조회됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostInfoDto.class))),
+  })
   @GetMapping("/home/{id}")
   public ResponseEntity<Page<PostInfoDto>> getPostPage(
       Authentication authentication,
@@ -77,11 +81,10 @@ public class ExhibitController {
       Pageable pageable,
       @PathVariable("id") Long id) {
     Long userId = Long.parseLong(authentication.getName());
-    Page<PostInfoDto> page = exhibitService.getExhibitByPage(id, userId, pageable);
+    Page<PostInfoDto> pageResult = exhibitService.getExhibitByPage(id, userId, pageable);
 
-    return ResponseEntity.ok().body(page);
+    return ResponseEntity.ok().body(pageResult);
   }
-
 
   @Operation(summary = "전시 생성", description = "처음 전시 정보 등록시 임시 전시로 생성됨")
   @ApiResponses(value = {
@@ -118,7 +121,6 @@ public class ExhibitController {
     return ResponseEntity.noContent().build();
   }
 
-
   @Operation(summary = "전시 발행", description = "임시 저장 전시를 영구 저장")
   @ApiResponses(value = {
       @ApiResponse(
@@ -131,7 +133,7 @@ public class ExhibitController {
       @PathVariable("id") Long id) {
 
     Long userId = Long.parseLong(authentication.getName());
-    exhibitService.persist(id, userId);
+    exhibitService.publish(id, userId);
     return ResponseEntity.noContent().build();
   }
 }

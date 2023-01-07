@@ -74,7 +74,7 @@ public class Exhibit extends BaseEntity {
     return this.contents;
   }
 
-  public void persist() {
+  public void publish() {
     if (isPublished()) {
       throw new ExhibitAlreadyPublishedException();
     }

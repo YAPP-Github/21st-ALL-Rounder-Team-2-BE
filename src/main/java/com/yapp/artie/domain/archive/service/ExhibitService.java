@@ -15,6 +15,7 @@ import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,10 +43,17 @@ public class ExhibitService {
     return exhibitRepository.findExhibitDto(findUser(userId));
   }
 
-  public void getExhibitByPage(Long id, Long userId, Pageable pageable) {
+  public Page<PostInfoDto> getExhibitByPage(Long id, Long userId, Pageable pageable) {
     User user = findUser(userId);
-    Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id);
-    validate(user, exhibit);
+    Category category = categoryService.findCategoryWithUser(userId);
+    validateCategoryOwnedByUser(category, user);
+
+    return exhibitRepository.findExhibitAllCountBy(pageable, user, category)
+        .map(exhibit -> {
+          ExhibitContents contents = exhibit.contents();
+          return new PostInfoDto(exhibit.getId(), contents.getName(), contents.getDate(),
+              exhibit.isPublished());
+        });
   }
 
   @Transactional
@@ -66,12 +74,12 @@ public class ExhibitService {
   }
 
   @Transactional
-  public void persist(Long id, Long userId) {
+  public void publish(Long id, Long userId) {
     User user = findUser(userId);
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id);
     validate(user, exhibit);
 
-    exhibit.persist();
+    exhibit.publish();
   }
 
   @Transactional
@@ -81,7 +89,6 @@ public class ExhibitService {
     validate(user, exhibit);
 
     exhibit.update(updateExhibitRequestDto.getName(), updateExhibitRequestDto.getPostDate());
-
   }
 
   private User findUser(Long userId) {
@@ -106,4 +113,10 @@ public class ExhibitService {
     }
   }
 
+  //TODO : 리팩토링 신호
+  private void validateCategoryOwnedByUser(Category category, User user) {
+    if (!category.ownedBy(user)) {
+      throw new NotOwnerOfCategoryException();
+    }
+  }
 }
