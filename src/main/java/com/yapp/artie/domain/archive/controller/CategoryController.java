@@ -69,7 +69,7 @@ public class CategoryController {
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "201",
-          description = "카테고리가 성공적으로 삭제됌",
+          description = "카테고리가 성공적으로 삭제됨",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class))),
   })
   @DeleteMapping("/{id}")

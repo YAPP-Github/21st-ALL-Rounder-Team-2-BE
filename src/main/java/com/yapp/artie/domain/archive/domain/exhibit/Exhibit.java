@@ -70,8 +70,8 @@ public class Exhibit extends BaseEntity {
     artwork.display(this);
   }
 
-  public boolean isDraft() {
-    return publication.isDraft();
+  public boolean isPublished() {
+    return !publication.isDraft();
   }
 
   public boolean ownedBy(User user) {

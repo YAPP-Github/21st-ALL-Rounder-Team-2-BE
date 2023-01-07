@@ -33,7 +33,7 @@ public class ExhibitService {
 
     ExhibitContents contents = exhibit.contents();
     return new PostInfoDto(exhibit.getId(), contents.getName(),
-        contents.getDate(), exhibit.isDraft());
+        contents.getDate(), exhibit.isPublished());
   }
 
   @Transactional

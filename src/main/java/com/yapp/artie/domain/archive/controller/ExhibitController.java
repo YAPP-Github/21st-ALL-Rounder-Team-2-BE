@@ -35,7 +35,7 @@ public class ExhibitController {
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "200",
-          description = "전시가 성공적으로 조회됌",
+          description = "전시가 성공적으로 조회됨",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostInfoDto.class))),
   })
   @GetMapping("/{id}")
@@ -51,7 +51,7 @@ public class ExhibitController {
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "201",
-          description = "전시가 성공적으로 생성됌",
+          description = "전시가 성공적으로 생성됨",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateExhibitResponseDto.class))),
   })
   @PostMapping()
@@ -65,6 +65,13 @@ public class ExhibitController {
         .body(new CreateExhibitResponseDto(id));
   }
 
+  @Operation(summary = "전시 발행", description = "임시 저장 전시를 영구 저장")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "201",
+          description = "전시가 성공적으로 발행됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class))),
+  })
   @PutMapping("/publish/{id}")
   public ResponseEntity<? extends HttpEntity> publishPost(Authentication authentication,
       @PathVariable("id") Long id) {

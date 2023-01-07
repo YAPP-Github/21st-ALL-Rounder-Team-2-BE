@@ -21,5 +21,5 @@ public class PostInfoDto {
   private final LocalDate postDate;
 
   @Schema(description = "임시 저장 여부")
-  private final boolean isDraft;
+  private final boolean isPublished;
 }
