@@ -61,7 +61,7 @@ public class ExhibitController {
     return ResponseEntity.ok().body(exhibitService.getDraftExhibits(userId));
   }
 
-  @Operation(summary = "전시 생성", description = "전시 생성")
+  @Operation(summary = "전시 생성", description = "처음 전시 정보 등록시 임시 전시로 생성됨")
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "201",
