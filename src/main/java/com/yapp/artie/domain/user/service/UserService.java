@@ -4,6 +4,7 @@ import static org.springframework.security.core.userdetails.User.builder;
 
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
+import com.yapp.artie.domain.user.exception.UserAlreadyExistException;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import java.util.Optional;
@@ -30,8 +31,13 @@ public class UserService implements UserDetailsService {
 
   @Transactional
   public CreateUserResponseDto register(String uid, String username, String picture) {
-    User user = User.create(uid, username, picture);
-    userRepository.save(user);
+    User user = findByUid(uid)
+        .orElse(User.create(uid, username, picture));
+
+    if (user.getId() == null) {
+      userRepository.save(user);
+    }
+
     return new CreateUserResponseDto(user.getId());
   }
 

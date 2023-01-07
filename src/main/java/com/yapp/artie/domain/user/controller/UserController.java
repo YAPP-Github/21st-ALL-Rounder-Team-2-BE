@@ -45,7 +45,6 @@ public class UserController {
     String authorization = request.getHeader("Authorization");
     FirebaseToken decodedToken = jwtService.verify(authorization);
     validateUidWithToken(uid, decodedToken);
-    validateDuplicateUser(uid);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(
         userService.register(decodedToken.getUid(), decodedToken.getName(),
@@ -72,11 +71,5 @@ public class UserController {
     if (!decodedToken.getUid().equals(uid)) {
       throw new InvalidValueException();
     }
-  }
-
-  private void validateDuplicateUser(String uid) {
-    userService.findByUid(uid).ifPresent((existedUser) -> {
-      throw new UserAlreadyExistException();
-    });
   }
 }
