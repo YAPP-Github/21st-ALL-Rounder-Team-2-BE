@@ -5,6 +5,7 @@ import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.exception.CategoryAlreadyExistException;
 import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
+import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.service.UserService;
@@ -24,7 +25,7 @@ public class CategoryService {
   public List<CategoryDto> categories(Long userId) {
     User user = userService.findById(userId).get();
     List<CategoryDto> categories = categoryRepository.findCategoryDto(user);
-    validateExsistAtLeastOneCategory(categories);
+    validateExistAtLeastOneCategory(categories);
 
     return categories;
   }
@@ -41,7 +42,17 @@ public class CategoryService {
     return category.getId();
   }
 
-  private void validateExsistAtLeastOneCategory(List<CategoryDto> categories) {
+  @Transactional
+  public void delete(Long id, Long userId) {
+    User user = userService.findById(userId).get();
+    Category category = categoryRepository.findById(id).orElseThrow(CategoryNotFoundException::new);
+    validateOwnedByUser(category, user);
+
+    categoryRepository.deleteById(id);
+  }
+
+
+  private void validateExistAtLeastOneCategory(List<CategoryDto> categories) {
     if (categories.size() == 0) {
       throw new CategoryNotFoundException();
     }
@@ -55,6 +66,12 @@ public class CategoryService {
 
     if (count != 0) {
       throw new CategoryAlreadyExistException();
+    }
+  }
+
+  private void validateOwnedByUser(Category category, User user) {
+    if (!category.getUser().equals(user)) {
+      throw new NotOwnerOfCategoryException();
     }
   }
 }
