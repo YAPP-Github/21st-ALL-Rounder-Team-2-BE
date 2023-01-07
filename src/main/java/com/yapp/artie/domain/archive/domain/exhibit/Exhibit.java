@@ -19,13 +19,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Table(name = "post")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
 public class Exhibit extends BaseEntity {
@@ -51,6 +49,10 @@ public class Exhibit extends BaseEntity {
   @Embedded
   private Publication publication;
 
+  public Long getId() {
+    return id;
+  }
+
   public void categorize(Category category) {
     this.category = category;
   }
@@ -58,5 +60,17 @@ public class Exhibit extends BaseEntity {
   public void addArtwork(Artwork artwork) {
     this.artworks.add(artwork);
     artwork.display(this);
+  }
+
+  public boolean isDraft() {
+    return publication.isDraft();
+  }
+
+  public boolean ownedBy(User user) {
+    return this.user.equals(user);
+  }
+
+  public ExhibitContents contents() {
+    return this.contents;
   }
 }
