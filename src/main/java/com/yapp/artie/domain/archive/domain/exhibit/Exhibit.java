@@ -55,6 +55,7 @@ public class Exhibit extends BaseEntity {
     this.user = user;
     this.category = category;
     this.contents = contents;
+    this.publication = publication;
   }
 
   public Long getId() {
@@ -89,8 +90,9 @@ public class Exhibit extends BaseEntity {
   }
 
   public void persist() {
-    if(!publication.isDraft())
+    if (isPublished()) {
       throw new ExhibitAlreadyPublishedException();
+    }
 
     publication.publish();
   }

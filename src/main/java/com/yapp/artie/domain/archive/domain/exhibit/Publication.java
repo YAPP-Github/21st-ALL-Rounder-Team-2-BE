@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class Publication {
 
   @Column(nullable = false, columnDefinition = "boolean default true")
-  private boolean isDraft;
+  private boolean isDraft = true;
 
   private LocalDate publishedAt;
 
