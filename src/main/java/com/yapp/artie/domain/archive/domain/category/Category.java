@@ -55,4 +55,8 @@ public class Category extends BaseEntity {
   public boolean ownedBy(User user) {
     return this.user.equals(user);
   }
+
+  public void update(String name) {
+    this.name = name;
+  }
 }

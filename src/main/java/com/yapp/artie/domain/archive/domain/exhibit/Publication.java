@@ -14,13 +14,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Publication {
 
-  @Column(nullable = false, columnDefinition = "boolean default true")
-  private boolean isDraft;
+  @Column(nullable = false, columnDefinition = "boolean default false")
+  private boolean isPublished = false;
 
   private LocalDate publishedAt;
 
   public void publish() {
-    this.isDraft = false;
+    this.isPublished = true;
     this.publishedAt = LocalDate.now();
   }
 }
