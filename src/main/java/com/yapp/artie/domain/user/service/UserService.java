@@ -24,8 +24,8 @@ public class UserService implements UserDetailsService {
     return userRepository.findByUid(uid);
   }
 
-  public Optional<User> findById(String id) {
-    return userRepository.findById(Long.parseLong(id));
+  public Optional<User> findById(Long id) {
+    return userRepository.findById(id);
   }
 
   @Transactional
