@@ -24,7 +24,7 @@ public class CategoryService {
   public List<CategoryDto> categories(Long userId) {
     User user = userService.findById(userId).get();
     List<CategoryDto> categories = categoryRepository.findCategoryDto(user);
-    validateCategoryLength(categories);
+    validateExsistAtLeastOneCategory(categories);
 
     return categories;
   }
@@ -41,7 +41,7 @@ public class CategoryService {
     return category.getId();
   }
 
-  private void validateCategoryLength(List<CategoryDto> categories) {
+  private void validateExsistAtLeastOneCategory(List<CategoryDto> categories) {
     if (categories.size() == 0) {
       throw new CategoryNotFoundException();
     }
