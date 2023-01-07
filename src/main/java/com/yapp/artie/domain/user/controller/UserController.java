@@ -3,7 +3,6 @@ package com.yapp.artie.domain.user.controller;
 import com.google.firebase.auth.FirebaseToken;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
-import com.yapp.artie.domain.user.exception.UserAlreadyExistException;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
 import com.yapp.artie.global.authentication.JwtService;
@@ -45,7 +44,6 @@ public class UserController {
     String authorization = request.getHeader("Authorization");
     FirebaseToken decodedToken = jwtService.verify(authorization);
     validateUidWithToken(uid, decodedToken);
-    validateDuplicateUser(uid);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(
         userService.register(decodedToken.getUid(), decodedToken.getName(),
@@ -72,11 +70,5 @@ public class UserController {
     if (!decodedToken.getUid().equals(uid)) {
       throw new InvalidValueException();
     }
-  }
-
-  private void validateDuplicateUser(String uid) {
-    userService.findByUid(uid).ifPresent((existedUser) -> {
-      throw new UserAlreadyExistException();
-    });
   }
 }

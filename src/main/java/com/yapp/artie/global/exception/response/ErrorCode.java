@@ -1,7 +1,6 @@
 package com.yapp.artie.global.exception.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import lombok.Getter;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)

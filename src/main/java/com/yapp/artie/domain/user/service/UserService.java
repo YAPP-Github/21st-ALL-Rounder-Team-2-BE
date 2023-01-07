@@ -30,8 +30,13 @@ public class UserService implements UserDetailsService {
 
   @Transactional
   public CreateUserResponseDto register(String uid, String username, String picture) {
-    User user = User.create(uid, username, picture);
-    userRepository.save(user);
+    User user = findByUid(uid)
+        .orElse(User.create(uid, username, picture));
+
+    if (user.getId() == null) {
+      userRepository.save(user);
+    }
+
     return new CreateUserResponseDto(user.getId());
   }
 
