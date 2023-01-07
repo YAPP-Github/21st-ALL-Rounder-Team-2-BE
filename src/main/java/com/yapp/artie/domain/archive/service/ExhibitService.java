@@ -11,6 +11,7 @@ import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfExhibitException;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,13 +26,10 @@ public class ExhibitService {
   private final UserService userService;
   private final CategoryService categoryService;
 
-
   public PostInfoDto getExhibitInformation(Long id, Long userId) {
-    User user = userService.findById(userId).get();
+    User user = findUser(userId);
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id);
-
-    validateExhibitFound(exhibit);
-    validateOwnedByUser(exhibit, user);
+    validate(user, exhibit);
 
     ExhibitContents contents = exhibit.contents();
     return new PostInfoDto(exhibit.getId(), contents.getName(),
@@ -40,10 +38,9 @@ public class ExhibitService {
 
   @Transactional
   public Long create(CreateExhibitRequestDto createExhibitRequestDto, Long userId) {
-    User user = userService.findById(userId).get();
+    User user = findUser(userId);
     Category category = categoryService.findCategoryWithUser(
-        createExhibitRequestDto.getCategoryId()).orElseThrow(
-        CategoryNotFoundException::new);
+        createExhibitRequestDto.getCategoryId());
 
     if (!category.ownedBy(user)) {
       throw new NotOwnerOfCategoryException();
@@ -56,6 +53,24 @@ public class ExhibitService {
     return exhibit.getId();
   }
 
+  @Transactional
+  public void persist(Long id, Long userId) {
+    User user = findUser(userId);
+    Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id);
+    validate(user, exhibit);
+
+    exhibit.persist();
+  }
+
+  private User findUser(Long userId) {
+    return userService.findById(userId)
+        .orElseThrow(UserNotFoundException::new);
+  }
+
+  private void validate(User user, Exhibit exhibit) {
+    validateExhibitFound(exhibit);
+    validateOwnedByUser(exhibit, user);
+  }
 
   private void validateExhibitFound(Exhibit exhibit) {
     if (exhibit == null) {
@@ -68,5 +83,4 @@ public class ExhibitService {
       throw new NotOwnerOfExhibitException();
     }
   }
-
 }

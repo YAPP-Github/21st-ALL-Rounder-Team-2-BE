@@ -18,4 +18,9 @@ public class Publication {
   private boolean isDraft;
 
   private LocalDate publishedAt;
+
+  public void publish() {
+    this.isDraft = true;
+    this.publishedAt = LocalDate.now();
+  }
 }

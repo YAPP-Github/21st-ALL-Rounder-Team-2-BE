@@ -23,8 +23,9 @@ public class CategoryService {
   private final CategoryRepository categoryRepository;
   private final UserService userService;
 
-  public Optional<Category> findCategoryWithUser(Long id) {
-    return Optional.ofNullable(categoryRepository.findCategoryEntityGraphById(id));
+  public Category findCategoryWithUser(Long id) {
+    return Optional.ofNullable(categoryRepository.findCategoryEntityGraphById(id))
+        .orElseThrow(CategoryNotFoundException::new);
   }
 
   public List<CategoryDto> categoriesOf(Long userId) {
