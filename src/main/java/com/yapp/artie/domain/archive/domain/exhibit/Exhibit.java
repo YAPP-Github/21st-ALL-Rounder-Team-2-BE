@@ -3,8 +3,10 @@ package com.yapp.artie.domain.archive.domain.exhibit;
 
 import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.archive.domain.category.Category;
+import com.yapp.artie.domain.archive.exception.ExhibitAlreadyPublishedException;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.global.common.BaseEntity;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -19,13 +21,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Table(name = "post")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
 public class Exhibit extends BaseEntity {
@@ -51,6 +51,16 @@ public class Exhibit extends BaseEntity {
   @Embedded
   private Publication publication;
 
+  private Exhibit(User user, Category category, ExhibitContents contents, Publication publication) {
+    this.user = user;
+    this.category = category;
+    this.contents = contents;
+  }
+
+  public Long getId() {
+    return id;
+  }
+
   public void categorize(Category category) {
     this.category = category;
   }
@@ -58,5 +68,30 @@ public class Exhibit extends BaseEntity {
   public void addArtwork(Artwork artwork) {
     this.artworks.add(artwork);
     artwork.display(this);
+  }
+
+  public boolean isPublished() {
+    return !publication.isDraft();
+  }
+
+  public boolean ownedBy(User user) {
+    return this.user.equals(user);
+  }
+
+  public ExhibitContents contents() {
+    return this.contents;
+  }
+
+  public static Exhibit create(String name, LocalDate postDate, Category category, User user) {
+    ExhibitContents contents = new ExhibitContents(name, null, null, postDate);
+    Publication publication = new Publication();
+    return new Exhibit(user, category, contents, publication);
+  }
+
+  public void persist() {
+    if(!publication.isDraft())
+      throw new ExhibitAlreadyPublishedException();
+
+    publication.publish();
   }
 }

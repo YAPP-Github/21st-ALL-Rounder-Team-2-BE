@@ -52,6 +52,17 @@ public class SwaggerConfig {
         .addOpenApiCustomiser(buildSecurityOpenApi()).build();
   }
 
+  @Bean
+  public GroupedOpenApi postOpenAPi() {
+    String[] paths = {"/post/**"};
+
+    return GroupedOpenApi
+        .builder()
+        .group("전시 API")
+        .pathsToMatch(paths)
+        .addOpenApiCustomiser(buildSecurityOpenApi()).build();
+  }
+
   public OpenApiCustomiser buildSecurityOpenApi() {
     // jwt token 을 한번 설정하면 header 에 값을 넣어주는 코드
     return OpenApi -> OpenApi.addSecurityItem(new SecurityRequirement().addList("jwt token"))

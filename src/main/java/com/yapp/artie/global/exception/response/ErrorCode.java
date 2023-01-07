@@ -1,6 +1,7 @@
 package com.yapp.artie.global.exception.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import lombok.Getter;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
@@ -29,7 +30,12 @@ public enum ErrorCode {
   // Category
   CATEGORY_NOT_FOUND(404, "CA001", "카테고리가 존재하지 않습니다."),
   CATEGORY_ALREADY_EXISTS(409, "CA002", "이미 존재하는 카테고리입니다."),
-  CATEGORY_NOT_OWNER(403, "CA003", "자신의 카테고리만 접근할 수 있습니다.");
+  CATEGORY_NOT_OWNER(403, "CA003", "자신의 카테고리만 접근할 수 있습니다."),
+
+  // Exhibit
+  EXHIBIT_NOT_FOUND(404, "E001", "전시가 존재하지 않습니다."),
+  EXHIBIT_NOT_OWNER(403, "E002", "자신의 전시 정보만 접근할 수 있습니다."),
+  EXHIBIT_ALREADY_PUBLISHED(409, "E003", "이미 발행된 전시입니다.");
 
   private final String code;
   private final String message;

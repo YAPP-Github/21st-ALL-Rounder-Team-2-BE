@@ -51,4 +51,8 @@ public class Category extends BaseEntity {
     this.exhibits.add(exhibit);
     exhibit.categorize(this);
   }
+
+  public boolean ownedBy(User user) {
+    return this.user.equals(user);
+  }
 }
