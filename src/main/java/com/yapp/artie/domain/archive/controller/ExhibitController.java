@@ -65,7 +65,11 @@ public class ExhibitController {
     return ResponseEntity.ok().body(exhibitService.getDraftExhibits(userId));
   }
 
-  @Operation(summary = "홈 화면 전시 조회", description = "저장된 전시 중 페이지네이션을 이용해 값을 가져온다.")
+  @Operation(summary = "홈 화면 전시 조회", description =
+      "저장된 전시 중 페이지네이션을 이용해 값을 가져온다. 이곳의 id는 category id를 의미하며 "
+          + "size의 기본값은 20이다. sort는 기본값이 최신 순이고, ?sort=post_date,ASC 는 오래된 순이다. "
+          + "오래된 순의 예시처럼 콤마를 기준으로 [<정렬 컬럼>,<정렬 타입 형식>]으로 쿼리 파라미터를 전달해야 한다."
+  )
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "200",
