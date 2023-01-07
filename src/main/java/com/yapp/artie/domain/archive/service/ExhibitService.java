@@ -5,6 +5,7 @@ import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.archive.domain.exhibit.ExhibitContents;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
+import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
 import com.yapp.artie.domain.archive.exception.ExhibitNotFoundException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfExhibitException;
@@ -64,6 +65,17 @@ public class ExhibitService {
     validate(user, exhibit);
 
     exhibit.persist();
+  }
+
+
+  @Transactional
+  public void update(UpdateExhibitRequestDto updateExhibitRequestDto, Long id, Long userId) {
+    User user = findUser(userId);
+    Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id);
+    validate(user, exhibit);
+
+    exhibit.update(updateExhibitRequestDto.getName(), updateExhibitRequestDto.getPostDate());
+
   }
 
   private User findUser(Long userId) {

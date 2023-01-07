@@ -68,7 +68,7 @@ public class CategoryController {
   @Operation(summary = "카테고리 삭제", description = "사용자 카테고리 삭제")
   @ApiResponses(value = {
       @ApiResponse(
-          responseCode = "201",
+          responseCode = "204",
           description = "카테고리가 성공적으로 삭제됨",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class))),
   })

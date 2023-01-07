@@ -4,6 +4,7 @@ package com.yapp.artie.domain.archive.controller;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
+import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
 import com.yapp.artie.domain.archive.service.ExhibitService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -78,10 +79,28 @@ public class ExhibitController {
         .body(new CreateExhibitResponseDto(id));
   }
 
+  @Operation(summary = "전시 수정", description = "전시 수정")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "204",
+          description = "전시가 성공적으로 수정됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class))),
+  })
+  @PutMapping("/{id}")
+  public ResponseEntity<? extends HttpEntity> updatePost(Authentication authentication,
+      @PathVariable("id") Long id, @RequestBody
+  UpdateExhibitRequestDto updateExhibitRequestDto) {
+    Long userId = Long.parseLong(authentication.getName());
+
+    exhibitService.update(updateExhibitRequestDto, id, userId);
+    return ResponseEntity.noContent().build();
+  }
+
+
   @Operation(summary = "전시 발행", description = "임시 저장 전시를 영구 저장")
   @ApiResponses(value = {
       @ApiResponse(
-          responseCode = "201",
+          responseCode = "204",
           description = "전시가 성공적으로 발행됨",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class))),
   })
@@ -93,5 +112,4 @@ public class ExhibitController {
     exhibitService.persist(id, userId);
     return ResponseEntity.noContent().build();
   }
-
 }
