@@ -36,4 +36,8 @@ public class Artwork extends BaseEntity {
 
   @Embedded
   private ArtworkContents contents;
+
+  public void display(Exhibit exhibit) {
+    this.exhibit = exhibit;
+  }
 }
