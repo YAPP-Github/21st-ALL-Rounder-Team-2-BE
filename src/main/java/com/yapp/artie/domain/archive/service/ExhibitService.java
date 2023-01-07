@@ -67,7 +67,6 @@ public class ExhibitService {
     exhibit.persist();
   }
 
-
   @Transactional
   public void update(UpdateExhibitRequestDto updateExhibitRequestDto, Long id, Long userId) {
     User user = findUser(userId);

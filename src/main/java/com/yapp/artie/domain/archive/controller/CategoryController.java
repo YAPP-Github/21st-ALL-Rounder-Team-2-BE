@@ -1,6 +1,7 @@
 package com.yapp.artie.domain.archive.controller;
 
 
+import com.yapp.artie.domain.archive.dto.cateogry.UpdateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryResponseDto;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,6 +66,22 @@ public class CategoryController {
         .body(new CreateCategoryResponseDto(id));
   }
 
+  @Operation(summary = "카테고리 수정", description = "카테고리 수정")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "204",
+          description = "카테고리가 성공적으로 수정됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class))),
+  })
+  @PutMapping("/{id}")
+  public ResponseEntity<? extends HttpEntity> updatePost(Authentication authentication,
+      @PathVariable("id") Long id, @RequestBody
+  UpdateCategoryRequestDto updateCategoryRequestDto) {
+    Long userId = Long.parseLong(authentication.getName());
+
+    categoryService.update(updateCategoryRequestDto, id, userId);
+    return ResponseEntity.noContent().build();
+  }
 
   @Operation(summary = "카테고리 삭제", description = "사용자 카테고리 삭제")
   @ApiResponses(value = {
