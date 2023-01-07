@@ -17,7 +17,7 @@ public class PostInfoDto {
   @Schema(description = "전시명")
   private final String name;
 
-  @Schema(description = "전시일")
+  @Schema(description = "관람 날짜")
   private final LocalDate postDate;
 
   @Schema(description = "임시 저장 여부")

@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
-import org.apache.http.message.BasicHttpResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -44,7 +43,7 @@ public class CategoryController {
   @GetMapping()
   public ResponseEntity<List<CategoryDto>> getCategories(Authentication authentication) {
     Long userId = Long.parseLong(authentication.getName());
-    List<CategoryDto> categories = categoryService.categories(userId);
+    List<CategoryDto> categories = categoryService.categoriesOf(userId);
     return ResponseEntity.ok(categories);
   }
 

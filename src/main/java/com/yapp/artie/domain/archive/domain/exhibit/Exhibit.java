@@ -5,6 +5,7 @@ import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.global.common.BaseEntity;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -49,6 +50,12 @@ public class Exhibit extends BaseEntity {
   @Embedded
   private Publication publication;
 
+  private Exhibit(User user, Category category, ExhibitContents contents, Publication publication) {
+    this.user = user;
+    this.category = category;
+    this.contents = contents;
+  }
+
   public Long getId() {
     return id;
   }
@@ -72,5 +79,11 @@ public class Exhibit extends BaseEntity {
 
   public ExhibitContents contents() {
     return this.contents;
+  }
+
+  public static Exhibit create(String name, LocalDate postDate, Category category, User user) {
+    ExhibitContents contents = new ExhibitContents(name, null, null, postDate);
+    Publication publication = new Publication();
+    return new Exhibit(user, category, contents, publication);
   }
 }

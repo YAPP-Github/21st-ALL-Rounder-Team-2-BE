@@ -10,6 +10,7 @@ import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.service.UserService;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,11 @@ public class CategoryService {
   private final CategoryRepository categoryRepository;
   private final UserService userService;
 
-  public List<CategoryDto> categories(Long userId) {
+  public Optional<Category> findCategoryWithUser(Long id) {
+    return Optional.ofNullable(categoryRepository.findCategoryEntityGraphById(id));
+  }
+
+  public List<CategoryDto> categoriesOf(Long userId) {
     User user = userService.findById(userId).get();
     List<CategoryDto> categories = categoryRepository.findCategoryDto(user);
     validateExistAtLeastOneCategory(categories);
@@ -70,7 +75,7 @@ public class CategoryService {
   }
 
   private void validateOwnedByUser(Category category, User user) {
-    if (!category.getUser().equals(user)) {
+    if (!category.ownedBy(user)) {
       throw new NotOwnerOfCategoryException();
     }
   }
