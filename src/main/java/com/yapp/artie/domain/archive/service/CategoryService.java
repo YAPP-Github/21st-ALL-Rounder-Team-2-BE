@@ -22,7 +22,8 @@ public class CategoryService {
   private final UserService userService;
 
   public List<CategoryDto> categories(Long userId) {
-    List<CategoryDto> categories = categoryRepository.findCategoryDto(userId);
+    User user = userService.findById(userId).get();
+    List<CategoryDto> categories = categoryRepository.findCategoryDto(user);
     validateCategoryLength(categories);
 
     return categories;
@@ -47,8 +48,7 @@ public class CategoryService {
   }
 
   private void validateDuplicateCategory(String name, User user) {
-    Long userId = user.getId();
-    List<CategoryDto> categories = categoryRepository.findCategoryDto(userId);
+    List<CategoryDto> categories = categoryRepository.findCategoryDto(user);
     long count = categories.stream()
         .filter(categoryDto -> categoryDto.getName().equals(name))
         .count();
