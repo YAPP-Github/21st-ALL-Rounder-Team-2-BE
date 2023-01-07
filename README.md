@@ -61,7 +61,25 @@ $ cd docker
 $ docker-compose down
 ```
 
-## 6. 기여자
+profile 환경변수 설정 :
+
+1. 인텔리제이 메뉴 Run > Edit Configurations 설정 접속 혹은 스크린 샷과 같이 접속
+   <img width="863" alt="스크린샷 2023-01-07 오후 4 06 05" src="https://user-images.githubusercontent.com/42285463/211137975-87d0e79c-7f8b-4640-9eae-0ad03d68fef5.png">
+2. Active profiles에 develop 입력 ( 개발용의 경우 develop, production의 경우 prod 입력 )
+   <img width="1042" alt="스크린샷 2023-01-07 오후 4 07 21" src="https://user-images.githubusercontent.com/42285463/211138359-e071c6ff-6fa5-432e-87e0-101e759b6037.png">
+
+환경 변수 추가 및 변경 시 ( production ) :
+
+- application-dev.yml에 해당하는 환경변수를 추가하고, 환경변수 구조 파악을 위하여 application-prod.yml에 추가되는 환경변수의 이름을 추가.
+- 실제 환경변수 값이 포함된 application-prod.yml을 base 64로 인코딩하여 Github Secrets에 업데이트
+
+## 6. 배포
+
+- Github actions를 시범 적용 중으로, ALB 이슈가 있어, Github Actions Workflow 중 기존 ECS Task를 중단해야함.
+- 현재 배포 시에 Github Secrets에 base64로 인코딩하여 저장해둔 application-prod.yml과 firebase.json을 decode하여 생성 후
+  빌드하는 과정을 포함하고 있음.
+
+## 7. 기여자
 
 | Avatar                                                                                         | Name | Team    | 
 |------------------------------------------------------------------------------------------------|------|---------|
