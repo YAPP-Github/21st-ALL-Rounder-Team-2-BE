@@ -59,6 +59,7 @@ public class CategoryService {
     categoryRepository.deleteById(id);
   }
 
+  @Transactional
   public void update(UpdateCategoryRequestDto updateCategoryRequestDto, Long id, Long userId) {
     User user = findUser(userId);
     Category category = categoryRepository.findCategoryEntityGraphById(id);
