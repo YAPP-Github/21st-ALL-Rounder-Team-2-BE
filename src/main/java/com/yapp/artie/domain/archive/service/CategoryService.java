@@ -50,7 +50,8 @@ public class CategoryService {
   @Transactional
   public void delete(Long id, Long userId) {
     User user = userService.findById(userId).get();
-    Category category = categoryRepository.findById(id).orElseThrow(CategoryNotFoundException::new);
+    Category category = Optional.ofNullable(categoryRepository.findCategoryEntityGraphById(id))
+        .orElseThrow(CategoryNotFoundException::new);
     validateOwnedByUser(category, user);
 
     categoryRepository.deleteById(id);
