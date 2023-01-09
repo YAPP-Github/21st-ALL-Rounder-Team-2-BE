@@ -28,9 +28,10 @@ public class Category extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private Category(User user, String name) {
+  private Category(User user, String name, int sequence) {
     this.user = user;
     this.name = name;
+    this.sequence = sequence;
   }
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -46,8 +47,8 @@ public class Category extends BaseEntity {
   @Column(nullable = false, name = "seq")
   private int sequence;
 
-  public static Category create(User user, String name) {
-    return new Category(user, name);
+  public static Category create(User user, String name, int sequence) {
+    return new Category(user, name, sequence);
   }
 
   public void addExhibit(Exhibit exhibit) {

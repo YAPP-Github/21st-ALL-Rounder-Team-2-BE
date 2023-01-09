@@ -14,4 +14,7 @@ public class CategoryDto {
 
   @Schema(description = "카테고리 명")
   private final String name;
+
+  @Schema(description = "카테고리 순서")
+  private final int sequence;
 }

@@ -7,6 +7,7 @@ import com.yapp.artie.domain.archive.dto.cateogry.UpdateCategoryRequestDto;
 import com.yapp.artie.domain.archive.exception.CategoryAlreadyExistException;
 import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
 import com.yapp.artie.domain.archive.exception.ChangeDefaultCategoryException;
+import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.user.domain.User;
@@ -26,6 +27,7 @@ public class CategoryService {
   private final CategoryRepository categoryRepository;
   private final UserService userService;
   private final String DEFAULT_CATEGORY_NAME = "전체 기록";
+  private final int CATEGORY_LIMIT_COUNT = 5;
 
   public Category findCategoryWithUser(Long id) {
     return Optional.ofNullable(categoryRepository.findCategoryEntityGraphById(id))
@@ -78,7 +80,10 @@ public class CategoryService {
   }
 
   private Category createCategory(String name, User user) {
-    Category category = Category.create(user, name);
+    int sequence = categoryRepository.countCategoriesByUser(user);
+    validateExceedLimitCategoryCount(sequence);
+
+    Category category = Category.create(user, name, sequence);
     categoryRepository.save(category);
     return category;
   }
@@ -125,6 +130,12 @@ public class CategoryService {
   private void validateDefaultCategory(Category category) {
     if (category.getName().equals(DEFAULT_CATEGORY_NAME)) {
       throw new ChangeDefaultCategoryException();
+    }
+  }
+
+  private void validateExceedLimitCategoryCount(int sequence) {
+    if (sequence >= CATEGORY_LIMIT_COUNT) {
+      throw new ExceededCategoryCountException();
     }
   }
 }
