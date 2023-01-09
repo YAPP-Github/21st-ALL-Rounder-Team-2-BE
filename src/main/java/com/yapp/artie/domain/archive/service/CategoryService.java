@@ -66,6 +66,7 @@ public class CategoryService {
     validateValidPair(user, category);
     validateDefaultCategory(category);
 
+    categoryRepository.bulkSequenceMinus(user, category.getSequence());
     categoryRepository.deleteById(id);
   }
 
