@@ -30,6 +30,7 @@ public enum ErrorCode {
   CATEGORY_NOT_FOUND(404, "CA001", "카테고리가 존재하지 않습니다."),
   CATEGORY_ALREADY_EXISTS(409, "CA002", "이미 존재하는 카테고리입니다."),
   CATEGORY_NOT_OWNER(403, "CA003", "자신의 카테고리만 접근할 수 있습니다."),
+  CATEGORY_DEFAULT_IS_READONLY(403, "CA004", "기본 카테고리는 수정, 삭제가 불가능합니다."),
 
   // Exhibit
   EXHIBIT_NOT_FOUND(404, "E001", "전시가 존재하지 않습니다."),

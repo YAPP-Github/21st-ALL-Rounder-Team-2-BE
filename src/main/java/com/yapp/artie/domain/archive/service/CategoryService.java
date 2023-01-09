@@ -6,6 +6,7 @@ import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.cateogry.UpdateCategoryRequestDto;
 import com.yapp.artie.domain.archive.exception.CategoryAlreadyExistException;
 import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
+import com.yapp.artie.domain.archive.exception.ChangeDefaultCategoryException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.user.domain.User;
@@ -60,7 +61,8 @@ public class CategoryService {
   public void delete(Long id, Long userId) {
     User user = findUser(userId);
     Category category = categoryRepository.findCategoryEntityGraphById(id);
-    validate(user, category);
+    validateValidPair(user, category);
+    validateDefaultCategory(category);
 
     categoryRepository.deleteById(id);
   }
@@ -69,7 +71,8 @@ public class CategoryService {
   public void update(UpdateCategoryRequestDto updateCategoryRequestDto, Long id, Long userId) {
     User user = findUser(userId);
     Category category = categoryRepository.findCategoryEntityGraphById(id);
-    validate(user, category);
+    validateValidPair(user, category);
+    validateDefaultCategory(category);
 
     category.update(updateCategoryRequestDto.getName());
   }
@@ -102,7 +105,7 @@ public class CategoryService {
     }
   }
 
-  private void validate(User user, Category category) {
+  private void validateValidPair(User user, Category category) {
     validateCategoryFound(category);
     validateOwnedByUser(category, user);
   }
@@ -116,6 +119,12 @@ public class CategoryService {
   private void validateOwnedByUser(Category category, User user) {
     if (!category.ownedBy(user)) {
       throw new NotOwnerOfCategoryException();
+    }
+  }
+
+  private void validateDefaultCategory(Category category) {
+    if (category.getName().equals(DEFAULT_CATEGORY_NAME)) {
+      throw new ChangeDefaultCategoryException();
     }
   }
 }
