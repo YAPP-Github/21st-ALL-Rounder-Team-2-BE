@@ -43,6 +43,9 @@ public class Category extends BaseEntity {
   @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
   List<Exhibit> exhibits = new ArrayList<>();
 
+  @Column(nullable = false, name = "seq")
+  private int sequence;
+
   public static Category create(User user, String name) {
     return new Category(user, name);
   }
