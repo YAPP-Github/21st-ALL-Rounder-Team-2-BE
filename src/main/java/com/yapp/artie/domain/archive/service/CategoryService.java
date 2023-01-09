@@ -24,6 +24,7 @@ public class CategoryService {
 
   private final CategoryRepository categoryRepository;
   private final UserService userService;
+  private final String DEFAULT_CATEGORY_NAME = "전체 기록";
 
   public Category findCategoryWithUser(Long id) {
     return Optional.ofNullable(categoryRepository.findCategoryEntityGraphById(id))
@@ -39,15 +40,20 @@ public class CategoryService {
   }
 
   @Transactional
+  public Long createDefault(Long userId) {
+    User user = findUser(userId);
+    validateDuplicateCategory(DEFAULT_CATEGORY_NAME, user);
+
+    return createCategory(DEFAULT_CATEGORY_NAME, user).getId();
+  }
+
+  @Transactional
   public Long create(CreateCategoryRequestDto createCategoryRequestDto, Long userId) {
     User user = findUser(userId);
     String name = createCategoryRequestDto.getName();
     validateDuplicateCategory(name, user);
 
-    Category category = Category.create(user, name);
-    categoryRepository.save(category);
-
-    return category.getId();
+    return createCategory(name, user).getId();
   }
 
   @Transactional
@@ -66,6 +72,12 @@ public class CategoryService {
     validate(user, category);
 
     category.update(updateCategoryRequestDto.getName());
+  }
+
+  private Category createCategory(String name, User user) {
+    Category category = Category.create(user, name);
+    categoryRepository.save(category);
+    return category;
   }
 
   private User findUser(Long userId) {
