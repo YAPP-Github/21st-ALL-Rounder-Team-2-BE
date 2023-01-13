@@ -29,4 +29,13 @@ public class Tag extends BaseEntity {
 
   @Column(nullable = false)
   private String name;
+
+  public Tag(User user, String name) {
+    this.user = user;
+    this.name = name;
+  }
+
+  public static Tag create(User user, String name) {
+    return new Tag(user, name);
+  }
 }
