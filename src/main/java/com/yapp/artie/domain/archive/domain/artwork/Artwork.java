@@ -31,8 +31,8 @@ public class Artwork extends BaseEntity {
   @JoinColumn(name = "post_id", nullable = false)
   private Exhibit exhibit;
 
-  @Embedded
-  private ExposureCondition condition;
+  @Column(nullable = false, columnDefinition = "boolean default false", name = "is_main_image")
+  private boolean isMain;
 
   @Embedded
   private ArtworkContents contents;
