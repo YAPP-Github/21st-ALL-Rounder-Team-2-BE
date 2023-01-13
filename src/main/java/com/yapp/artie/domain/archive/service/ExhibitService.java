@@ -31,7 +31,8 @@ public class ExhibitService {
 
   public PostInfoDto getExhibitInformation(Long id, Long userId) {
     User user = findUser(userId);
-    Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id);
+    Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
+        .orElseThrow(ExhibitNotFoundException::new);
     validate(user, exhibit);
 
     ExhibitContents contents = exhibit.contents();
@@ -76,7 +77,8 @@ public class ExhibitService {
   @Transactional
   public void publish(Long id, Long userId) {
     User user = findUser(userId);
-    Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id);
+    Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
+        .orElseThrow(ExhibitNotFoundException::new);
     validate(user, exhibit);
 
     exhibit.publish();
@@ -85,7 +87,9 @@ public class ExhibitService {
   @Transactional
   public void update(UpdateExhibitRequestDto updateExhibitRequestDto, Long id, Long userId) {
     User user = findUser(userId);
-    Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id);
+    Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
+        .orElseThrow(ExhibitNotFoundException::new);
+    ;
     validate(user, exhibit);
 
     exhibit.update(updateExhibitRequestDto.getName(), updateExhibitRequestDto.getPostDate());
