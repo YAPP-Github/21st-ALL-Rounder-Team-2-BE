@@ -32,7 +32,7 @@ public class ArtworkController {
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateArtworkResponseDto.class))),
   })
   @PostMapping()
-  public ResponseEntity<CreateArtworkResponseDto> createImage(Authentication authentication,
+  public ResponseEntity<CreateArtworkResponseDto> createArtwork(Authentication authentication,
       @RequestBody
       CreateArtworkRequestDto createArtworkRequestDto) {
 
