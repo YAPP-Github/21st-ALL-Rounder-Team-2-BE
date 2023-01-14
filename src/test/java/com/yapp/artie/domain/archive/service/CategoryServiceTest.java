@@ -1,12 +1,10 @@
 package com.yapp.artie.domain.archive.service;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.domain.user.repository.UserRepository;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,11 +45,23 @@ class CategoryServiceTest {
   }
 
   @Test
-  public void create_기본_카테고리를_생성한다() throws Exception {
+  public void createDefault_기본_카테고리를_생성한다() throws Exception {
     Long created = categoryService.createDefault(1L);
     Category find = em.find(Category.class, created);
     assertThat(find.getName()).isEqualTo("전체 기록");
   }
 
+
+  @Test
+  public void delete_카테고리를_삭제한다() throws Exception {
+    User user = em.find(User.class, 1L);
+    Category category = Category.create(user, "test", 1);
+    em.persist(category);
+
+    categoryService.delete(category.getId(), user.getId());
+
+    Category find = em.find(Category.class, category.getId());
+    assertThat(Optional.ofNullable(find)).isNotPresent();
+  }
 
 }
