@@ -1,5 +1,6 @@
 package com.yapp.artie.domain.archive.service;
 
+import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
@@ -43,6 +44,13 @@ class CategoryServiceTest {
     Long created = categoryService.create(createCategoryRequestDto, 1L);
     Category find = em.find(Category.class, created);
     assertThat(find.getId()).isEqualTo(created);
+  }
+
+  @Test
+  public void create_기본_카테고리를_생성한다() throws Exception {
+    Long created = categoryService.createDefault(1L);
+    Category find = em.find(Category.class, created);
+    assertThat(find.getName()).isEqualTo("전체 기록");
   }
 
 
