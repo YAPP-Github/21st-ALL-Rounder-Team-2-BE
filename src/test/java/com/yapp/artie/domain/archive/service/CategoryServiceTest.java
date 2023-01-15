@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
+import com.yapp.artie.domain.archive.dto.cateogry.UpdateCategoryRequestDto;
 import com.yapp.artie.domain.archive.exception.CategoryAlreadyExistException;
 import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
 import com.yapp.artie.domain.archive.exception.ChangeDefaultCategoryException;
@@ -141,4 +142,12 @@ class CategoryServiceTest {
     }).isInstanceOf(NotOwnerOfCategoryException.class);
   }
 
+  @Test
+  public void update_카테고리를_수정한다() throws Exception {
+    User user = userRepository.findByUid("tu1").get();
+    CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto("test");
+    Long created = categoryService.create(createCategoryRequestDto, user.getId());
+    categoryService.update(new UpdateCategoryRequestDto("rename"), created, user.getId());
+    assertThat(em.find(Category.class, created).getName()).isEqualTo("rename");
+  }
 }
