@@ -8,6 +8,7 @@ import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.exception.CategoryAlreadyExistException;
 import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
 import com.yapp.artie.domain.archive.exception.ChangeDefaultCategoryException;
+import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import java.util.Optional;
@@ -61,6 +62,18 @@ class CategoryServiceTest {
       categoryService.create(createCategoryRequestDto, user.getId());
       categoryService.create(createCategoryRequestDto, user.getId());
     }).isInstanceOf(CategoryAlreadyExistException.class);
+  }
+
+  @Test
+  public void create_카테고리의_갯수가_5개_이상일_경우_생성하려_시도할_경우_예외를_발생한다() throws Exception {
+    User user = userRepository.findByUid("tu1").get();
+    assertThatThrownBy(() -> {
+      for (int sequence = 0; sequence < 6; sequence++) {
+        CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto(
+            "test" + sequence);
+        categoryService.create(createCategoryRequestDto, user.getId());
+      }
+    }).isInstanceOf(ExceededCategoryCountException.class);
   }
 
   @Test
