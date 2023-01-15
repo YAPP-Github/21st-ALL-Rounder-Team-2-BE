@@ -62,12 +62,10 @@ class CategoryServiceTest {
   @Test
   public void delete_카테고리를_삭제한다() throws Exception {
     User user = userRepository.findByUid("tu1").get();
-    Category category = Category.create(user, "test", 1);
-    em.persist(category);
-
-    categoryService.delete(category.getId(), user.getId());
-
-    Category find = em.find(Category.class, category.getId());
+    CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto("test");
+    Long created = categoryService.create(createCategoryRequestDto, user.getId());
+    categoryService.delete(created, user.getId());
+    Category find = em.find(Category.class, created);
     assertThat(Optional.ofNullable(find)).isNotPresent();
   }
 
@@ -80,7 +78,5 @@ class CategoryServiceTest {
       categoryService.delete(created, user.getId());
     }).isInstanceOf(ChangeDefaultCategoryException.class);
   }
-
-
 
 }
