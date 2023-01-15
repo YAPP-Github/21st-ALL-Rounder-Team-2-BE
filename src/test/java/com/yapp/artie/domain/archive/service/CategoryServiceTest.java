@@ -46,6 +46,14 @@ class CategoryServiceTest {
   }
 
   @Test
+  public void findCategoryWithUser_해당_id의_카테고리가_존재하지_않으면_예외를_발생한다() throws Exception {
+    User user = userRepository.findByUid("tu1").get();
+    assertThatThrownBy(() -> {
+      categoryService.findCategoryWithUser(1L);
+    }).isInstanceOf(CategoryNotFoundException.class);
+  }
+
+  @Test
   public void categoriesOf_카테고리가_하나도_존재하지_않으면_예외를_발생한다() throws Exception {
     User user = userRepository.findByUid("tu1").get();
     assertThatThrownBy(() -> {
