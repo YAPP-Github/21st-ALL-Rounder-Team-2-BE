@@ -19,6 +19,8 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -190,4 +192,23 @@ class CategoryServiceTest {
     }
   }
 
+  @ParameterizedTest(name = "[시퀀스 벌크성 업데이트 테스트 #{index}] => {0}번 카테고리가 삭제될 경우")
+  @ValueSource(ints = {1, 2, 3, 4})
+  public void sequence_카테고리_삭제_시_시퀀스가_누락된_숫자없이_오름차순으로_정렬된다(int target) throws Exception {
+    User user = userRepository.findByUid("tu1").get();
+    categoryService.createDefault(user.getId());
+    for (int sequence = 1; sequence < 5; sequence++) {
+      categoryService.create(new CreateCategoryRequestDto("test" + sequence), user.getId());
+    }
+
+    List<CategoryDto> categories = categoryService.categoriesOf(user.getId());
+    CategoryDto deleted = categories.get(target);
+    categoryService.delete(deleted.getId(), user.getId());
+
+    List<CategoryDto> actualCategories = categoryService.categoriesOf(user.getId());
+    for (int expected = 0; expected < actualCategories.size(); expected++) {
+      assertThat(actualCategories.get(expected).getSequence())
+          .isEqualTo(expected);
+    }
+  }
 }
