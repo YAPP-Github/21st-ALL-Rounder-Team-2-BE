@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.repository.UserRepository;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +20,9 @@ class CategoryServiceTest {
 
   @Autowired
   EntityManager em;
+
+  @Autowired
+  UserRepository userRepository;
 
   @Autowired
   CategoryService categoryService;
@@ -38,23 +42,24 @@ class CategoryServiceTest {
 
   @Test
   public void create_카테고리를_생성한다() throws Exception {
+    User user = userRepository.findByUid("tu1").get();
     CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto("test");
-    Long created = categoryService.create(createCategoryRequestDto, 1L);
+    Long created = categoryService.create(createCategoryRequestDto, user.getId());
     Category find = em.find(Category.class, created);
     assertThat(find.getId()).isEqualTo(created);
   }
 
   @Test
   public void createDefault_기본_카테고리를_생성한다() throws Exception {
-    Long created = categoryService.createDefault(1L);
+    User user = userRepository.findByUid("tu1").get();
+    Long created = categoryService.createDefault(user.getId());
     Category find = em.find(Category.class, created);
     assertThat(find.getName()).isEqualTo("전체 기록");
   }
 
-
   @Test
   public void delete_카테고리를_삭제한다() throws Exception {
-    User user = em.find(User.class, 1L);
+    User user = userRepository.findByUid("tu1").get();
     Category category = Category.create(user, "test", 1);
     em.persist(category);
 
