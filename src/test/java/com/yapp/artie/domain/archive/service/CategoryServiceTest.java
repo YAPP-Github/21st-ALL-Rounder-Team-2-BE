@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
+import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.cateogry.UpdateCategoryRequestDto;
 import com.yapp.artie.domain.archive.exception.CategoryAlreadyExistException;
@@ -13,6 +14,7 @@ import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
+import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -171,6 +173,21 @@ class CategoryServiceTest {
     assertThatThrownBy(() -> {
       categoryService.update(new UpdateCategoryRequestDto("rename"), created, user1.getId());
     }).isInstanceOf(NotOwnerOfCategoryException.class);
+  }
+
+  @Test
+  public void sequence_카테고리_생성_시_시퀀스가_오름차순으로_생성된다() throws Exception {
+    User user = userRepository.findByUid("tu1").get();
+    categoryService.createDefault(user.getId());
+    for (int sequence = 1; sequence < 5; sequence++) {
+      categoryService.create(new CreateCategoryRequestDto("test" + sequence), user.getId());
+    }
+
+    List<CategoryDto> categories = categoryService.categoriesOf(user.getId());
+    for (int expected = 0; expected < categories.size(); expected++) {
+      assertThat(categories.get(expected).getSequence())
+          .isEqualTo(expected);
+    }
   }
 
 }
