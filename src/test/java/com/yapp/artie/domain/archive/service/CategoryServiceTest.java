@@ -152,6 +152,16 @@ class CategoryServiceTest {
   }
 
   @Test
+  public void update_기본_카테고리를_수정하려_시도할_경우_예외를_발생한다() throws Exception {
+    User user = userRepository.findByUid("tu1").get();
+    Long created = categoryService.createDefault(user.getId());
+
+    assertThatThrownBy(() -> {
+      categoryService.update(new UpdateCategoryRequestDto("rename"), created, user.getId());
+    }).isInstanceOf(ChangeDefaultCategoryException.class);
+  }
+
+  @Test
   public void update_다른사람의_카테고리를_수정하려_시도할_경우_예외를_발생한다() throws Exception {
     User user1 = userRepository.findByUid("tu1").get();
     User user2 = userRepository.findByUid("tu2").get();
