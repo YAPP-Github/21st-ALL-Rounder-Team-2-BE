@@ -9,6 +9,7 @@ import com.yapp.artie.domain.archive.exception.CategoryAlreadyExistException;
 import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
 import com.yapp.artie.domain.archive.exception.ChangeDefaultCategoryException;
 import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
+import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import java.util.Optional;
@@ -126,6 +127,18 @@ class CategoryServiceTest {
     assertThatThrownBy(() -> {
       categoryService.delete(1L, user.getId());
     }).isInstanceOf(CategoryNotFoundException.class);
+  }
+
+  @Test
+  public void delete_다른사람의_카테고리를_삭제하려_시도할_경우_예외를_발생한다() throws Exception {
+    User user1 = userRepository.findByUid("tu1").get();
+    User user2 = userRepository.findByUid("tu2").get();
+    CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto("test");
+    Long created = categoryService.create(createCategoryRequestDto, user2.getId());
+
+    assertThatThrownBy(() -> {
+      categoryService.delete(created, user1.getId());
+    }).isInstanceOf(NotOwnerOfCategoryException.class);
   }
 
 }
