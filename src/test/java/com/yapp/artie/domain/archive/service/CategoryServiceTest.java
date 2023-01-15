@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
+import com.yapp.artie.domain.archive.exception.CategoryAlreadyExistException;
 import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
 import com.yapp.artie.domain.archive.exception.ChangeDefaultCategoryException;
 import com.yapp.artie.domain.user.domain.User;
@@ -50,6 +51,16 @@ class CategoryServiceTest {
     Long created = categoryService.create(createCategoryRequestDto, user.getId());
     Category find = em.find(Category.class, created);
     assertThat(find.getId()).isEqualTo(created);
+  }
+
+  @Test
+  public void create_이미_존재하는_카테고리를_생성하려_시도할_경우_예외를_발생한다() throws Exception {
+    User user = userRepository.findByUid("tu1").get();
+    assertThatThrownBy(() -> {
+      CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto("test");
+      categoryService.create(createCategoryRequestDto, user.getId());
+      categoryService.create(createCategoryRequestDto, user.getId());
+    }).isInstanceOf(CategoryAlreadyExistException.class);
   }
 
   @Test
