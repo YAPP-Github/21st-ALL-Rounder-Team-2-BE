@@ -17,6 +17,7 @@ import com.yapp.artie.domain.user.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,6 +32,9 @@ class CategoryServiceTest {
 
   @Autowired
   EntityManager em;
+
+  @Autowired
+  EntityManagerFactory emf;
 
   @Autowired
   UserRepository userRepository;
@@ -57,6 +61,15 @@ class CategoryServiceTest {
     assertThatThrownBy(() -> {
       categoryService.findCategoryWithUser(1L);
     }).isInstanceOf(CategoryNotFoundException.class);
+  }
+
+  @Test
+  public void findCategoryWithUser_카테고리와_함께_유저_프록시도_초기화_해야한다() throws Exception {
+    User user = userRepository.findByUid("tu1").get();
+    CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto("test");
+    Long created = categoryService.create(createCategoryRequestDto, user.getId());
+    Category categoryWithUser = categoryService.findCategoryWithUser(created);
+    assertThat(emf.getPersistenceUnitUtil().isLoaded(categoryWithUser.getUser())).isTrue();
   }
 
   @Test
