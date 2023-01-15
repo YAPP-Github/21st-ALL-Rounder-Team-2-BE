@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
+import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
 import com.yapp.artie.domain.archive.exception.ChangeDefaultCategoryException;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
@@ -77,6 +78,14 @@ class CategoryServiceTest {
     assertThatThrownBy(() -> {
       categoryService.delete(created, user.getId());
     }).isInstanceOf(ChangeDefaultCategoryException.class);
+  }
+
+  @Test
+  public void delete_존재하지_않는_카테고리를_삭제하면_예외를_발생한다() throws Exception {
+    User user = userRepository.findByUid("tu1").get();
+    assertThatThrownBy(() -> {
+      categoryService.delete(1L, user.getId());
+    }).isInstanceOf(CategoryNotFoundException.class);
   }
 
 }
