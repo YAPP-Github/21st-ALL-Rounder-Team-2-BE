@@ -150,4 +150,17 @@ class CategoryServiceTest {
     categoryService.update(new UpdateCategoryRequestDto("rename"), created, user.getId());
     assertThat(em.find(Category.class, created).getName()).isEqualTo("rename");
   }
+
+  @Test
+  public void update_다른사람의_카테고리를_수정하려_시도할_경우_예외를_발생한다() throws Exception {
+    User user1 = userRepository.findByUid("tu1").get();
+    User user2 = userRepository.findByUid("tu2").get();
+    CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto("test");
+    Long created = categoryService.create(createCategoryRequestDto, user2.getId());
+
+    assertThatThrownBy(() -> {
+      categoryService.update(new UpdateCategoryRequestDto("rename"), created, user1.getId());
+    }).isInstanceOf(NotOwnerOfCategoryException.class);
+  }
+
 }
