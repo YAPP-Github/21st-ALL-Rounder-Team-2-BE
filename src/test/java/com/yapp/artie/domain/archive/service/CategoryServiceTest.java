@@ -1,9 +1,11 @@
 package com.yapp.artie.domain.archive.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
+import com.yapp.artie.domain.archive.exception.ChangeDefaultCategoryException;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import java.util.Optional;
@@ -68,5 +70,17 @@ class CategoryServiceTest {
     Category find = em.find(Category.class, category.getId());
     assertThat(Optional.ofNullable(find)).isNotPresent();
   }
+
+  @Test
+  public void delete_기본_카테고리를_삭제하면_예외를_발생한다() throws Exception {
+    User user = userRepository.findByUid("tu1").get();
+    Long created = categoryService.createDefault(user.getId());
+
+    assertThatThrownBy(() -> {
+      categoryService.delete(created, user.getId());
+    }).isInstanceOf(ChangeDefaultCategoryException.class);
+  }
+
+
 
 }
