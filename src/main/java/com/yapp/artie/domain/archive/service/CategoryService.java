@@ -80,6 +80,11 @@ public class CategoryService {
     category.update(updateCategoryRequestDto.getName());
   }
 
+  @Transactional
+  public void shuffle() {
+
+  }
+
   private Category createCategory(String name, User user) {
     int sequence = categoryRepository.countCategoriesByUser(user);
     validateExceedLimitCategoryCount(sequence);
