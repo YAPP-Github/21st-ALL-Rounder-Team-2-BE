@@ -86,10 +86,7 @@ public class CategoryService {
   public void shuffle(List<CategoryDto> changeCategorySequenceDtos, Long userId) {
     User user = findUser(userId);
     List<Category> categories = categoryRepository.findCategoriesByUser(user);
-
-    if (categories.size() != changeCategorySequenceDtos.size()) {
-      throw new BusinessException(ErrorCode.CATEGORY_ILLEGAL_CHANGE_COUNT);
-    }
+    validateChangeCategoriesLengthWithOriginal(changeCategorySequenceDtos, categories);
 
     int sequence = 1;
     for (CategoryDto changeCategorySequenceDto : changeCategorySequenceDtos) {
@@ -157,6 +154,13 @@ public class CategoryService {
   private void validateExceedLimitCategoryCount(int sequence) {
     if (sequence >= CATEGORY_LIMIT_COUNT) {
       throw new ExceededCategoryCountException();
+    }
+  }
+
+  private void validateChangeCategoriesLengthWithOriginal(List<CategoryDto> changeCategorySequenceDtos,
+      List<Category> categories) {
+    if (categories.size() != changeCategorySequenceDtos.size()) {
+      throw new BusinessException(ErrorCode.CATEGORY_ILLEGAL_CHANGE_COUNT);
     }
   }
 }
