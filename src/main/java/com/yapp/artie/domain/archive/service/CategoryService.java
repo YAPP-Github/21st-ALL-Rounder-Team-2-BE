@@ -77,12 +77,11 @@ public class CategoryService {
     validateValidPair(user, category);
     validateDefaultCategory(category);
 
-    category.update(updateCategoryRequestDto.getName());
+    category.rename(updateCategoryRequestDto.getName());
   }
 
   @Transactional
-  public void shuffle() {
-
+  public void shuffle(List<CategoryDto> changeCategorySequenceDtos, Long userId) {
   }
 
   private Category createCategory(String name, User user) {

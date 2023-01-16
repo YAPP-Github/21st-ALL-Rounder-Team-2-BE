@@ -14,8 +14,11 @@ import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -225,8 +228,35 @@ class CategoryServiceTest {
     }
   }
 
-  @Test
-  public void shuffle_카테고리의_순서를_변경한다() throws Exception {
-    categoryService.shuffle();
+  @ParameterizedTest(name = "[카테고리 순서 변경 테스트 #{index}] => {0}순으로 재배열하는 경우")
+  @ValueSource(strings = {"1234", "1243", "1423", "4321", "2134", "2431"})
+  public void shuffle_카테고리의_순서를_변경한다(String expected) throws Exception {
+    List<Integer> expectedList = Arrays.stream(expected.split(""))
+        .mapToInt(Integer::parseInt)
+        .boxed()
+        .collect(Collectors.toList());
+
+    User user = userRepository.findByUid("tu1").get();
+    categoryService.createDefault(user.getId());
+    for (int sequence = 1; sequence < 5; sequence++) {
+      categoryService.create(new CreateCategoryRequestDto("test" + sequence), user.getId());
+    }
+    List<CategoryDto> shuffled = new ArrayList<>();
+    List<CategoryDto> categories = categoryService.categoriesOf(user.getId());
+    expectedList.forEach(index -> {
+      shuffled.add(categories.get(index));
+    });
+
+    categoryService.shuffle(shuffled, user.getId());
+    StringBuilder actual = new StringBuilder();
+    categoryService.categoriesOf(user.getId())
+        .forEach(categoryDto -> {
+              if (categoryDto.getSequence() != 0) {
+                actual.append(categoryDto.getSequence());
+              }
+            }
+        );
+
+    assertThat(actual.toString()).isEqualTo(expected);
   }
 }

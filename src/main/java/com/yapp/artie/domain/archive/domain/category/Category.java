@@ -60,7 +60,11 @@ public class Category extends BaseEntity {
     return this.user.equals(user);
   }
 
-  public void update(String name) {
+  public void rename(String name) {
     this.name = name;
+  }
+
+  public void rearrange(int sequence) {
+    this.sequence = sequence;
   }
 }
