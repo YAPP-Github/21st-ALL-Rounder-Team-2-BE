@@ -13,6 +13,8 @@ import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
+import com.yapp.artie.global.exception.common.BusinessException;
+import com.yapp.artie.global.exception.response.ErrorCode;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -84,6 +86,10 @@ public class CategoryService {
   public void shuffle(List<CategoryDto> changeCategorySequenceDtos, Long userId) {
     User user = findUser(userId);
     List<Category> categories = categoryRepository.findCategoriesByUser(user);
+
+    if (categories.size() != changeCategorySequenceDtos.size()) {
+      throw new BusinessException(ErrorCode.CATEGORY_ILLEGAL_CHANGE_COUNT);
+    }
 
     int sequence = 1;
     for (CategoryDto changeCategorySequenceDto : changeCategorySequenceDtos) {
