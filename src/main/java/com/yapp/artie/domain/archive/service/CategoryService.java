@@ -6,6 +6,7 @@ import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.cateogry.UpdateCategoryRequestDto;
 import com.yapp.artie.domain.archive.exception.CategoryAlreadyExistException;
 import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
+import com.yapp.artie.domain.archive.exception.ChangeCategoryWrongLengthException;
 import com.yapp.artie.domain.archive.exception.ChangeDefaultCategoryException;
 import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
@@ -13,8 +14,6 @@ import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
-import com.yapp.artie.global.exception.common.BusinessException;
-import com.yapp.artie.global.exception.response.ErrorCode;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -157,10 +156,11 @@ public class CategoryService {
     }
   }
 
-  private void validateChangeCategoriesLengthWithOriginal(List<CategoryDto> changeCategorySequenceDtos,
+  private void validateChangeCategoriesLengthWithOriginal(
+      List<CategoryDto> changeCategorySequenceDtos,
       List<Category> categories) {
     if (categories.size() != changeCategorySequenceDtos.size()) {
-      throw new BusinessException(ErrorCode.CATEGORY_ILLEGAL_CHANGE_COUNT);
+      throw new ChangeCategoryWrongLengthException();
     }
   }
 }
