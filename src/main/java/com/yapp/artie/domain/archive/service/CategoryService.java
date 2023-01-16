@@ -159,7 +159,7 @@ public class CategoryService {
   private void validateChangeCategoriesLengthWithOriginal(
       List<CategoryDto> changeCategorySequenceDtos,
       List<Category> categories) {
-    if (categories.size() != changeCategorySequenceDtos.size()) {
+    if (categories.size() - 1 != changeCategorySequenceDtos.size()) {
       throw new ChangeCategoryWrongLengthException();
     }
   }
