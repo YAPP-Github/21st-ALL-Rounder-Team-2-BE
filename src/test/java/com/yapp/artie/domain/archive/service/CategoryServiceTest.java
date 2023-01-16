@@ -9,12 +9,12 @@ import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.cateogry.UpdateCategoryRequestDto;
 import com.yapp.artie.domain.archive.exception.CategoryAlreadyExistException;
 import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
+import com.yapp.artie.domain.archive.exception.ChangeCategoryWrongLengthException;
 import com.yapp.artie.domain.archive.exception.ChangeDefaultCategoryException;
 import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
-import com.yapp.artie.global.exception.common.BusinessException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -273,6 +273,6 @@ class CategoryServiceTest {
 
     assertThatThrownBy(() -> {
       categoryService.shuffle(List.of(new CategoryDto(1L, "test", 1)), user.getId());
-    }).isInstanceOf(BusinessException.class);
+    }).isInstanceOf(ChangeCategoryWrongLengthException.class);
   }
 }
