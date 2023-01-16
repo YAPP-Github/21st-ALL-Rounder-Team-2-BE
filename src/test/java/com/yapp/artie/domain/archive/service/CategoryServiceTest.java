@@ -14,6 +14,7 @@ import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
+import com.yapp.artie.global.exception.common.BusinessException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -259,5 +260,19 @@ class CategoryServiceTest {
         );
 
     assertThat(actual.toString()).isEqualTo(expected);
+  }
+
+  @Test
+  public void shuffle__주어진_리스트가_원본_카테고리의_수와_같지않으면_예외를_발생한다() throws Exception {
+    User user = userRepository.findByUid("tu1").get();
+    categoryService.createDefault(user.getId());
+    for (int sequence = 1; sequence < 5; sequence++) {
+      categoryService.create(new CreateCategoryRequestDto(Integer.toString(sequence)),
+          user.getId());
+    }
+
+    assertThatThrownBy(() -> {
+      categoryService.shuffle(List.of(new CategoryDto(1L, "test", 1)), user.getId());
+    }).isInstanceOf(BusinessException.class);
   }
 }
