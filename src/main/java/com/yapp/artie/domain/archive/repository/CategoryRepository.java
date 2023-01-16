@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-  @Query("select new com.yapp.artie.domain.archive.dto.cateogry.CategoryDto(c.id, c.name, c.sequence) from Category c where c.user = :user")
+  @Query("select new com.yapp.artie.domain.archive.dto.cateogry.CategoryDto(c.id, c.name, c.sequence) from Category c where c.user = :user order by c.sequence")
   List<CategoryDto> findCategoryDto(@Param("user") User user);
 
   @Modifying(clearAutomatically = true)
@@ -25,5 +25,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
   Category findCategoryEntityGraphById(Long id);
 
   int countCategoriesByUser(@Param("user") User user);
+
+  List<Category> findCategoriesByUser(User user);
 }
 

@@ -82,6 +82,16 @@ public class CategoryService {
 
   @Transactional
   public void shuffle(List<CategoryDto> changeCategorySequenceDtos, Long userId) {
+    User user = findUser(userId);
+    List<Category> categories = categoryRepository.findCategoriesByUser(user);
+
+    int sequence = 1;
+    for (CategoryDto changeCategorySequenceDto : changeCategorySequenceDtos) {
+      int originSequence = changeCategorySequenceDto.getSequence();
+      Category category = categories.get(originSequence);
+
+      category.rearrange(sequence++);
+    }
   }
 
   private Category createCategory(String name, User user) {
