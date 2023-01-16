@@ -224,4 +224,9 @@ class CategoryServiceTest {
           .isEqualTo(expected);
     }
   }
+
+  @Test
+  public void shuffle_카테고리의_순서를_변경한다() throws Exception {
+    categoryService.shuffle();
+  }
 }
