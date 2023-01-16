@@ -239,7 +239,8 @@ class CategoryServiceTest {
     User user = userRepository.findByUid("tu1").get();
     categoryService.createDefault(user.getId());
     for (int sequence = 1; sequence < 5; sequence++) {
-      categoryService.create(new CreateCategoryRequestDto("test" + sequence), user.getId());
+      categoryService.create(new CreateCategoryRequestDto(Integer.toString(sequence)),
+          user.getId());
     }
     List<CategoryDto> shuffled = new ArrayList<>();
     List<CategoryDto> categories = categoryService.categoriesOf(user.getId());
@@ -252,7 +253,7 @@ class CategoryServiceTest {
     categoryService.categoriesOf(user.getId())
         .forEach(categoryDto -> {
               if (categoryDto.getSequence() != 0) {
-                actual.append(categoryDto.getSequence());
+                actual.append(categoryDto.getName());
               }
             }
         );
