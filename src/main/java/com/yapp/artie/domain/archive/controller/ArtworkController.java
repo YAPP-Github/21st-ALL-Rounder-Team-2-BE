@@ -59,7 +59,7 @@ public class ArtworkController {
   })
   @PostMapping()
   public ResponseEntity<CreateArtworkResponseDto> createArtwork(Authentication authentication,
-      @RequestBody
+      @RequestBody @Valid
       CreateArtworkRequestDto createArtworkRequestDto) {
 
     Long userId = Long.parseLong(authentication.getName());
