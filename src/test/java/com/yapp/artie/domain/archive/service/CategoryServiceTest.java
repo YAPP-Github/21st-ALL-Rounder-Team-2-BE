@@ -263,7 +263,7 @@ class CategoryServiceTest {
   }
 
   @Test
-  public void shuffle__주어진_리스트가_원본_카테고리의_수와_같지않으면_예외를_발생한다() throws Exception {
+  public void shuffle_주어진_리스트가_원본_카테고리의_수와_같지않으면_예외를_발생한다() throws Exception {
     User user = userRepository.findByUid("tu1").get();
     categoryService.createDefault(user.getId());
     for (int sequence = 1; sequence < 5; sequence++) {
