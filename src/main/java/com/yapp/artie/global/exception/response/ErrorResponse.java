@@ -1,11 +1,13 @@
 package com.yapp.artie.global.exception.response;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
@@ -48,6 +50,18 @@ public class ErrorResponse {
     final String value = e.getValue() == null ? "" : e.getValue().toString();
     final List<ErrorResponse.FieldError> errors = ErrorResponse.FieldError.of(e.getName(), value,
         e.getErrorCode());
+    return new ErrorResponse(ErrorCode.INVALID_TYPE_VALUE, errors);
+  }
+
+  public static ErrorResponse of(HttpMessageNotReadableException e) {
+    return new ErrorResponse(ErrorCode.INVALID_INPUT_VALUE);
+  }
+
+  public static ErrorResponse of(InvalidFormatException e) {
+    List<ErrorResponse.FieldError> errors = ErrorResponse.FieldError.of(
+        e.getPath().size() > 0 ? e.getPath().get(0).getFieldName() : "알 수 없는 필드",
+        e.getValue().toString(),
+        "해당 필드는 " + e.getTargetType().getSimpleName() + " 타입이어야합니다.");
     return new ErrorResponse(ErrorCode.INVALID_TYPE_VALUE, errors);
   }
 

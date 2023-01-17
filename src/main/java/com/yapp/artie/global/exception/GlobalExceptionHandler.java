@@ -1,5 +1,6 @@
 package com.yapp.artie.global.exception;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.yapp.artie.global.exception.common.BusinessException;
 import com.yapp.artie.global.exception.response.ErrorCode;
 import com.yapp.artie.global.exception.response.ErrorResponse;
@@ -7,6 +8,7 @@ import java.nio.file.AccessDeniedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -90,5 +92,18 @@ public class GlobalExceptionHandler {
     log.error("handleEntityNotFoundException", e);
     final ErrorResponse response = ErrorResponse.of(ErrorCode.INTERNAL_SERVER_ERROR);
     return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  protected ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(
+      HttpMessageNotReadableException e) {
+    log.error("handleHttpMessageNotReadableException", e);
+    final ErrorResponse response;
+    if (e.getRootCause() instanceof InvalidFormatException) {
+      response = ErrorResponse.of((InvalidFormatException) e.getRootCause());
+    } else {
+      response = ErrorResponse.of(e);
+    }
+    return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
   }
 }
