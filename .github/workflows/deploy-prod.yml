@@ -55,12 +55,27 @@ jobs:
 
       - name: Copy Secret
         env:
-          APPLICATION_PROD: ${{ secrets.APPLICATION_PROD }}
-          APPLICATION_PROD_PATH: src/main/resources/application-prod.yml
           FIREBASE_JSON_VALUE: ${{ secrets.FIREBASE_JSON_VALUE }}
           FIREBASE_JSON_PATH: ./firebase.json
-        run: echo $APPLICATION_PROD | base64 --decode > $APPLICATION_PROD_PATH &&
-          echo $FIREBASE_JSON_VALUE | base64 --decode > $FIREBASE_JSON_PATH
+        run: echo $FIREBASE_JSON_VALUE | base64 --decode > $FIREBASE_JSON_PATH
+
+      - name: Set application-prod.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: './src/main/resources/application-prod.yml'
+        env:
+          spring.datasource.url: ${{ secrets.DATABASE_URL }}
+          spring.datasource.username: ${{ secrets.DATABASE_USERNAME }}
+          spring.datasource.password: ${{ secrets.DATABASE_PASSWORD }}
+
+      - name: Set application-aws.yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: './src/main/resources/application-aws.yml'
+        env:
+          cloud.aws.credentials.access-key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          cloud.aws.credentials.secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          cloud.aws.s3.bucket: ${{ secrets.AWS_S3_BUCKET }}/prod
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1

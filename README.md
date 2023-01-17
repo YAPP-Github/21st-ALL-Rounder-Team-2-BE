@@ -82,8 +82,7 @@ profile 환경변수 설정 :
 ## 6. 배포
 
 - Github actions를 시범 적용 중으로, ALB 이슈가 있어, Github Actions Workflow 중 기존 ECS Task를 중단해야함.
-- 현재 배포 시에 Github Secrets에 base64로 인코딩하여 저장해둔 application-prod.yml과 firebase.json을 decode하여 생성 후
-  빌드하는 과정을 포함하고 있음.
+- 현재 배포 시에 Github Secrets에 base64로 인코딩하여 저장해둔 firebase.json을 decode하여 생성 후 빌드하는 과정을 포함하고 있음.
 
 ## 7. 기여자
 
