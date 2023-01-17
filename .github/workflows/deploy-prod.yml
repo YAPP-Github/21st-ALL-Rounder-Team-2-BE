@@ -35,10 +35,8 @@ env:
   ECR_REPOSITORY: artie-ecr-private           # set this to your Amazon ECR repository name
   ECS_SERVICE: ARTIE_ECS_Service              # set this to your Amazon ECS service name
   ECS_CLUSTER: ARTIE-ECS-Cluster              # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: .aws/task-definition.json # set this to the path to your Amazon ECS task definition
-  # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: ARTIE_ECS_Container         # set this to the name of the container in the
-  # containerDefinitions section of your task definition
+  ECS_TASK_NAME: ARTIE_ECS_Task
 
 permissions:
   contents: read
@@ -114,11 +112,15 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition $ECS_TASK_NAME --query taskDefinition > task-definition.json
+
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          task-definition: task-definition.json
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
