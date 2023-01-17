@@ -44,6 +44,7 @@ public class CategoryController {
   public ResponseEntity<List<CategoryDto>> getCategories(Authentication authentication) {
     Long userId = Long.parseLong(authentication.getName());
     List<CategoryDto> categories = categoryService.categoriesOf(userId);
+
     return ResponseEntity.ok(categories);
   }
 
@@ -88,12 +89,12 @@ public class CategoryController {
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class))),
   })
   @PutMapping("/{id}")
-  public ResponseEntity<? extends HttpEntity> updatePost(Authentication authentication,
+  public ResponseEntity<? extends HttpEntity> updateCategory(Authentication authentication,
       @PathVariable("id") Long id, @RequestBody
   UpdateCategoryRequestDto updateCategoryRequestDto) {
     Long userId = Long.parseLong(authentication.getName());
-
     categoryService.update(updateCategoryRequestDto, id, userId);
+
     return ResponseEntity.noContent().build();
   }
 
@@ -109,6 +110,24 @@ public class CategoryController {
       @PathVariable("id") Long id) {
     Long userId = Long.parseLong(authentication.getName());
     categoryService.delete(id, userId);
+
+    return ResponseEntity.noContent().build();
+  }
+
+  @Operation(summary = "카테고리 순서 변경", description = "카테고리 순서를 변경합니다. 요청되는 카테고리에는 "
+      + "기본 카테고리가 포함되어 있으면 에러를 발생합니다."
+  )
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "204",
+          description = "카테고리 순서가 성공적으로 수정됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class))),
+  })
+  @PutMapping("/sequence")
+  public ResponseEntity<? extends HttpEntity> updateCategorySequence(
+      Authentication authentication, @RequestBody CategoryDto[] changeCategorySequenceDtos) {
+    Long userId = Long.parseLong(authentication.getName());
+    categoryService.shuffle(List.of(changeCategorySequenceDtos), userId);
 
     return ResponseEntity.noContent().build();
   }
