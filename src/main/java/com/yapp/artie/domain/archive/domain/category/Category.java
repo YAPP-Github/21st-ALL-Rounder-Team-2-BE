@@ -28,9 +28,10 @@ public class Category extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private Category(User user, String name) {
+  private Category(User user, String name, int sequence) {
     this.user = user;
     this.name = name;
+    this.sequence = sequence;
   }
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -43,8 +44,11 @@ public class Category extends BaseEntity {
   @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
   List<Exhibit> exhibits = new ArrayList<>();
 
-  public static Category create(User user, String name) {
-    return new Category(user, name);
+  @Column(nullable = false, name = "seq")
+  private int sequence;
+
+  public static Category create(User user, String name, int sequence) {
+    return new Category(user, name, sequence);
   }
 
   public void addExhibit(Exhibit exhibit) {
@@ -56,7 +60,11 @@ public class Category extends BaseEntity {
     return this.user.equals(user);
   }
 
-  public void update(String name) {
+  public void rename(String name) {
     this.name = name;
+  }
+
+  public void rearrange(int sequence) {
+    this.sequence = sequence;
   }
 }

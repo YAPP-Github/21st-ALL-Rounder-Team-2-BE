@@ -6,6 +6,9 @@ import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.cateogry.UpdateCategoryRequestDto;
 import com.yapp.artie.domain.archive.exception.CategoryAlreadyExistException;
 import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
+import com.yapp.artie.domain.archive.exception.ChangeCategoryWrongLengthException;
+import com.yapp.artie.domain.archive.exception.ChangeDefaultCategoryException;
+import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.user.domain.User;
@@ -24,6 +27,8 @@ public class CategoryService {
 
   private final CategoryRepository categoryRepository;
   private final UserService userService;
+  private final String DEFAULT_CATEGORY_NAME = "전체 기록";
+  private final int CATEGORY_LIMIT_COUNT = 5;
 
   public Category findCategoryWithUser(Long id) {
     return Optional.ofNullable(categoryRepository.findCategoryEntityGraphById(id))
@@ -39,23 +44,30 @@ public class CategoryService {
   }
 
   @Transactional
+  public Long createDefault(Long userId) {
+    User user = findUser(userId);
+    validateDuplicateCategory(DEFAULT_CATEGORY_NAME, user);
+
+    return createCategory(DEFAULT_CATEGORY_NAME, user).getId();
+  }
+
+  @Transactional
   public Long create(CreateCategoryRequestDto createCategoryRequestDto, Long userId) {
     User user = findUser(userId);
     String name = createCategoryRequestDto.getName();
     validateDuplicateCategory(name, user);
 
-    Category category = Category.create(user, name);
-    categoryRepository.save(category);
-
-    return category.getId();
+    return createCategory(name, user).getId();
   }
 
   @Transactional
   public void delete(Long id, Long userId) {
     User user = findUser(userId);
     Category category = categoryRepository.findCategoryEntityGraphById(id);
-    validate(user, category);
+    validateValidPair(user, category);
+    validateDefaultCategory(category);
 
+    categoryRepository.bulkSequenceMinus(user, category.getSequence());
     categoryRepository.deleteById(id);
   }
 
@@ -63,9 +75,34 @@ public class CategoryService {
   public void update(UpdateCategoryRequestDto updateCategoryRequestDto, Long id, Long userId) {
     User user = findUser(userId);
     Category category = categoryRepository.findCategoryEntityGraphById(id);
-    validate(user, category);
+    validateValidPair(user, category);
+    validateDefaultCategory(category);
 
-    category.update(updateCategoryRequestDto.getName());
+    category.rename(updateCategoryRequestDto.getName());
+  }
+
+  @Transactional
+  public void shuffle(List<CategoryDto> changeCategorySequenceDtos, Long userId) {
+    User user = findUser(userId);
+    List<Category> categories = categoryRepository.findCategoriesByUser(user);
+    validateChangeCategoriesLengthWithOriginal(changeCategorySequenceDtos, categories);
+
+    int sequence = 1;
+    for (CategoryDto changeCategorySequenceDto : changeCategorySequenceDtos) {
+      int originSequence = changeCategorySequenceDto.getSequence();
+      Category category = categories.get(originSequence);
+
+      category.rearrange(sequence++);
+    }
+  }
+
+  private Category createCategory(String name, User user) {
+    int sequence = categoryRepository.countCategoriesByUser(user);
+    validateExceedLimitCategoryCount(sequence);
+
+    Category category = Category.create(user, name, sequence);
+    categoryRepository.save(category);
+    return category;
   }
 
   private User findUser(Long userId) {
@@ -90,7 +127,7 @@ public class CategoryService {
     }
   }
 
-  private void validate(User user, Category category) {
+  private void validateValidPair(User user, Category category) {
     validateCategoryFound(category);
     validateOwnedByUser(category, user);
   }
@@ -104,6 +141,26 @@ public class CategoryService {
   private void validateOwnedByUser(Category category, User user) {
     if (!category.ownedBy(user)) {
       throw new NotOwnerOfCategoryException();
+    }
+  }
+
+  private void validateDefaultCategory(Category category) {
+    if (category.getName().equals(DEFAULT_CATEGORY_NAME)) {
+      throw new ChangeDefaultCategoryException();
+    }
+  }
+
+  private void validateExceedLimitCategoryCount(int sequence) {
+    if (sequence >= CATEGORY_LIMIT_COUNT) {
+      throw new ExceededCategoryCountException();
+    }
+  }
+
+  private void validateChangeCategoriesLengthWithOriginal(
+      List<CategoryDto> changeCategorySequenceDtos,
+      List<Category> categories) {
+    if (categories.size() - 1 != changeCategorySequenceDtos.size()) {
+      throw new ChangeCategoryWrongLengthException();
     }
   }
 }

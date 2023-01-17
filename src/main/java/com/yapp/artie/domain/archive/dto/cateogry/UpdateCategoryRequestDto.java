@@ -13,4 +13,8 @@ public class UpdateCategoryRequestDto {
 
   @Schema(description = "수정할 이름")
   private String name;
+
+  public UpdateCategoryRequestDto(String name) {
+    this.name = name;
+  }
 }
