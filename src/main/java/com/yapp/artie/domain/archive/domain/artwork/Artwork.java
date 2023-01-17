@@ -2,6 +2,7 @@ package com.yapp.artie.domain.archive.domain.artwork;
 
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.global.common.BaseEntity;
+import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -31,13 +32,25 @@ public class Artwork extends BaseEntity {
   @JoinColumn(name = "post_id", nullable = false)
   private Exhibit exhibit;
 
-  @Embedded
-  private ExposureCondition condition;
+  @Column(nullable = false, columnDefinition = "boolean default false", name = "is_main_image")
+  private boolean isMain;
 
   @Embedded
   private ArtworkContents contents;
 
+  public Artwork(Exhibit exhibit, boolean isMain, ArtworkContents contents) {
+    this.exhibit = exhibit;
+    this.isMain = isMain;
+    this.contents = contents;
+  }
+
   public void display(Exhibit exhibit) {
     this.exhibit = exhibit;
+  }
+
+  public static Artwork create(Exhibit exhibit, boolean isMain, String name,
+      String artist, String uri) {
+    ArtworkContents contents = new ArtworkContents.Builder(uri).name(name).artist(artist).build();
+    return new Artwork(exhibit, isMain, contents);
   }
 }

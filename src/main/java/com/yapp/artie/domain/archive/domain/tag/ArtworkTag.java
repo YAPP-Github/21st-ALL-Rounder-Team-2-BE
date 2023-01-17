@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 public class ArtworkTag {
 
   @EmbeddedId
-  private ArtworkTagId id;
+  private ArtworkTagId id = new ArtworkTagId();
 
   @ManyToOne(fetch = FetchType.LAZY)
   @MapsId("tagId")
@@ -34,4 +34,11 @@ public class ArtworkTag {
 
   @Column(nullable = false, name = "seq")
   private int sequence;
+
+  public ArtworkTag(Tag tag, Artwork artwork, int sequence) {
+    this.id = new ArtworkTagId(tag.getId(), artwork.getId());
+    this.tag = tag;
+    this.artwork = artwork;
+    this.sequence = sequence;
+  }
 }
