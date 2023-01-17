@@ -37,7 +37,6 @@ public class TagService {
       } else {
         tag = tagRepository.save(this.create(tagInfo.getTagName(), user));
       }
-      System.out.println(artwork.getId());
       artworkTags.add(
           new ArtworkTag(tag, artwork, seq.getAndIncrement()));
     });
