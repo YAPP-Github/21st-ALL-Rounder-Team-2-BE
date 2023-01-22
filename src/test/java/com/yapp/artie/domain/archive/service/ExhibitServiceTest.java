@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
+import com.yapp.artie.domain.archive.exception.ExhibitAlreadyPublishedException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
@@ -51,7 +52,8 @@ class ExhibitServiceTest {
   public void create_전시를_생성한다() throws Exception {
     User user = createUser("user", "tu1");
     CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);
-    CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test", defaultCateogry.getId(),
+    CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
+        defaultCateogry.getId(),
         LocalDate.now());
 
     Long created = exhibitService.create(exhibitRequestDto, user.getId());
@@ -87,6 +89,23 @@ class ExhibitServiceTest {
     Exhibit exhibit = em.find(Exhibit.class, created);
 
     assertThat(exhibit.isPublished()).isTrue();
+  }
+
+  @Test
+  public void publish_이미_발행된_전시를_영구_저장_요청하면_예외를_발생한다() throws Exception {
+    User user = createUser("user", "tu");
+    CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);
+    CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
+        defaultCateogry.getId(),
+        LocalDate.now());
+
+    Long created = exhibitService.create(exhibitRequestDto, user.getId());
+    exhibitService.publish(created, user.getId());
+    Exhibit exhibit = em.find(Exhibit.class, created);
+
+    assertThatThrownBy(() -> {
+      exhibitService.publish(exhibit.getId(), user.getId());
+    }).isInstanceOf(ExhibitAlreadyPublishedException.class);
   }
 }
 
