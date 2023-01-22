@@ -2,10 +2,10 @@ package com.yapp.artie.domain.archive.repository;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
-import java.util.Optional;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.user.domain.User;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
