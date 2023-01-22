@@ -89,7 +89,7 @@ public class ExhibitService {
     User user = findUser(userId);
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
         .orElseThrow(ExhibitNotFoundException::new);
-    ;
+
     validate(user, exhibit);
 
     exhibit.update(updateExhibitRequestDto.getName(), updateExhibitRequestDto.getPostDate());
