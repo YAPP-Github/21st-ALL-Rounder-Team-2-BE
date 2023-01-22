@@ -1,9 +1,12 @@
 package com.yapp.artie.domain.archive.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
+import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
+import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import java.time.LocalDate;
@@ -34,10 +37,10 @@ class ExhibitServiceTest {
   @Autowired
   CategoryService categoryService;
 
-  User createUser() {
+  User createUser(String name, String uid) {
     User user = new User();
-    user.setName("test");
-    user.setUid("tu1");
+    user.setName(name);
+    user.setUid(uid);
     em.persist(user);
     categoryService.createDefault(user.getId());
 
@@ -46,14 +49,29 @@ class ExhibitServiceTest {
 
   @Test
   public void create_전시를_생성한다() throws Exception {
-    User user = createUser();
-    CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test", 1L,
+    User user = createUser("user", "tu1");
+    CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);
+    CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test", defaultCateogry.getId(),
         LocalDate.now());
 
-    exhibitService.create(exhibitRequestDto, user.getId());
-    Optional<Exhibit> exhibit = Optional.ofNullable(em.find(Exhibit.class, 1L));
+    Long created = exhibitService.create(exhibitRequestDto, user.getId());
+    Optional<Exhibit> exhibit = Optional.ofNullable(em.find(Exhibit.class, created));
 
     assertThat(exhibit).isPresent();
   }
 
+  @Test
+  public void create_다른_사용자의_카테고리에_전시를_생성하려고_하는_경우_예외를_발생한다() throws Exception {
+    User user = createUser("user", "tu");
+    User userAnother = createUser("userAnother", "tu2");
+    CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);
+    CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
+        defaultCateogry.getId(),
+        LocalDate.now());
+
+    assertThatThrownBy(() -> {
+      exhibitService.create(exhibitRequestDto, userAnother.getId());
+    }).isInstanceOf(NotOwnerOfCategoryException.class);
+  }
 }
+
