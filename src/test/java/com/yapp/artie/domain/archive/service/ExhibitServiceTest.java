@@ -73,5 +73,20 @@ class ExhibitServiceTest {
       exhibitService.create(exhibitRequestDto, userAnother.getId());
     }).isInstanceOf(NotOwnerOfCategoryException.class);
   }
+
+  @Test
+  public void publish_임시저장된_전시를_영구저장한다() throws Exception {
+    User user = createUser("user", "tu");
+    CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);
+    CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
+        defaultCateogry.getId(),
+        LocalDate.now());
+
+    Long created = exhibitService.create(exhibitRequestDto, user.getId());
+    exhibitService.publish(created, user.getId());
+    Exhibit exhibit = em.find(Exhibit.class, created);
+
+    assertThat(exhibit.isPublished()).isTrue();
+  }
 }
 
