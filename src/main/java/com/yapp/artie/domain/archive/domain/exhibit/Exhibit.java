@@ -3,7 +3,6 @@ package com.yapp.artie.domain.archive.domain.exhibit;
 
 import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.archive.domain.category.Category;
-import com.yapp.artie.domain.archive.exception.ExhibitAlreadyPublishedException;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.global.common.BaseEntity;
 import java.time.LocalDate;
@@ -75,10 +74,6 @@ public class Exhibit extends BaseEntity {
   }
 
   public void publish() {
-    if (isPublished()) {
-      throw new ExhibitAlreadyPublishedException();
-    }
-
     publication.publish();
   }
 
