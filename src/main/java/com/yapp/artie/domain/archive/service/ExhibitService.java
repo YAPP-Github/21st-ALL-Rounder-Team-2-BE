@@ -2,7 +2,6 @@ package com.yapp.artie.domain.archive.service;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
-import com.yapp.artie.domain.archive.domain.exhibit.ExhibitContents;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
@@ -29,14 +28,11 @@ public class ExhibitService {
   private final CategoryService categoryService;
 
   public PostInfoDto getExhibitInformation(Long id, Long userId) {
-    User user = findUser(userId);
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
         .orElseThrow(ExhibitNotFoundException::new);
-    validateOwnedByUser(user, exhibit);
+    validateOwnedByUser(findUser(userId), exhibit);
 
-    ExhibitContents contents = exhibit.contents();
-    return new PostInfoDto(exhibit.getId(), contents.getName(),
-        contents.getDate(), exhibit.isPublished());
+    return buildExhibitionInformation(exhibit);
   }
 
   public List<PostInfoDto> getDraftExhibits(Long userId) {
@@ -44,45 +40,36 @@ public class ExhibitService {
   }
 
   public Page<PostInfoDto> getExhibitByPage(Long id, Long userId, Pageable pageable) {
-    User user = findUser(userId);
     Category category = categoryService.findCategoryWithUser(id, userId);
-
-    return exhibitRepository.findExhibitAllCountBy(pageable, user, category)
-        .map(exhibit -> {
-          ExhibitContents contents = exhibit.contents();
-          return new PostInfoDto(exhibit.getId(), contents.getName(), contents.getDate(),
-              exhibit.isPublished());
-        });
+    return exhibitRepository.findExhibitAllCountBy(pageable, findUser(userId), category)
+        .map(this::buildExhibitionInformation);
   }
 
   @Transactional
   public Long create(CreateExhibitRequestDto createExhibitRequestDto, Long userId) {
-    User user = findUser(userId);
     Category category = categoryService.findCategoryWithUser(
         createExhibitRequestDto.getCategoryId(), userId);
     Exhibit exhibit = Exhibit.create(createExhibitRequestDto.getName(),
-        createExhibitRequestDto.getPostDate(), category, user);
-    exhibitRepository.save(exhibit);
+        createExhibitRequestDto.getPostDate(), category, findUser(userId));
 
-    return exhibit.getId();
+    return exhibitRepository.save(exhibit)
+        .getId();
   }
 
   @Transactional
   public void publish(Long id, Long userId) {
-    User user = findUser(userId);
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
         .orElseThrow(ExhibitNotFoundException::new);
-    validateOwnedByUser(user, exhibit);
+    validateOwnedByUser(findUser(userId), exhibit);
 
     exhibit.publish();
   }
 
   @Transactional
   public void update(UpdateExhibitRequestDto updateExhibitRequestDto, Long id, Long userId) {
-    User user = findUser(userId);
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
         .orElseThrow(ExhibitNotFoundException::new);
-    validateOwnedByUser(user, exhibit);
+    validateOwnedByUser(findUser(userId), exhibit);
 
     exhibit.update(updateExhibitRequestDto.getName(), updateExhibitRequestDto.getPostDate());
   }
@@ -96,5 +83,10 @@ public class ExhibitService {
     if (!exhibit.ownedBy(user)) {
       throw new NotOwnerOfExhibitException();
     }
+  }
+
+  private PostInfoDto buildExhibitionInformation(Exhibit exhibit) {
+    return new PostInfoDto(exhibit.getId(), exhibit.contents().getName(),
+        exhibit.contents().getDate(), exhibit.isPublished());
   }
 }
