@@ -30,9 +30,13 @@ public class CategoryService {
   private final String DEFAULT_CATEGORY_NAME = "전체 기록";
   private final int CATEGORY_LIMIT_COUNT = 5;
 
-  public Category findCategoryWithUser(Long id) {
-    return Optional.ofNullable(categoryRepository.findCategoryEntityGraphById(id))
+  public Category findCategoryWithUser(Long id, Long userId) {
+    Category category = Optional.ofNullable(categoryRepository.findCategoryEntityGraphById(id))
         .orElseThrow(CategoryNotFoundException::new);
+    User user = findUser(userId);
+    validateOwnedByUser(category, user);
+
+    return category;
   }
 
   public List<CategoryDto> categoriesOf(Long userId) {

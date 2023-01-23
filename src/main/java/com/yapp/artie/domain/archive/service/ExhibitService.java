@@ -7,7 +7,6 @@ import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
 import com.yapp.artie.domain.archive.exception.ExhibitNotFoundException;
-import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfExhibitException;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
@@ -41,13 +40,12 @@ public class ExhibitService {
   }
 
   public List<PostInfoDto> getDraftExhibits(Long userId) {
-    return exhibitRepository.findExhibitDto(findUser(userId));
+    return exhibitRepository.findDraftExhibitDto(findUser(userId));
   }
 
   public Page<PostInfoDto> getExhibitByPage(Long id, Long userId, Pageable pageable) {
     User user = findUser(userId);
-    Category category = categoryService.findCategoryWithUser(userId);
-    validateCategoryOwnedByUser(category, user);
+    Category category = categoryService.findCategoryWithUser(id, userId);
 
     return exhibitRepository.findExhibitAllCountBy(pageable, user, category)
         .map(exhibit -> {
@@ -61,12 +59,7 @@ public class ExhibitService {
   public Long create(CreateExhibitRequestDto createExhibitRequestDto, Long userId) {
     User user = findUser(userId);
     Category category = categoryService.findCategoryWithUser(
-        createExhibitRequestDto.getCategoryId());
-
-    if (!category.ownedBy(user)) {
-      throw new NotOwnerOfCategoryException();
-    }
-
+        createExhibitRequestDto.getCategoryId(), userId);
     Exhibit exhibit = Exhibit.create(createExhibitRequestDto.getName(),
         createExhibitRequestDto.getPostDate(), category, user);
     exhibitRepository.save(exhibit);
@@ -102,13 +95,6 @@ public class ExhibitService {
   private void validateOwnedByUser(User user, Exhibit exhibit) {
     if (!exhibit.ownedBy(user)) {
       throw new NotOwnerOfExhibitException();
-    }
-  }
-
-  //TODO : 리팩토링 신호
-  private void validateCategoryOwnedByUser(Category category, User user) {
-    if (!category.ownedBy(user)) {
-      throw new NotOwnerOfCategoryException();
     }
   }
 }

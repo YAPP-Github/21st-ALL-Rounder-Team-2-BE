@@ -63,7 +63,7 @@ class CategoryServiceTest {
   public void findCategoryWithUser_해당_id의_카테고리가_존재하지_않으면_예외를_발생한다() throws Exception {
     User user = userRepository.findByUid("tu1").get();
     assertThatThrownBy(() -> {
-      categoryService.findCategoryWithUser(1L);
+      categoryService.findCategoryWithUser(1L, user.getId());
     }).isInstanceOf(CategoryNotFoundException.class);
   }
 
@@ -72,7 +72,7 @@ class CategoryServiceTest {
     User user = userRepository.findByUid("tu1").get();
     CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto("test");
     Long created = categoryService.create(createCategoryRequestDto, user.getId());
-    Category categoryWithUser = categoryService.findCategoryWithUser(created);
+    Category categoryWithUser = categoryService.findCategoryWithUser(created, user.getId());
     assertThat(emf.getPersistenceUnitUtil().isLoaded(categoryWithUser.getUser())).isTrue();
   }
 
