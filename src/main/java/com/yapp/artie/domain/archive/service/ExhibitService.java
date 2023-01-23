@@ -33,7 +33,7 @@ public class ExhibitService {
     User user = findUser(userId);
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
         .orElseThrow(ExhibitNotFoundException::new);
-    validate(user, exhibit);
+    validateOwnedByUser(user, exhibit);
 
     ExhibitContents contents = exhibit.contents();
     return new PostInfoDto(exhibit.getId(), contents.getName(),
@@ -79,7 +79,7 @@ public class ExhibitService {
     User user = findUser(userId);
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
         .orElseThrow(ExhibitNotFoundException::new);
-    validate(user, exhibit);
+    validateOwnedByUser(user, exhibit);
 
     exhibit.publish();
   }
@@ -89,8 +89,7 @@ public class ExhibitService {
     User user = findUser(userId);
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
         .orElseThrow(ExhibitNotFoundException::new);
-
-    validate(user, exhibit);
+    validateOwnedByUser(user, exhibit);
 
     exhibit.update(updateExhibitRequestDto.getName(), updateExhibitRequestDto.getPostDate());
   }
@@ -100,18 +99,7 @@ public class ExhibitService {
         .orElseThrow(UserNotFoundException::new);
   }
 
-  private void validate(User user, Exhibit exhibit) {
-    validateExhibitFound(exhibit);
-    validateOwnedByUser(exhibit, user);
-  }
-
-  private void validateExhibitFound(Exhibit exhibit) {
-    if (exhibit == null) {
-      throw new ExhibitNotFoundException();
-    }
-  }
-
-  private void validateOwnedByUser(Exhibit exhibit, User user) {
+  private void validateOwnedByUser(User user, Exhibit exhibit) {
     if (!exhibit.ownedBy(user)) {
       throw new NotOwnerOfExhibitException();
     }
