@@ -1,0 +1,13 @@
+version: '3.9'
+services:
+  db:
+    image: mysql:8
+    container_name: yapp-archive
+    restart: always
+    environment:
+      MYSQL_DATABASE: archive-db
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - .dbdata:/var/lib/mysql
+    ports:
+      - '3306:3306'

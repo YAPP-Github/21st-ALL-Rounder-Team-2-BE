@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:archive-db;MODE=MySQL;
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    properties:
+      hibernate:
+        auto_quote_keyword: true
+    hibernate:
+      ddl-auto: update
+
+logging:
+  level:
+    org.hibernate.sql: debug
+    org.hibernate.type: trace
