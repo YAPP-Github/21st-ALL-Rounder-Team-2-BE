@@ -2,16 +2,13 @@ package com.yapp.artie.domain.archive.service;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
-import com.yapp.artie.domain.archive.domain.exhibit.ExhibitContents;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
 import com.yapp.artie.domain.archive.exception.ExhibitNotFoundException;
-import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfExhibitException;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -30,97 +27,64 @@ public class ExhibitService {
   private final CategoryService categoryService;
 
   public PostInfoDto getExhibitInformation(Long id, Long userId) {
-    User user = findUser(userId);
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
         .orElseThrow(ExhibitNotFoundException::new);
-    validate(user, exhibit);
+    validateOwnedByUser(findUser(userId), exhibit);
 
-    ExhibitContents contents = exhibit.contents();
-    return new PostInfoDto(exhibit.getId(), contents.getName(),
-        contents.getDate(), exhibit.isPublished());
+    return buildExhibitionInformation(exhibit);
   }
 
   public List<PostInfoDto> getDraftExhibits(Long userId) {
-    return exhibitRepository.findExhibitDto(findUser(userId));
+    return exhibitRepository.findDraftExhibitDto(findUser(userId));
   }
 
   public Page<PostInfoDto> getExhibitByPage(Long id, Long userId, Pageable pageable) {
-    User user = findUser(userId);
-    Category category = categoryService.findCategoryWithUser(userId);
-    validateCategoryOwnedByUser(category, user);
-
-    return exhibitRepository.findExhibitAllCountBy(pageable, user, category)
-        .map(exhibit -> {
-          ExhibitContents contents = exhibit.contents();
-          return new PostInfoDto(exhibit.getId(), contents.getName(), contents.getDate(),
-              exhibit.isPublished());
-        });
+    Category category = categoryService.findCategoryWithUser(id, userId);
+    return exhibitRepository.findExhibitAllCountBy(pageable, findUser(userId), category)
+        .map(this::buildExhibitionInformation);
   }
 
   @Transactional
   public Long create(CreateExhibitRequestDto createExhibitRequestDto, Long userId) {
-    User user = findUser(userId);
     Category category = categoryService.findCategoryWithUser(
-        createExhibitRequestDto.getCategoryId());
-
-    if (!category.ownedBy(user)) {
-      throw new NotOwnerOfCategoryException();
-    }
-
+        createExhibitRequestDto.getCategoryId(), userId);
     Exhibit exhibit = Exhibit.create(createExhibitRequestDto.getName(),
-        createExhibitRequestDto.getPostDate(), category, user);
-    exhibitRepository.save(exhibit);
+        createExhibitRequestDto.getPostDate(), category, findUser(userId));
 
-    return exhibit.getId();
+    return exhibitRepository.save(exhibit)
+        .getId();
   }
 
   @Transactional
   public void publish(Long id, Long userId) {
-    User user = findUser(userId);
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
         .orElseThrow(ExhibitNotFoundException::new);
-    validate(user, exhibit);
+    validateOwnedByUser(findUser(userId), exhibit);
 
     exhibit.publish();
   }
 
   @Transactional
   public void update(UpdateExhibitRequestDto updateExhibitRequestDto, Long id, Long userId) {
-    User user = findUser(userId);
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
         .orElseThrow(ExhibitNotFoundException::new);
-    ;
-    validate(user, exhibit);
+    validateOwnedByUser(findUser(userId), exhibit);
 
     exhibit.update(updateExhibitRequestDto.getName(), updateExhibitRequestDto.getPostDate());
   }
 
   private User findUser(Long userId) {
-    return userService.findById(userId)
-        .orElseThrow(UserNotFoundException::new);
+    return userService.findById(userId);
   }
 
-  private void validate(User user, Exhibit exhibit) {
-    validateExhibitFound(exhibit);
-    validateOwnedByUser(exhibit, user);
-  }
-
-  private void validateExhibitFound(Exhibit exhibit) {
-    if (exhibit == null) {
-      throw new ExhibitNotFoundException();
-    }
-  }
-
-  private void validateOwnedByUser(Exhibit exhibit, User user) {
+  private void validateOwnedByUser(User user, Exhibit exhibit) {
     if (!exhibit.ownedBy(user)) {
       throw new NotOwnerOfExhibitException();
     }
   }
 
-  //TODO : 리팩토링 신호
-  private void validateCategoryOwnedByUser(Category category, User user) {
-    if (!category.ownedBy(user)) {
-      throw new NotOwnerOfCategoryException();
-    }
+  private PostInfoDto buildExhibitionInformation(Exhibit exhibit) {
+    return new PostInfoDto(exhibit.getId(), exhibit.contents().getName(),
+        exhibit.contents().getDate(), exhibit.isPublished());
   }
 }

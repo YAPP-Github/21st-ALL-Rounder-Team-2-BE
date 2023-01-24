@@ -1,5 +1,6 @@
 package com.yapp.artie.domain.archive.domain.exhibit;
 
+import com.yapp.artie.domain.archive.exception.ExhibitAlreadyPublishedException;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -20,6 +21,10 @@ public class Publication {
   private LocalDate publishedAt;
 
   public void publish() {
+    if (isPublished) {
+      throw new ExhibitAlreadyPublishedException();
+    }
+
     this.isPublished = true;
     this.publishedAt = LocalDate.now();
   }

@@ -2,10 +2,10 @@ package com.yapp.artie.domain.archive.repository;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
-import java.util.Optional;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.user.domain.User;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -23,7 +23,7 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
   @Query("select new com.yapp.artie.domain.archive.dto.exhibit."
       + "PostInfoDto(e.id, e.contents.name, e.contents.date, e.publication.isPublished) "
       + "from Exhibit e where e.user = :user and e.publication.isPublished = false")
-  List<PostInfoDto> findExhibitDto(@Param("user") User user);
+  List<PostInfoDto> findDraftExhibitDto(@Param("user") User user);
 
 
   @Query(

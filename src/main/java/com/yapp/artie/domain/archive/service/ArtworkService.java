@@ -45,7 +45,6 @@ public class ArtworkService {
   }
 
   private User findUser(Long userId) {
-    return userService.findById(userId)
-        .orElseThrow(UserNotFoundException::new);
+    return userService.findById(userId);
   }
 }

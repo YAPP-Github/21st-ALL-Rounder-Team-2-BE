@@ -19,7 +19,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
   @Modifying(clearAutomatically = true)
   @Query("update Category c set c.sequence = c.sequence - 1 where c.sequence > :sequence and c.user = :user")
-  int bulkSequenceMinus(@Param("user") User user, @Param("sequence") int sequence);
+  void bulkSequenceMinus(@Param("user") User user, @Param("sequence") int sequence);
 
   @EntityGraph(attributePaths = {"user"})
   Category findCategoryEntityGraphById(Long id);
