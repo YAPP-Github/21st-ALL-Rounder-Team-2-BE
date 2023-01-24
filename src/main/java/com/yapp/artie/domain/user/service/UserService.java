@@ -24,8 +24,8 @@ public class UserService implements UserDetailsService {
     return userRepository.findByUid(uid);
   }
 
-  public Optional<User> findById(Long id) {
-    return userRepository.findById(id);
+  public User findById(Long id) {
+    return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
   }
 
   @Transactional

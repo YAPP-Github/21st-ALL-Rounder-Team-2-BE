@@ -12,7 +12,6 @@ import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
 import java.util.List;
 import java.util.Optional;
@@ -110,8 +109,7 @@ public class CategoryService {
   }
 
   private User findUser(Long userId) {
-    return userService.findById(userId)
-        .orElseThrow(UserNotFoundException::new);
+    return userService.findById(userId);
   }
 
   private void validateExistAtLeastOneCategory(List<CategoryDto> categories) {

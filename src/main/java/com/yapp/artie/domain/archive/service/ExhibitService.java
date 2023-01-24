@@ -9,7 +9,6 @@ import com.yapp.artie.domain.archive.exception.ExhibitNotFoundException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfExhibitException;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -75,8 +74,7 @@ public class ExhibitService {
   }
 
   private User findUser(Long userId) {
-    return userService.findById(userId)
-        .orElseThrow(UserNotFoundException::new);
+    return userService.findById(userId);
   }
 
   private void validateOwnedByUser(User user, Exhibit exhibit) {
