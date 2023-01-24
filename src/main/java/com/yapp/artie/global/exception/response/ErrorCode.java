@@ -41,7 +41,11 @@ public enum ErrorCode {
 
   // Tag
   TAG_NOT_FOUND(404, "TAG001", "태그가 존재하지 않습니다."),
-  TAG_ALREADY_EXISTS(409, "TAG002", "이미 존재하는 태그입니다.");
+  TAG_ALREADY_EXISTS(409, "TAG002", "이미 존재하는 태그입니다."),
+
+  // S3
+  S3_SERVICE_ERROR(500, "S3001", "AmazonServiceException 에러가 발생하였습니다."),
+  S3_SDK_ERROR(500, "S3002", "SdkClientException 에러가 발생하였습니다.");
 
   private final String code;
   private final String message;
