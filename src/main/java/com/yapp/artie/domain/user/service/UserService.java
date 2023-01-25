@@ -51,4 +51,9 @@ public class UserService implements UserDetailsService {
         .authorities("user")
         .build();
   }
+
+  public User findUser(Long userId) {
+    return this.findById(userId)
+        .orElseThrow(UserNotFoundException::new);
+  }
 }

@@ -74,6 +74,17 @@ public class SwaggerConfig {
         .addOpenApiCustomiser(buildSecurityOpenApi()).build();
   }
 
+  @Bean
+  public GroupedOpenApi s3Api() {
+    String[] paths = {"/s3/**"};
+
+    return GroupedOpenApi
+        .builder()
+        .group("S3(이미지) API")
+        .pathsToMatch(paths)
+        .addOpenApiCustomiser(buildSecurityOpenApi()).build();
+  }
+
   public OpenApiCustomiser buildSecurityOpenApi() {
     // jwt token 을 한번 설정하면 header 에 값을 넣어주는 코드
     return OpenApi -> OpenApi.addSecurityItem(new SecurityRequirement().addList("jwt token"))
