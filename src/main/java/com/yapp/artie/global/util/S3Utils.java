@@ -2,6 +2,8 @@ package com.yapp.artie.global.util;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.Headers;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +25,10 @@ public class S3Utils {
   public String generatePresignedUrl(String objectKey, long expirationMin) {
     GeneratePresignedUrlRequest generatePresignedUrlRequest =
         new GeneratePresignedUrlRequest(bucketName, objectKey)
-            .withMethod(HttpMethod.GET)
+            .withMethod(HttpMethod.PUT)
             .withExpiration(convertExpirationMinIntoDate(expirationMin));
+    generatePresignedUrlRequest.addRequestParameter(Headers.S3_CANNED_ACL,
+        CannedAccessControlList.Private.toString());
     return amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest).toString();
   }
 
