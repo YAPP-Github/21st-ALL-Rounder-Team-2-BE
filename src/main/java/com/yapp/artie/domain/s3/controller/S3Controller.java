@@ -60,11 +60,13 @@ public class S3Controller {
       @RequestParam(required = true, value = "id") Long postId) {
     Long userId = Long.parseLong(authentication.getName());
     userService.findById(userId);
+
     AtomicInteger index = new AtomicInteger(1);
     List<presignedUrlDataDto> urlDataList = getPresignedUrlRequestDto.getImageNames()
         .stream().map(imageName -> s3Service.getPresignedUrl(imageName, postId,
             index.getAndIncrement())).filter(url -> url.isPresent()).filter(Optional::isPresent)
         .map(Optional::get).collect(Collectors.toList());
+    
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new GetPresignedUrlResponseDto(urlDataList));
   }
