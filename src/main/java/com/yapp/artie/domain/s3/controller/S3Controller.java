@@ -34,11 +34,11 @@ public class S3Controller {
   private final UserService userService;
   private final S3Service s3Service;
 
-  @Operation(summary = "이미지 업로드 URL 요청", description = "S3로 이미지를 업로드할 Presigned URL 반환 요청")
+  @Operation(summary = "이미지 업로드 URL 요청", description = "S3로 이미지를 업로드할 Presigned URL 발급 요청으로, 정상적으로 발급된 이미지에 대해서만 반환함. 각 Presigned URL은 약 3분간 유효함.")
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "201",
-          description = "Presigned URL이 성공적으로 발급됨",
+          description = "S3 Presigned URL이 성공적으로 발급됨",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = GetPresignedUrlResponseDto.class))),
       @ApiResponse(
           responseCode = "400",

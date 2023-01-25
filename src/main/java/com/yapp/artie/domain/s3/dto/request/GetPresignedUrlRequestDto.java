@@ -10,11 +10,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Schema(description = "이미지 업로드 Presigned URL 요청 Request")
+@Schema(description = "이미지 업로드를 위한 S3 Presigned URL 발급 요청 Request")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class GetPresignedUrlRequestDto {
 
   @NotNull
-  @Schema(description = "이미지 명")
+  @Schema(description = "이미지 이름")
   private List<@NotBlank String> imageNames;
 }

@@ -6,16 +6,16 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@Schema(description = "이미지 업로드 Presigned URL 반환 Response")
+@Schema(description = "각 이미지에 대해 발급된 S3 업로드 Presigned URL Response")
 @RequiredArgsConstructor
 public class presignedUrlDataDto {
 
   @NotNull
-  @Schema(description = "Presigned URL 목록")
+  @Schema(description = "발급된 S3 업로드 Presigned URL")
   public final String url;
 
   @NotNull
-  @Schema(description = "요청 이미지 이름")
+  @Schema(description = "요청한 이미지 이름")
   public final String originalName;
 
   @NotNull

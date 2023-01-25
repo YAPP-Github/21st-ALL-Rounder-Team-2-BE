@@ -7,11 +7,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@Schema(description = "이미지 업로드 Presigned URL 반환 Response")
+@Schema(description = "발급된 이미지 업로드 Presigned URL 정보 Response")
 @RequiredArgsConstructor
 public class GetPresignedUrlResponseDto {
 
   @NotNull
-  @Schema(description = "Presigned URL 목록")
+  @Schema(description = "발급된 S3 Presigned URL 정보 리스트")
   public final List<presignedUrlDataDto> url;
 }
