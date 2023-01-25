@@ -25,7 +25,7 @@ public class ArtworkService {
 
   @Transactional
   public Long create(CreateArtworkRequestDto createArtworkRequestDto, Long userId) {
-    User user = findUser(userId);
+    User user = userService.findById(userId);
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(
         createArtworkRequestDto.getPostId()).orElseThrow(UserNotFoundException::new);
     if (!exhibit.ownedBy(user)) {
@@ -42,9 +42,5 @@ public class ArtworkService {
     tagService.addTagsToArtwork(createArtworkRequestDto.getTags(), artwork, user);
 
     return artwork.getId();
-  }
-
-  private User findUser(Long userId) {
-    return userService.findById(userId);
   }
 }
