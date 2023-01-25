@@ -59,7 +59,7 @@ public class S3Controller {
       @RequestBody @Valid GetPresignedUrlRequestDto getPresignedUrlRequestDto,
       @RequestParam(required = true, value = "id") Long postId) {
     Long userId = Long.parseLong(authentication.getName());
-    userService.findUser(userId);
+    userService.findById(userId);
     AtomicInteger index = new AtomicInteger(1);
     List<presignedUrlDataDto> urlDataList = getPresignedUrlRequestDto.getImageNames()
         .stream().map(imageName -> s3Service.getPresignedUrl(imageName, postId,
