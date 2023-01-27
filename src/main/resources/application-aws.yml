@@ -9,3 +9,5 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false
+    cloudfront:
+      domain: ${AWS_CDN_DOMAIN}
