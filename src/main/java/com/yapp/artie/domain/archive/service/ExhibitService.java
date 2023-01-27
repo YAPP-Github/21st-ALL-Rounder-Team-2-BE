@@ -3,15 +3,18 @@ package com.yapp.artie.domain.archive.service;
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
+import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
 import com.yapp.artie.domain.archive.exception.ExhibitNotFoundException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfExhibitException;
+import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,7 +25,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ExhibitService {
 
+  @Value("${cloud.aws.cloudfront.domain}")
+  private String cdnDomain;
+
   private final ExhibitRepository exhibitRepository;
+  private final ArtworkRepository artworkRepository;
   private final UserService userService;
   private final CategoryService categoryService;
 
@@ -32,6 +39,16 @@ public class ExhibitService {
     validateOwnedByUser(findUser(userId), exhibit);
 
     return buildExhibitionInformation(exhibit);
+  }
+
+  public PostDetailInfo getDetailExhibitInformation(Long id, Long userId) {
+    Exhibit exhibit = exhibitRepository.findDetailExhibitEntityGraphById(id)
+        .orElseThrow(ExhibitNotFoundException::new);
+    validateOwnedByUser(findUser(userId), exhibit);
+
+    String mainImageUri = artworkRepository.findMainArtworkByExhibitId(exhibit)
+        .map(artwork -> cdnDomain + artwork.getContents().getUri()).orElse(null);
+    return buildDetailExhibitionInformation(exhibit, mainImageUri);
   }
 
   public List<PostInfoDto> getDraftExhibits(Long userId) {
@@ -86,5 +103,17 @@ public class ExhibitService {
   private PostInfoDto buildExhibitionInformation(Exhibit exhibit) {
     return new PostInfoDto(exhibit.getId(), exhibit.contents().getName(),
         exhibit.contents().getDate(), exhibit.isPublished());
+  }
+
+  private PostDetailInfo buildDetailExhibitionInformation(Exhibit exhibit, String imageUri) {
+    return PostDetailInfo.builder()
+        .id(exhibit.getId())
+        .name(exhibit.contents().getName())
+        .postDate(exhibit.contents().getDate())
+        .isPublished(exhibit.isPublished())
+        .categoryId(exhibit.getCategory().getId())
+        .categoryName(exhibit.getCategory().getName())
+        .mainImage(imageUri)
+        .build();
   }
 }

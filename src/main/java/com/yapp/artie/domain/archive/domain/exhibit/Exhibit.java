@@ -61,6 +61,10 @@ public class Exhibit extends BaseEntity {
     return id;
   }
 
+  public Category getCategory() {
+    return category;
+  }
+
   public void categorize(Category category) {
     this.category = category;
   }
