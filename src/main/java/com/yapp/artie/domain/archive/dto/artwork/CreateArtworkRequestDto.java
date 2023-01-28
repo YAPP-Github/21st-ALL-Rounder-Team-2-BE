@@ -24,7 +24,7 @@ public class CreateArtworkRequestDto {
 
   @NotNull
   @NotBlank
-  @Schema(description = "s3 이미지 URI")
+  @Schema(description = "s3 이미지 URI. S3 Presigned URL 발급 후 반환한 imageKey 값")
   private String imageUri;
 
   @Schema(description = "작가 이름")

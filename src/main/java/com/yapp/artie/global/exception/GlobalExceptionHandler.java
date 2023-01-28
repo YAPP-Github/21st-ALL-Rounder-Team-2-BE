@@ -1,5 +1,7 @@
 package com.yapp.artie.global.exception;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkClientException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.yapp.artie.global.exception.common.BusinessException;
 import com.yapp.artie.global.exception.response.ErrorCode;
@@ -105,5 +107,19 @@ public class GlobalExceptionHandler {
       response = ErrorResponse.of(e);
     }
     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(AmazonServiceException.class)
+  protected ResponseEntity<ErrorResponse> handleAmazonServiceException(AmazonServiceException e) {
+    log.error("AmazonServiceException", e);
+    return new ResponseEntity<>(ErrorResponse.of(ErrorCode.S3_SERVICE_ERROR),
+        HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+
+  @ExceptionHandler(SdkClientException.class)
+  protected ResponseEntity<ErrorResponse> handleS3SdkClientException(SdkClientException e) {
+    log.error("S3SdkClientException", e);
+    return new ResponseEntity<>(ErrorResponse.of(ErrorCode.S3_SDK_ERROR),
+        HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }
