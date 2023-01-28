@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
 import org.springframework.data.domain.Page;
@@ -175,7 +176,7 @@ public class ExhibitController {
   @GetMapping("/detail/{id}")
   public ResponseEntity<PostDetailInfo> getPostInfoWithCategory(
       Authentication authentication,
-      @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @PathVariable("id") Long id) {
+      @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long id) {
     Long userId = Long.parseLong(authentication.getName());
     return ResponseEntity.ok().body(exhibitService.getDetailExhibitInformation(id, userId));
   }
