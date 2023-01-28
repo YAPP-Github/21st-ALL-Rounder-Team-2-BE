@@ -90,6 +90,13 @@ public class ExhibitService {
     exhibit.update(updateExhibitRequestDto.getName(), updateExhibitRequestDto.getPostDate());
   }
 
+  public Exhibit getExhibitByUser(Long id, Long userId) {
+    Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
+        .orElseThrow(ExhibitNotFoundException::new);
+    validateOwnedByUser(findUser(userId), exhibit);
+    return exhibit;
+  }
+
   private User findUser(Long userId) {
     return userService.findById(userId);
   }

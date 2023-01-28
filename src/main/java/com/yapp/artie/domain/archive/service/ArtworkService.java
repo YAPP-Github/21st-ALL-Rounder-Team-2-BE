@@ -2,6 +2,7 @@ package com.yapp.artie.domain.archive.service;
 
 import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
+import com.yapp.artie.domain.archive.dto.artwork.ArtworkThumbnailDto;
 import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkRequestDto;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfExhibitException;
 import com.yapp.artie.domain.archive.repository.ArtworkRepository;
@@ -10,6 +11,8 @@ import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +25,8 @@ public class ArtworkService {
   private final ExhibitRepository exhibitRepository;
   private final ArtworkRepository artworkRepository;
   private final TagService tagService;
+  private final ExhibitService exhibitService;
+  ;
 
   @Transactional
   public Long create(CreateArtworkRequestDto createArtworkRequestDto, Long userId) {
@@ -42,5 +47,21 @@ public class ArtworkService {
     tagService.addTagsToArtwork(createArtworkRequestDto.getTags(), artwork, user);
 
     return artwork.getId();
+  }
+
+  public Page<ArtworkThumbnailDto> getArtworkAsPage(Long exhibitId, Long userId,
+      Pageable pageable) {
+    Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
+    return artworkRepository.findAllArtworkAsPage(pageable, exhibit)
+        .map(this::buildArtworkThumbnail);
+  }
+
+  private ArtworkThumbnailDto buildArtworkThumbnail(Artwork artwork) {
+    return ArtworkThumbnailDto.builder()
+        .id(artwork.getId())
+        .imageURL(artwork.getContents().getUri())
+        .name(artwork.getContents().getName())
+        .artist(artwork.getContents().getArtist())
+        .build();
   }
 }
