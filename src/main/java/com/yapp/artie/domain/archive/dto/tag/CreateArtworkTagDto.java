@@ -11,11 +11,11 @@ import lombok.Getter;
 public class CreateArtworkTagDto {
 
   @Positive
-  @Schema(description = "태그 ID")
+  @Schema(description = "태그 ID. 기존에 존재한 태그를 작품에 추가할 경우 제공되어야함.")
   private Long tagId;
 
   @NotNull
   @NotBlank
-  @Schema(description = "태그 이름")
+  @Schema(description = "태그 이름. 새롭게 태그를 생성하여 작품에 추가할 경우 태그 이름만 제공되어야함.")
   private String tagName;
 }

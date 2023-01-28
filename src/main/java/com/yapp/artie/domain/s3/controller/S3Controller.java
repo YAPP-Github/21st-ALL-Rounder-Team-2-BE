@@ -7,6 +7,8 @@ import com.yapp.artie.domain.s3.service.S3Service;
 import com.yapp.artie.domain.user.service.UserService;
 import com.yapp.artie.global.exception.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -57,7 +59,7 @@ public class S3Controller {
   public ResponseEntity<GetPresignedUrlResponseDto> generateArtworkPresignedUrl(
       Authentication authentication,
       @RequestBody @Valid GetPresignedUrlRequestDto getPresignedUrlRequestDto,
-      @RequestParam(required = true, value = "id") Long postId) {
+      @Parameter(name = "id", description = "전시 ID", in = ParameterIn.QUERY) @Valid @RequestParam(required = true, value = "id") Long postId) {
     Long userId = Long.parseLong(authentication.getName());
     userService.findById(userId);
 
@@ -66,7 +68,7 @@ public class S3Controller {
         .stream().map(imageName -> s3Service.getPresignedUrl(imageName, postId,
             index.getAndIncrement())).filter(url -> url.isPresent()).filter(Optional::isPresent)
         .map(Optional::get).collect(Collectors.toList());
-    
+
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new GetPresignedUrlResponseDto(urlDataList));
   }
