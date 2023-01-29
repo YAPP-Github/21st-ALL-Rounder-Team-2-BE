@@ -2,6 +2,7 @@ package com.yapp.artie.domain.archive.service;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
+import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
@@ -12,6 +13,10 @@ import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.service.UserService;
+import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.YearMonth;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -59,6 +64,18 @@ public class ExhibitService {
     Category category = categoryService.findCategoryWithUser(id, userId);
     return exhibitRepository.findExhibitAllCountBy(pageable, findUser(userId), category)
         .map(this::buildExhibitionInformation);
+  }
+
+  public List<Exhibit> getExhibitByMonthly(
+      CalendarExhibitRequestDto calendarExhibitRequestDto, Long userId) throws ParseException {
+    User user = findUser(userId);
+    int year = calendarExhibitRequestDto.getYear();
+    Month month = Month.of(calendarExhibitRequestDto.getMonth());
+    YearMonth yearMonth = YearMonth.of(year, month);
+    LocalDate start = yearMonth.atDay(1);
+    LocalDate end = yearMonth.atEndOfMonth();
+
+    return exhibitRepository.findAllByContentsDateBetweenAndUser(start, end, user);
   }
 
   @Transactional
