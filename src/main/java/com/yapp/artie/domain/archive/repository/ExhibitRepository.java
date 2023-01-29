@@ -4,6 +4,7 @@ import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.user.domain.User;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -28,7 +29,6 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
       + "from Exhibit e where e.user = :user and e.publication.isPublished = false")
   List<PostInfoDto> findDraftExhibitDto(@Param("user") User user);
 
-
   @Query(
       value = "select e from Exhibit e "
           + "where e.user = :user "
@@ -38,4 +38,7 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
   )
   Page<Exhibit> findExhibitAllCountBy(Pageable pageable, @Param("user") User user,
       @Param("category") Category category);
+
+  List<Exhibit> findAllByContentsDateBetweenAndUser(LocalDate start, LocalDate end,
+      User user);
 }
