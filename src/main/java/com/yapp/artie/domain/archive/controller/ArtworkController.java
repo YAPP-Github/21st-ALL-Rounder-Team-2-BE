@@ -82,8 +82,8 @@ public class ArtworkController {
   @Operation(summary = "전시의 작품 목록 조회", description = "전시 상세 페이지의 작품 목록 조회")
   @ApiResponses(value = {
       @ApiResponse(
-          responseCode = "201",
-          description = "전시 작품이 성공적으로 추가됨",
+          responseCode = "200",
+          description = "전시 작품 목록 조회",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArtworkThumbnailDtoPage.class))),
       @ApiResponse(
           responseCode = "400",
