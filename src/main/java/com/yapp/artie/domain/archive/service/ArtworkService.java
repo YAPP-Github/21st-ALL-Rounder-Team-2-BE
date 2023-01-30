@@ -17,6 +17,7 @@ import com.yapp.artie.domain.user.service.UserService;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ArtworkService {
+
+  @Value("${cloud.aws.cloudfront.domain}")
+  private String cdnDomain;
 
   private final UserService userService;
   private final TagService tagService;
@@ -79,7 +83,7 @@ public class ArtworkService {
   private ArtworkThumbnailDto buildArtworkThumbnail(Artwork artwork) {
     return ArtworkThumbnailDto.builder()
         .id(artwork.getId())
-        .imageURL(artwork.getContents().getUri())
+        .imageURL(cdnDomain + artwork.getContents().getUri())
         .name(artwork.getContents().getName())
         .artist(artwork.getContents().getArtist())
         .build();
@@ -88,7 +92,7 @@ public class ArtworkService {
   private ArtworkInfoDto buildArtworkInfo(Artwork artwork, List<TagDto> tags) {
     return ArtworkInfoDto.builder()
         .id(artwork.getId())
-        .imageURL(artwork.getContents().getUri())
+        .imageURL(cdnDomain + artwork.getContents().getUri())
         .name(artwork.getContents().getName())
         .artist(artwork.getContents().getArtist())
         .tags(tags)
@@ -96,7 +100,8 @@ public class ArtworkService {
   }
 
   private ArtworkBrowseThumbnailDto buildArtworkBrowseThumbnail(Artwork artwork) {
-    return new ArtworkBrowseThumbnailDto(artwork.getId(), artwork.getContents().getUri());
+    return new ArtworkBrowseThumbnailDto(artwork.getId(),
+        cdnDomain + artwork.getContents().getUri());
   }
 
 }
