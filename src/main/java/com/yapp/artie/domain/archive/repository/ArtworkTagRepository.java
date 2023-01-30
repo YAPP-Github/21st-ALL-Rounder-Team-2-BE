@@ -10,5 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface ArtworkTagRepository extends JpaRepository<ArtworkTag, Long> {
 
   List<ArtworkTag> findArtworkTagsByArtworkOrderBySequenceAsc(Artwork artwork);
+
+  List<ArtworkTag> findArtworkTagsByArtwork(Artwork artwork);
 }
 

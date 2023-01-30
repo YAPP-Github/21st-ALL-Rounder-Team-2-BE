@@ -11,6 +11,7 @@ import com.yapp.artie.domain.archive.exception.ArtworkNotFoundException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfExhibitException;
 import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
+import com.yapp.artie.domain.s3.service.S3Service;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
@@ -35,6 +36,7 @@ public class ArtworkService {
   private final TagService tagService;
   private final ExhibitService exhibitService;
   private final ArtworkTagService artworkTagService;
+  private final S3Service s3Service;
   private final ExhibitRepository exhibitRepository;
   private final ArtworkRepository artworkRepository;
 
@@ -67,9 +69,7 @@ public class ArtworkService {
   }
 
   public ArtworkInfoDto getArtworkInfo(Long artworkId, Long userId) {
-    Artwork artwork = artworkRepository.findById(artworkId)
-        .orElseThrow(ArtworkNotFoundException::new);
-    exhibitService.validateOwnedByUser(userService.findById(userId), artwork.getExhibit());
+    Artwork artwork = findById(artworkId, userId);
     List<TagDto> tags = artworkTagService.getTagDtosFromArtwork(artwork);
     return buildArtworkInfo(artwork, tags);
   }
@@ -78,6 +78,15 @@ public class ArtworkService {
     Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
     return artworkRepository.findArtworksByExhibitOrderByCreatedAtDesc(exhibit).stream()
         .map(this::buildArtworkBrowseThumbnail).collect(Collectors.toList());
+  }
+
+  @Transactional
+  public void delete(Long id, Long userId) {
+    Artwork artwork = findById(id, userId);
+    artworkTagService.deleteAllByArtwork(artwork);
+    String imageUri = artwork.getContents().getUri();
+    artworkRepository.delete(artwork);
+    s3Service.deleteObject(imageUri);
   }
 
   private ArtworkThumbnailDto buildArtworkThumbnail(Artwork artwork) {
@@ -104,4 +113,9 @@ public class ArtworkService {
         cdnDomain + artwork.getContents().getUri());
   }
 
+  private Artwork findById(Long id, Long userId) {
+    Artwork artwork = artworkRepository.findById(id).orElseThrow(ArtworkNotFoundException::new);
+    exhibitService.validateOwnedByUser(userService.findById(userId), artwork.getExhibit());
+    return artwork;
+  }
 }

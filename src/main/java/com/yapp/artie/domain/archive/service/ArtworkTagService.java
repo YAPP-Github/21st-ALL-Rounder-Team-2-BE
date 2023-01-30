@@ -27,6 +27,13 @@ public class ArtworkTagService {
         artwork).stream().map(this::buildTagDto).collect(Collectors.toList());
   }
 
+  @Transactional
+  public void deleteAllByArtwork(Artwork artwork) {
+    artworkTagRepository.deleteAll(
+        artworkTagRepository.findArtworkTagsByArtwork(artwork)
+    );
+  }
+
   private TagDto buildTagDto(ArtworkTag artworkTag) {
     return new TagDto(artworkTag.getTag().getId(), artworkTag.getTag().getName());
   }
