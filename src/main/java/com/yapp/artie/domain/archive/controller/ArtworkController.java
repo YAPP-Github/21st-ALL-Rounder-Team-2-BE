@@ -1,5 +1,6 @@
 package com.yapp.artie.domain.archive.controller;
 
+import com.yapp.artie.domain.archive.dto.artwork.ArtworkInfoDto;
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkThumbnailDto;
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkThumbnailDtoPage;
 import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkRequestDto;
@@ -110,5 +111,40 @@ public class ArtworkController {
           "createdAt"}, direction = Sort.Direction.DESC) Pageable pageable) {
     Long userId = Long.parseLong(authentication.getName());
     return ResponseEntity.ok().body(artworkService.getArtworkAsPage(exhibitId, userId, pageable));
+  }
+
+  @Operation(summary = "작품 상세 정보 조회", description = "작품 상세 페이지의 작품 상세 정보 조회")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200",
+          description = "작품 상세 정보 조회",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArtworkInfoDto.class))),
+      @ApiResponse(
+          responseCode = "400",
+          description = "잘못된 입력",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "401",
+          description = "인증 오류",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "403",
+          description = "접근 불가능한 전시",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "404",
+          description = "찾을 수 없는 회원",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "409",
+          description = "찾을 수 없는 작품",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+  })
+  @GetMapping("/{id}")
+  public ResponseEntity<ArtworkInfoDto> getArtworkInfo(
+      Authentication authentication,
+      @Parameter(name = "id", description = "작품 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long artworkId) {
+    Long userId = Long.parseLong(authentication.getName());
+    return ResponseEntity.ok().body(artworkService.getArtworkInfo(artworkId, userId));
   }
 }

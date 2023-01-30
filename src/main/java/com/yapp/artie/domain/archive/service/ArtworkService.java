@@ -2,14 +2,18 @@ package com.yapp.artie.domain.archive.service;
 
 import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
+import com.yapp.artie.domain.archive.dto.artwork.ArtworkInfoDto;
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkThumbnailDto;
 import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkRequestDto;
+import com.yapp.artie.domain.archive.dto.tag.TagDto;
+import com.yapp.artie.domain.archive.exception.ArtworkNotFoundException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfExhibitException;
 import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,10 +26,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArtworkService {
 
   private final UserService userService;
-  private final ExhibitRepository exhibitRepository;
-  private final ArtworkRepository artworkRepository;
   private final TagService tagService;
   private final ExhibitService exhibitService;
+  private final ArtworkTagService artworkTagService;
+  private final ExhibitRepository exhibitRepository;
+  private final ArtworkRepository artworkRepository;
   ;
 
   @Transactional
@@ -56,6 +61,14 @@ public class ArtworkService {
         .map(this::buildArtworkThumbnail);
   }
 
+  public ArtworkInfoDto getArtworkInfo(Long artworkId, Long userId) {
+    Artwork artwork = artworkRepository.findById(artworkId)
+        .orElseThrow(ArtworkNotFoundException::new);
+    exhibitService.validateOwnedByUser(userService.findById(userId), artwork.getExhibit());
+    List<TagDto> tags = artworkTagService.getTagDtosFromArtwork(artwork);
+    return buildArtworkInfo(artwork, tags);
+  }
+
   private ArtworkThumbnailDto buildArtworkThumbnail(Artwork artwork) {
     return ArtworkThumbnailDto.builder()
         .id(artwork.getId())
@@ -64,4 +77,15 @@ public class ArtworkService {
         .artist(artwork.getContents().getArtist())
         .build();
   }
+
+  private ArtworkInfoDto buildArtworkInfo(Artwork artwork, List<TagDto> tags) {
+    return ArtworkInfoDto.builder()
+        .id(artwork.getId())
+        .imageURL(artwork.getContents().getUri())
+        .name(artwork.getContents().getName())
+        .artist(artwork.getContents().getArtist())
+        .tags(tags)
+        .build();
+  }
+
 }
