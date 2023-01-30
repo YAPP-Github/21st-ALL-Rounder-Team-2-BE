@@ -1,5 +1,6 @@
 package com.yapp.artie.domain.archive.controller;
 
+import com.yapp.artie.domain.archive.dto.artwork.ArtworkBrowseThumbnailDto;
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkInfoDto;
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkThumbnailDto;
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkThumbnailDtoPage;
@@ -10,10 +11,12 @@ import com.yapp.artie.global.exception.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -146,5 +149,41 @@ public class ArtworkController {
       @Parameter(name = "id", description = "작품 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long artworkId) {
     Long userId = Long.parseLong(authentication.getName());
     return ResponseEntity.ok().body(artworkService.getArtworkInfo(artworkId, userId));
+  }
+
+  @Operation(summary = "작품 탐색 썸네일 목록 조회", description = "작품 상세 페이지의 작품 썸네일 목록 조회")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200",
+          description = "작품 썸네일 목록 조회",
+          content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ArtworkBrowseThumbnailDto.class)))),
+      @ApiResponse(
+          responseCode = "400",
+          description = "잘못된 입력",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "401",
+          description = "인증 오류",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "403",
+          description = "접근 불가능한 전시",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "404",
+          description = "찾을 수 없는 회원",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "404",
+          description = "찾을 수 없는 전시",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+  })
+  @GetMapping("post/{id}/thumbnail")
+  public ResponseEntity<List<ArtworkBrowseThumbnailDto>> getArtworkBrowseThumbnails(
+      Authentication authentication,
+      @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long exhibitId) {
+
+    Long userId = Long.parseLong(authentication.getName());
+    return ResponseEntity.ok().body(artworkService.getArtworkBrowseThumbnail(exhibitId, userId));
   }
 }

@@ -2,6 +2,7 @@ package com.yapp.artie.domain.archive.service;
 
 import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
+import com.yapp.artie.domain.archive.dto.artwork.ArtworkBrowseThumbnailDto;
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkInfoDto;
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkThumbnailDto;
 import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkRequestDto;
@@ -14,6 +15,7 @@ import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +33,6 @@ public class ArtworkService {
   private final ArtworkTagService artworkTagService;
   private final ExhibitRepository exhibitRepository;
   private final ArtworkRepository artworkRepository;
-  ;
 
   @Transactional
   public Long create(CreateArtworkRequestDto createArtworkRequestDto, Long userId) {
@@ -69,6 +70,12 @@ public class ArtworkService {
     return buildArtworkInfo(artwork, tags);
   }
 
+  public List<ArtworkBrowseThumbnailDto> getArtworkBrowseThumbnail(Long exhibitId, Long userId) {
+    Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
+    return artworkRepository.findArtworksByExhibitOrderByCreatedAtDesc(exhibit).stream()
+        .map(this::buildArtworkBrowseThumbnail).collect(Collectors.toList());
+  }
+
   private ArtworkThumbnailDto buildArtworkThumbnail(Artwork artwork) {
     return ArtworkThumbnailDto.builder()
         .id(artwork.getId())
@@ -86,6 +93,10 @@ public class ArtworkService {
         .artist(artwork.getContents().getArtist())
         .tags(tags)
         .build();
+  }
+
+  private ArtworkBrowseThumbnailDto buildArtworkBrowseThumbnail(Artwork artwork) {
+    return new ArtworkBrowseThumbnailDto(artwork.getId(), artwork.getContents().getUri());
   }
 
 }
