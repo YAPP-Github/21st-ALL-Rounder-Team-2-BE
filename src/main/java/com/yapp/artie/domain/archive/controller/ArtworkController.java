@@ -136,7 +136,7 @@ public class ArtworkController {
           description = "찾을 수 없는 회원",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
       @ApiResponse(
-          responseCode = "409",
+          responseCode = "404",
           description = "찾을 수 없는 작품",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
   })
