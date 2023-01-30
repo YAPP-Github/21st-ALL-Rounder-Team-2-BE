@@ -43,6 +43,10 @@ public enum ErrorCode {
   TAG_NOT_FOUND(404, "TAG001", "태그가 존재하지 않습니다."),
   TAG_ALREADY_EXISTS(409, "TAG002", "이미 존재하는 태그입니다."),
 
+  // Artwork
+  ARTWORK_NOT_OWNER(403, "AW001", "자신의 작품 정보만 접근할 수 있습니다."),
+  ARTWORK_NOT_FOUND(404, "AW002", "작품이 존재하지 않습니다."),
+
   // S3
   S3_SERVICE_ERROR(500, "S3001", "AmazonServiceException 에러가 발생하였습니다."),
   S3_SDK_ERROR(500, "S3002", "SdkClientException 에러가 발생하였습니다.");
