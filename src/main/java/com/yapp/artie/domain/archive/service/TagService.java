@@ -52,7 +52,6 @@ public class TagService {
     return tag;
   }
 
-
   private void validateDuplicateTagName(String tagName, User user) {
     List<TagDto> tags = tagRepository.findTagDto(user);
     long count = tags.stream().filter(tagDto -> tagDto.getName().equals(tagName)).count();

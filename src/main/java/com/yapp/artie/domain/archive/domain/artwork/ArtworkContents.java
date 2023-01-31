@@ -56,4 +56,12 @@ public class ArtworkContents {
       return new ArtworkContents(this);
     }
   }
+
+  public void updateArtist(String artist) {
+    this.artist = artist;
+  }
+
+  public void updateName(String name) {
+    this.name = name;
+  }
 }

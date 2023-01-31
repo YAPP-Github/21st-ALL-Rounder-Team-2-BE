@@ -6,6 +6,7 @@ import com.yapp.artie.domain.archive.dto.artwork.ArtworkBrowseThumbnailDto;
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkInfoDto;
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkThumbnailDto;
 import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkRequestDto;
+import com.yapp.artie.domain.archive.dto.artwork.UpdateArtworkRequestDto;
 import com.yapp.artie.domain.archive.dto.tag.TagDto;
 import com.yapp.artie.domain.archive.exception.ArtworkNotFoundException;
 import com.yapp.artie.domain.archive.repository.ArtworkRepository;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -95,6 +97,22 @@ public class ArtworkService {
     String imageUri = artwork.getContents().getUri();
     artworkRepository.delete(artwork);
     s3Service.deleteObject(imageUri);
+  }
+
+  @Transactional
+  public void update(Long artworkId, Long userId, UpdateArtworkRequestDto updateArtworkRequestDto) {
+    Artwork artwork = findById(artworkId, userId);
+    if (StringUtils.isNotBlank(updateArtworkRequestDto.getArtist())) {
+      artwork.getContents().updateArtist(updateArtworkRequestDto.getArtist());
+    }
+    if (StringUtils.isNotBlank(updateArtworkRequestDto.getName())) {
+      artwork.getContents().updateName(updateArtworkRequestDto.getName());
+    }
+    if (updateArtworkRequestDto.getTags() != null) {
+      artworkTagService.deleteAllByArtwork(artwork);
+      tagService.addTagsToArtwork(updateArtworkRequestDto.getTags(), artwork,
+          userService.findById(userId));
+    }
   }
 
   private ArtworkThumbnailDto buildArtworkThumbnail(Artwork artwork) {
