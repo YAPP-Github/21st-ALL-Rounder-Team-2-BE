@@ -8,15 +8,14 @@ import com.yapp.artie.domain.archive.dto.artwork.ArtworkThumbnailDto;
 import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkRequestDto;
 import com.yapp.artie.domain.archive.dto.tag.TagDto;
 import com.yapp.artie.domain.archive.exception.ArtworkNotFoundException;
-import com.yapp.artie.domain.archive.exception.NotOwnerOfExhibitException;
 import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.s3.service.S3Service;
 import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.service.UserService;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -42,12 +41,7 @@ public class ArtworkService {
 
   @Transactional
   public Long create(CreateArtworkRequestDto createArtworkRequestDto, Long userId) {
-    User user = userService.findById(userId);
-    Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(
-        createArtworkRequestDto.getPostId()).orElseThrow(UserNotFoundException::new);
-    if (!exhibit.ownedBy(user)) {
-      throw new NotOwnerOfExhibitException();
-    }
+    Exhibit exhibit = exhibitService.getExhibitByUser(createArtworkRequestDto.getPostId(), userId);
 
     Long artworkNum = artworkRepository.countArtworkByExhibitId(exhibit.getId());
     boolean isMain = artworkNum <= 0;
@@ -56,9 +50,23 @@ public class ArtworkService {
         Artwork.create(exhibit, isMain, createArtworkRequestDto.getName(),
             createArtworkRequestDto.getArtist(), createArtworkRequestDto.getImageUri()));
 
+    User user = userService.findById(userId);
     tagService.addTagsToArtwork(createArtworkRequestDto.getTags(), artwork, user);
 
     return artwork.getId();
+  }
+
+  @Transactional
+  public List<Long> createBatch(List<String> imageUriList, Long exhibitId, Long userId) {
+    Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
+    boolean emptyArtwork = artworkRepository.countArtworkByExhibitId(exhibit.getId()) <= 0;
+
+    List<Artwork> artworks = IntStream.range(0, imageUriList.size())
+        .mapToObj(i -> Artwork.create(exhibit, i == 0 && emptyArtwork, imageUriList.get(i)))
+        .collect(
+            Collectors.toList());
+    return artworkRepository.saveAll(artworks).stream().map(Artwork::getId)
+        .collect(Collectors.toList());
   }
 
   public Page<ArtworkThumbnailDto> getArtworkAsPage(Long exhibitId, Long userId,
