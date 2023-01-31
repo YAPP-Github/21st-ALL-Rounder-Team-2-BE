@@ -101,7 +101,7 @@ public class ExhibitService {
     return userService.findById(userId);
   }
 
-  private void validateOwnedByUser(User user, Exhibit exhibit) {
+  public void validateOwnedByUser(User user, Exhibit exhibit) {
     if (!exhibit.ownedBy(user)) {
       throw new NotOwnerOfExhibitException();
     }

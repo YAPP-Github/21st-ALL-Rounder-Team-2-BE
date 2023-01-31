@@ -2,6 +2,7 @@ package com.yapp.artie.domain.archive.repository;
 
 import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,4 +27,6 @@ public interface ArtworkRepository extends JpaRepository<Artwork, Long> {
       countQuery = "select count(a.id) from Artwork a"
   )
   Page<Artwork> findAllArtworkAsPage(Pageable pageable, @Param("exhibit") Exhibit exhibit);
+
+  List<Artwork> findArtworksByExhibitOrderByCreatedAtDesc(Exhibit exhibit);
 }

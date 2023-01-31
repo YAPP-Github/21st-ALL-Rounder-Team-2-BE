@@ -5,8 +5,10 @@ import com.yapp.artie.global.util.S3Utils;
 import java.util.Date;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class S3Service {
@@ -23,6 +25,14 @@ public class S3Service {
               objectKey));
     } catch (Exception e) {
       return Optional.empty();
+    }
+  }
+
+  public void deleteObject(String objectUri) {
+    try {
+      s3Utils.deleteObject(objectUri);
+    } catch (Exception e) {
+      log.error("Error occurred while delete object(URI:{})", objectUri, e);
     }
   }
 

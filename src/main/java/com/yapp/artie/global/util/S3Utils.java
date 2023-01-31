@@ -21,7 +21,6 @@ public class S3Utils {
 
   private final AmazonS3Client amazonS3Client;
 
-
   public String generatePresignedUrl(String objectKey, long expirationMin) {
     GeneratePresignedUrlRequest generatePresignedUrlRequest =
         new GeneratePresignedUrlRequest(bucketName, objectKey)
@@ -30,6 +29,10 @@ public class S3Utils {
     generatePresignedUrlRequest.addRequestParameter(Headers.S3_CANNED_ACL,
         CannedAccessControlList.Private.toString());
     return amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest).toString();
+  }
+
+  public void deleteObject(String objectKey) {
+    amazonS3Client.deleteObject(bucketName, objectKey);
   }
 
   private Date convertExpirationMinIntoDate(long expirationMin) {
