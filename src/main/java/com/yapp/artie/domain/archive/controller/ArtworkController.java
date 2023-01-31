@@ -4,8 +4,11 @@ import com.yapp.artie.domain.archive.dto.artwork.ArtworkBrowseThumbnailDto;
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkInfoDto;
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkThumbnailDto;
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkThumbnailDtoPage;
+import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkBatchRequestDto;
+import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkBatchResponseDto;
 import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkRequestDto;
 import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkResponseDto;
+import com.yapp.artie.domain.archive.dto.artwork.UpdateArtworkRequestDto;
 import com.yapp.artie.domain.archive.service.ArtworkService;
 import com.yapp.artie.global.exception.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,6 +32,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -223,6 +227,92 @@ public class ArtworkController {
 
     Long userId = Long.parseLong(authentication.getName());
     artworkService.delete(id, userId);
+    return ResponseEntity.noContent().build();
+  }
+
+  @Operation(summary = "전시 작품 다중 추가", description = "다중 작품(이미지)를 전시에 추가")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "201",
+          description = "전시 작품이 성공적으로 추가됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateArtworkBatchResponseDto.class))),
+      @ApiResponse(
+          responseCode = "400",
+          description = "잘못된 입력",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "401",
+          description = "인증 오류",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "403",
+          description = "접근 불가능한 전시",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "404",
+          description = "찾을 수 없는 회원",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "404",
+          description = "찾을 수 없는 태그",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "409",
+          description = "이미 존재하는 태그",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+  })
+  @PostMapping("batch/{id}")
+  public ResponseEntity<CreateArtworkBatchResponseDto> createArtwork(Authentication authentication,
+      @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long exhibitId,
+      @RequestBody @Valid CreateArtworkBatchRequestDto createArtworkBatchRequestDtoRequestDto) {
+
+    Long userId = Long.parseLong(authentication.getName());
+
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(new CreateArtworkBatchResponseDto(
+            artworkService.createBatch(createArtworkBatchRequestDtoRequestDto.getImageUriList(),
+                exhibitId, userId)));
+  }
+
+  @Operation(summary = "작품 정보 수정", description = "작품의 작가정보, 작품명, 태그 정보 수정")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "204",
+          description = "전시 작품이 성공적으로 추가됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))),
+      @ApiResponse(
+          responseCode = "400",
+          description = "잘못된 입력",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "401",
+          description = "인증 오류",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "404",
+          description = "찾을 수 없는 회원",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "404",
+          description = "찾을 수 없는 전시",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "404",
+          description = "찾을 수 없는 태그. 요청한 태그 ID에 해당 하는 태그를 찾을 수 없습니다.",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "409",
+          description = "이미 존재하는 태그. 이미 존재하는 태그를 등록하는 경우는 태그 ID를 함께 요청해야합니다.",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+  })
+  @PatchMapping("/{id}")
+  public ResponseEntity<? extends HttpEntity> createArtwork(Authentication authentication,
+      @Parameter(name = "id", description = "작품 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long artworkId,
+      @RequestBody @Valid
+      UpdateArtworkRequestDto updateArtworkRequestDto) {
+
+    Long userId = Long.parseLong(authentication.getName());
+    artworkService.update(artworkId, userId, updateArtworkRequestDto);
     return ResponseEntity.noContent().build();
   }
 }
