@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
+import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
@@ -148,7 +149,8 @@ class ExhibitServiceTest {
 
     for (int i = 1; i <= 12; i++) {
       CalendarExhibitRequestDto calendarExhibitRequestDto = new CalendarExhibitRequestDto(2023, i);
-      List<Exhibit> exhibitByMonthly = exhibitService.getExhibitByMonthly(calendarExhibitRequestDto,
+      List<CalendarExhibitResponseDto> exhibitByMonthly = exhibitService.getExhibitByMonthly(
+          calendarExhibitRequestDto,
           user.getId());
 
       assertThat(exhibitByMonthly.size()).isEqualTo(1);
