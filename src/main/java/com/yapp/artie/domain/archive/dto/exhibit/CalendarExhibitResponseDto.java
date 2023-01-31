@@ -19,5 +19,5 @@ public class CalendarExhibitResponseDto {
   private final int day;
 
   @Schema(description = "작품 이미지")
-  private String imageURL;
+  private final String imageURL;
 }
