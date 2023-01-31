@@ -53,7 +53,7 @@ public class ExhibitService {
     validateOwnedByUser(findUser(userId), exhibit);
 
     String mainImageUri = artworkRepository.findMainArtworkByExhibitId(exhibit)
-        .map(artwork -> cdnDomain + artwork.getContents().getUri()).orElse(null);
+        .map(artwork -> artwork.getContents().getFullUri(cdnDomain)).orElse(null);
     return buildDetailExhibitionInformation(exhibit, mainImageUri);
   }
 
@@ -61,6 +61,7 @@ public class ExhibitService {
     return exhibitRepository.findDraftExhibitDto(findUser(userId));
   }
 
+  // TODO : buildDetailExhibitionInformation 사용하도록 변경 필요
   public Page<PostInfoDto> getExhibitByPage(Long id, Long userId, Pageable pageable) {
     Category category = categoryService.findCategoryWithUser(id, userId);
     return exhibitRepository.findExhibitAllCountBy(pageable, findUser(userId), category)
@@ -83,7 +84,7 @@ public class ExhibitService {
           exhibit.contents().getDate().getYear(),
           exhibit.contents().getDate().getMonthValue(),
           exhibit.contents().getDate().getDayOfMonth(),
-          mainArtwork.getContents().getUri());
+          mainArtwork.getContents().getFullUri(cdnDomain));
     }).collect(Collectors.toList());
   }
 
