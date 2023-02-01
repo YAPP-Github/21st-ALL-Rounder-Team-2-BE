@@ -73,19 +73,11 @@ public class ExhibitService {
     User user = findUser(userId);
     int year = calendarExhibitRequestDto.getYear();
     int month = calendarExhibitRequestDto.getMonth();
-    List<Exhibit> exhibits = exhibitRepository.findAllByContentsDateBetweenAndUser(
-        DateUtils.getFirstDayOf(year, month), DateUtils.getLastDayOf(year, month), user);
 
-    return exhibits.stream().map(exhibit -> {
-      Artwork mainArtwork = artworkRepository.findMainArtworkByExhibitId(exhibit)
-          .orElseGet(NullArtwork::create);
-
-      return new CalendarExhibitResponseDto(
-          exhibit.contents().getDate().getYear(),
-          exhibit.contents().getDate().getMonthValue(),
-          exhibit.contents().getDate().getDayOfMonth(),
-          mainArtwork.getContents().getFullUri(cdnDomain));
-    }).collect(Collectors.toList());
+    return exhibitRepository.findAllExhibitForCalendar(
+            DateUtils.getFirstDayOf(year, month), DateUtils.getLastDayOf(year, month), user).stream()
+        .map(this::buildCalendarExhibitInformation)
+        .collect(Collectors.toList());
   }
 
   @Transactional
@@ -132,6 +124,18 @@ public class ExhibitService {
     if (!exhibit.ownedBy(user)) {
       throw new NotOwnerOfExhibitException();
     }
+  }
+
+  private CalendarExhibitResponseDto buildCalendarExhibitInformation(Exhibit exhibit) {
+    Artwork mainArtwork = artworkRepository.findMainArtworkByExhibitId(exhibit)
+        .orElseGet(NullArtwork::create);
+
+    return new CalendarExhibitResponseDto(
+        exhibit.contents().getDate().getYear(),
+        exhibit.contents().getDate().getMonthValue(),
+        exhibit.contents().getDate().getDayOfMonth(),
+        mainArtwork.getContents().getFullUri(cdnDomain),
+        exhibit.isPublished());
   }
 
   private PostInfoDto buildExhibitionInformation(Exhibit exhibit) {
