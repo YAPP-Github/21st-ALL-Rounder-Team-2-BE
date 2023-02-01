@@ -118,7 +118,7 @@ public class ArtworkService {
   private ArtworkThumbnailDto buildArtworkThumbnail(Artwork artwork) {
     return ArtworkThumbnailDto.builder()
         .id(artwork.getId())
-        .imageURL(cdnDomain + artwork.getContents().getUri())
+        .imageURL(artwork.getContents().getFullUri(cdnDomain))
         .name(artwork.getContents().getName())
         .artist(artwork.getContents().getArtist())
         .build();
@@ -127,7 +127,7 @@ public class ArtworkService {
   private ArtworkInfoDto buildArtworkInfo(Artwork artwork, List<TagDto> tags) {
     return ArtworkInfoDto.builder()
         .id(artwork.getId())
-        .imageURL(cdnDomain + artwork.getContents().getUri())
+        .imageURL(artwork.getContents().getFullUri(cdnDomain))
         .name(artwork.getContents().getName())
         .artist(artwork.getContents().getArtist())
         .tags(tags)
@@ -136,7 +136,7 @@ public class ArtworkService {
 
   private ArtworkBrowseThumbnailDto buildArtworkBrowseThumbnail(Artwork artwork) {
     return new ArtworkBrowseThumbnailDto(artwork.getId(),
-        cdnDomain + artwork.getContents().getUri());
+        artwork.getContents().getFullUri(cdnDomain));
   }
 
   private Artwork findById(Long id, Long userId) {

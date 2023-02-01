@@ -1,7 +1,11 @@
 package com.yapp.artie.domain.archive.service;
 
+import com.yapp.artie.domain.archive.domain.artwork.Artwork;
+import com.yapp.artie.domain.archive.domain.artwork.NullArtwork;
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
+import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
+import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
@@ -12,7 +16,9 @@ import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.service.UserService;
+import com.yapp.artie.global.util.DateUtils;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -47,7 +53,7 @@ public class ExhibitService {
     validateOwnedByUser(findUser(userId), exhibit);
 
     String mainImageUri = artworkRepository.findMainArtworkByExhibitId(exhibit)
-        .map(artwork -> cdnDomain + artwork.getContents().getUri()).orElse(null);
+        .map(artwork -> artwork.getContents().getFullUri(cdnDomain)).orElse(null);
     return buildDetailExhibitionInformation(exhibit, mainImageUri);
   }
 
@@ -55,10 +61,23 @@ public class ExhibitService {
     return exhibitRepository.findDraftExhibitDto(findUser(userId));
   }
 
+  // TODO : buildDetailExhibitionInformation 사용하도록 변경 필요
   public Page<PostInfoDto> getExhibitByPage(Long id, Long userId, Pageable pageable) {
     Category category = categoryService.findCategoryWithUser(id, userId);
     return exhibitRepository.findExhibitAllCountBy(pageable, findUser(userId), category)
         .map(this::buildExhibitionInformation);
+  }
+
+  public List<CalendarExhibitResponseDto> getExhibitByMonthly(
+      CalendarExhibitRequestDto calendarExhibitRequestDto, Long userId) {
+    User user = findUser(userId);
+    int year = calendarExhibitRequestDto.getYear();
+    int month = calendarExhibitRequestDto.getMonth();
+
+    return exhibitRepository.findAllExhibitForCalendar(
+            DateUtils.getFirstDayOf(year, month), DateUtils.getLastDayOf(year, month), user).stream()
+        .map(this::buildCalendarExhibitInformation)
+        .collect(Collectors.toList());
   }
 
   @Transactional
@@ -105,6 +124,18 @@ public class ExhibitService {
     if (!exhibit.ownedBy(user)) {
       throw new NotOwnerOfExhibitException();
     }
+  }
+
+  private CalendarExhibitResponseDto buildCalendarExhibitInformation(Exhibit exhibit) {
+    Artwork mainArtwork = artworkRepository.findMainArtworkByExhibitId(exhibit)
+        .orElseGet(NullArtwork::create);
+
+    return new CalendarExhibitResponseDto(
+        exhibit.contents().getDate().getYear(),
+        exhibit.contents().getDate().getMonthValue(),
+        exhibit.contents().getDate().getDayOfMonth(),
+        mainArtwork.getContents().getFullUri(cdnDomain),
+        exhibit.isPublished());
   }
 
   private PostInfoDto buildExhibitionInformation(Exhibit exhibit) {

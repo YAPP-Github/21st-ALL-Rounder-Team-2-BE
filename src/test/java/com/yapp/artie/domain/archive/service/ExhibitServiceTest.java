@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
+import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
+import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
@@ -13,6 +15,8 @@ import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import java.time.LocalDate;
+import java.time.Month;
+import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -129,6 +133,28 @@ class ExhibitServiceTest {
     PostInfoDto actual = exhibitService.getExhibitInformation(exhibit.getId(),
         user.getId());
     assertThat(actual.getName()).isEqualTo(updatedName);
+  }
+
+  @Test
+  public void getExhibitByMonthly_월_별로_전시를_조회한다() throws Exception {
+    User user = createUser("user", "tu");
+    CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);
+
+    for (int i = 1; i <= 12; i++) {
+      CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
+          defaultCateogry.getId(),
+          LocalDate.of(2023, Month.of(i), 1));
+      exhibitService.create(exhibitRequestDto, user.getId());
+    }
+
+    for (int i = 1; i <= 12; i++) {
+      CalendarExhibitRequestDto calendarExhibitRequestDto = new CalendarExhibitRequestDto(2023, i);
+      List<CalendarExhibitResponseDto> exhibitByMonthly = exhibitService.getExhibitByMonthly(
+          calendarExhibitRequestDto,
+          user.getId());
+
+      assertThat(exhibitByMonthly.size()).isEqualTo(1);
+    }
   }
 }
 
