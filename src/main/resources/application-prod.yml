@@ -9,7 +9,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     open-in-view: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
       show_sql: true
       format_sql: true
 
