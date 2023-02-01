@@ -39,6 +39,12 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
   Page<Exhibit> findExhibitAllCountBy(Pageable pageable, @Param("user") User user,
       @Param("category") Category category);
 
-  List<Exhibit> findAllByContentsDateBetweenAndUser(LocalDate start, LocalDate end,
-      User user);
+  @Query("select e from Exhibit e "
+      + "where e.user = :user "
+      + "and e.contents.date between :start and :end "
+      + "order by e.contents.date asc, e.createdAt asc"
+  )
+  List<Exhibit> findAllExhibitForCalendar(@Param("start") LocalDate start,
+      @Param("end") LocalDate end,
+      @Param("user") User user);
 }
