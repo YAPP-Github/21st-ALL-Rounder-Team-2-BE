@@ -18,6 +18,9 @@ public class CalendarExhibitResponseDto {
   @Schema(description = "일(day)")
   private final int day;
 
-  @Schema(description = "작품 이미지")
+  @Schema(description = "대표 이미지")
   private final String imageURL;
+
+  @Schema(description = "임시 저장 여부")
+  private final boolean isPublished;
 }
