@@ -1,6 +1,8 @@
 package com.yapp.artie.domain.archive.controller;
 
 
+import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
+import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/post")
@@ -55,6 +58,27 @@ public class ExhibitController {
     PostInfoDto exhibitInformation = exhibitService.getExhibitInformation(id, userId);
 
     return ResponseEntity.ok().body(exhibitInformation);
+  }
+
+  @Operation(summary = "월별 전시 조회", description = "월별로 전시 목록 조회")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200",
+          description = "월별 전시가 성공적으로 조회됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = CalendarExhibitResponseDto.class))),
+  })
+  @GetMapping("/monthly")
+  public ResponseEntity<List<CalendarExhibitResponseDto>> getPostByMonthly(
+      Authentication authentication,
+      @Parameter(example = "2023", description = "yyyy")
+      @RequestParam("year") int year,
+      @Parameter(example = "02", description = "mm")
+      @RequestParam("month") int month) {
+    Long userId = Long.parseLong(authentication.getName());
+
+    return ResponseEntity.ok()
+        .body(
+            exhibitService.getExhibitByMonthly(new CalendarExhibitRequestDto(year, month), userId));
   }
 
   @Operation(summary = "임시 저장 전시 조회", description = "임시 저장된 전시 목록 조회")
@@ -104,8 +128,7 @@ public class ExhibitController {
   })
   @PostMapping()
   public ResponseEntity<CreateExhibitResponseDto> createPost(Authentication authentication,
-      @RequestBody
-      CreateExhibitRequestDto createExhibitRequestDto) {
+      @RequestBody CreateExhibitRequestDto createExhibitRequestDto) {
     Long userId = Long.parseLong(authentication.getName());
     Long id = exhibitService.create(createExhibitRequestDto, userId);
 
