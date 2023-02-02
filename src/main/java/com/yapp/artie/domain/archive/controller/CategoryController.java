@@ -48,22 +48,6 @@ public class CategoryController {
     return ResponseEntity.ok(categories);
   }
 
-  @Operation(summary = "기본 카테고리 생성", description = "기본 사용자 카테고리 생성")
-  @ApiResponses(value = {
-      @ApiResponse(
-          responseCode = "201",
-          description = "기본 카테고리가 성공적으로 생성됨",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateCategoryResponseDto.class))),
-  })
-  @PostMapping("/initialize")
-  public ResponseEntity<CreateCategoryResponseDto> createCategories(Authentication authentication) {
-    Long userId = Long.parseLong(authentication.getName());
-    Long id = categoryService.createDefault(userId);
-
-    return ResponseEntity.status(HttpStatus.CREATED)
-        .body(new CreateCategoryResponseDto(id));
-  }
-
   @Operation(summary = "카테고리 생성", description = "사용자 카테고리 생성")
   @ApiResponses(value = {
       @ApiResponse(
