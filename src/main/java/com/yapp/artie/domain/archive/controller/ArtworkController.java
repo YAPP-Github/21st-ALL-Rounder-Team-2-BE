@@ -278,7 +278,7 @@ public class ArtworkController {
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "204",
-          description = "전시 작품이 성공적으로 추가됨",
+          description = "전시 작품이 성공적으로 수정됨",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))),
       @ApiResponse(
           responseCode = "400",
@@ -306,13 +306,49 @@ public class ArtworkController {
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
   })
   @PatchMapping("/{id}")
-  public ResponseEntity<? extends HttpEntity> createArtwork(Authentication authentication,
+  public ResponseEntity<? extends HttpEntity> updateArtwork(Authentication authentication,
       @Parameter(name = "id", description = "작품 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long artworkId,
       @RequestBody @Valid
       UpdateArtworkRequestDto updateArtworkRequestDto) {
 
     Long userId = Long.parseLong(authentication.getName());
     artworkService.update(artworkId, userId, updateArtworkRequestDto);
+    return ResponseEntity.noContent().build();
+  }
+
+  @Operation(summary = "대표 작품 설정", description = "해당 작품을 해당 전시의 대표 작품으로 설정. 기존 작품은 대표 작품에서 해제됨")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "204",
+          description = "성공적으로 대표 작품으로 설정됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))),
+      @ApiResponse(
+          responseCode = "400",
+          description = "잘못된 입력",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "401",
+          description = "인증 오류",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "403",
+          description = "접근할 수 없는 작품입니다.",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "404",
+          description = "찾을 수 없는 회원",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "404",
+          description = "찾을 수 없는 작품",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class)))
+  })
+  @PatchMapping("/main/{id}")
+  public ResponseEntity<? extends HttpEntity> setMainArtwork(Authentication authentication,
+      @Parameter(name = "id", description = "작품 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long artworkId) {
+
+    Long userId = Long.parseLong(authentication.getName());
+    artworkService.setMainArtwork(artworkId, userId);
     return ResponseEntity.noContent().build();
   }
 }
