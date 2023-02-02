@@ -52,20 +52,17 @@ public class ExhibitService {
         .orElseThrow(ExhibitNotFoundException::new);
     validateOwnedByUser(findUser(userId), exhibit);
 
-    String mainImageUri = artworkRepository.findMainArtworkByExhibitId(exhibit)
-        .map(artwork -> artwork.getContents().getFullUri(cdnDomain)).orElse(null);
-    return buildDetailExhibitionInformation(exhibit, mainImageUri);
+    return buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit));
   }
 
   public List<PostInfoDto> getDraftExhibits(Long userId) {
     return exhibitRepository.findDraftExhibitDto(findUser(userId));
   }
 
-  // TODO : buildDetailExhibitionInformation 사용하도록 변경 필요
-  public Page<PostInfoDto> getExhibitByPage(Long id, Long userId, Pageable pageable) {
+  public Page<PostDetailInfo> getExhibitByPage(Long id, Long userId, Pageable pageable) {
     Category category = categoryService.findCategoryWithUser(id, userId);
     return exhibitRepository.findExhibitAllCountBy(pageable, findUser(userId), category)
-        .map(this::buildExhibitionInformation);
+        .map(exhibit -> buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit)));
   }
 
   public List<CalendarExhibitResponseDto> getExhibitByMonthly(
@@ -120,6 +117,12 @@ public class ExhibitService {
     return userService.findById(userId);
   }
 
+  private String getMainImageUri(Exhibit exhibit) {
+    return artworkRepository.findMainArtworkByExhibitId(exhibit)
+        .map(artwork -> artwork.getContents().getFullUri(cdnDomain)).orElse(null);
+  }
+
+  // TODO : public이 아니도록 수정
   public void validateOwnedByUser(User user, Exhibit exhibit) {
     if (!exhibit.ownedBy(user)) {
       throw new NotOwnerOfExhibitException();
