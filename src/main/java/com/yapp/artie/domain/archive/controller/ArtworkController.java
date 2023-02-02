@@ -278,7 +278,7 @@ public class ArtworkController {
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "204",
-          description = "전시 작품이 성공적으로 추가됨",
+          description = "전시 작품이 성공적으로 수정됨",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))),
       @ApiResponse(
           responseCode = "400",
@@ -306,7 +306,7 @@ public class ArtworkController {
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
   })
   @PatchMapping("/{id}")
-  public ResponseEntity<? extends HttpEntity> createArtwork(Authentication authentication,
+  public ResponseEntity<? extends HttpEntity> updateArtwork(Authentication authentication,
       @Parameter(name = "id", description = "작품 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long artworkId,
       @RequestBody @Valid
       UpdateArtworkRequestDto updateArtworkRequestDto) {
