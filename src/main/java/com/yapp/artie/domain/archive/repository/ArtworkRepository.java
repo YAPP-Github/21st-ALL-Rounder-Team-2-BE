@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -29,4 +30,8 @@ public interface ArtworkRepository extends JpaRepository<Artwork, Long> {
   Page<Artwork> findAllArtworkAsPage(Pageable pageable, @Param("exhibit") Exhibit exhibit);
 
   List<Artwork> findArtworksByExhibitOrderByCreatedAtDesc(Exhibit exhibit);
+
+  @Modifying
+  @Query("update Artwork a set a.isMain = false where a.exhibit = :exhibit")
+  void updateArtworkNotMainByExhibit(@Param("exhibit") Exhibit exhibit);
 }
