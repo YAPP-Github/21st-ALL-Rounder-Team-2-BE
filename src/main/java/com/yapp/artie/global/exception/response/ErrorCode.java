@@ -30,9 +30,8 @@ public enum ErrorCode {
   CATEGORY_NOT_FOUND(404, "CA001", "카테고리가 존재하지 않습니다."),
   CATEGORY_ALREADY_EXISTS(409, "CA002", "이미 존재하는 카테고리입니다."),
   CATEGORY_NOT_OWNER(403, "CA003", "자신의 카테고리만 접근할 수 있습니다."),
-  CATEGORY_DEFAULT_IS_READONLY(403, "CA004", "기본 카테고리는 수정, 삭제가 불가능합니다."),
-  CATEGORY_EXCEEDED_COUNT(409, "CA005", "카테고리 최대 생성 갯수 5개를 초과했습니다."),
-  CATEGORY_WRONG_CHANGE_LENGTH(400, "CA006", "수정할 카테고리의 개수는 원본의 개수와 같아야 합니다. "),
+  CATEGORY_EXCEEDED_COUNT(409, "CA004", "카테고리 최대 생성 갯수 5개를 초과했습니다."),
+  CATEGORY_WRONG_CHANGE_LENGTH(400, "CA005", "수정할 카테고리의 개수는 원본의 개수와 같아야 합니다. "),
 
   // Exhibit
   EXHIBIT_NOT_FOUND(404, "E001", "전시가 존재하지 않습니다."),
