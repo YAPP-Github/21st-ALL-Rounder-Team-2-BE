@@ -99,8 +99,7 @@ public class CategoryController {
   }
 
   @Operation(summary = "카테고리 순서 변경", description = "카테고리 순서를 변경합니다. "
-      + "전체 카테고리에서 기본 카테고리를 제외하고 배열에 담아 변경을 원하는 순서로 정렬시켜 전달해야 합니다. "
-      + "요청되는 카테고리에 기본 카테고리가 포함되어 있으면 정상적인 작동을 기대하기 어렵습니다. 주의 부탁드립니다."
+      + "변경을 원하는 순서로 정렬시켜 배열에 담아 전달해주세요. "
   )
   @ApiResponses(value = {
       @ApiResponse(
