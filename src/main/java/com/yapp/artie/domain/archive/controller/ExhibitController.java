@@ -103,10 +103,10 @@ public class ExhibitController {
       @ApiResponse(
           responseCode = "200",
           description = "홈 화면 전시 목록이 성공적으로 조회됨",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostInfoDto.class))),
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDetailInfo.class))),
   })
   @GetMapping("/home/{id}")
-  public ResponseEntity<Page<PostInfoDto>> getPostPage(
+  public ResponseEntity<Page<PostDetailInfo>> getPostPage(
       Authentication authentication,
       @PageableDefault(
           size = 20, sort = {"contents.date"}, direction = Sort.Direction.DESC
@@ -114,7 +114,7 @@ public class ExhibitController {
       Pageable pageable,
       @PathVariable("id") Long id) {
     Long userId = Long.parseLong(authentication.getName());
-    Page<PostInfoDto> pageResult = exhibitService.getExhibitByPage(id, userId, pageable);
+    Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(id, userId, pageable);
 
     return ResponseEntity.ok().body(pageResult);
   }
