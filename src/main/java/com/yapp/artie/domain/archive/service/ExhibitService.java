@@ -1,11 +1,10 @@
 package com.yapp.artie.domain.archive.service;
 
-import com.yapp.artie.domain.archive.domain.artwork.Artwork;
-import com.yapp.artie.domain.archive.domain.artwork.NullArtwork;
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
+import com.yapp.artie.domain.archive.dto.exhibit.CalenderQueryResultDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
@@ -18,10 +17,11 @@ import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.service.UserService;
 import com.yapp.artie.global.util.DateUtils;
 import com.yapp.artie.global.util.S3Utils;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -67,14 +67,13 @@ public class ExhibitService {
 
   public List<CalendarExhibitResponseDto> getExhibitByMonthly(
       CalendarExhibitRequestDto calendarExhibitRequestDto, Long userId) {
-    User user = findUser(userId);
     int year = calendarExhibitRequestDto.getYear();
     int month = calendarExhibitRequestDto.getMonth();
-
-    return exhibitRepository.findAllExhibitForCalendar(
-            DateUtils.getFirstDayOf(year, month), DateUtils.getLastDayOf(year, month), user).stream()
-        .map(this::buildCalendarExhibitInformation)
-        .collect(Collectors.toList());
+    return exhibitRepository.findExhibitAsCalenderByDay(
+            DateUtils.getFirstDayOf(year, month),
+            DateUtils.getLastDayOf(year, month), userId).stream()
+        .map(this::buildCalendarExhibitInformation).collect(
+            Collectors.toList());
   }
 
   @Transactional
@@ -129,16 +128,12 @@ public class ExhibitService {
     }
   }
 
-  private CalendarExhibitResponseDto buildCalendarExhibitInformation(Exhibit exhibit) {
-    Artwork mainArtwork = artworkRepository.findMainArtworkByExhibitId(exhibit)
-        .orElseGet(NullArtwork::create);
-
-    return new CalendarExhibitResponseDto(
-        exhibit.contents().getDate().getYear(),
-        exhibit.contents().getDate().getMonthValue(),
-        exhibit.contents().getDate().getDayOfMonth(),
-        mainArtwork.getContents().getFullUri(cdnDomain),
-        exhibit.isPublished());
+  private CalendarExhibitResponseDto buildCalendarExhibitInformation(
+      CalenderQueryResultDto queryResult) {
+    LocalDate date = LocalDate.parse(queryResult.getDate(), DateTimeFormatter.ISO_DATE);
+    return new CalendarExhibitResponseDto(date.getYear(),
+        date.getMonthValue(), date.getDayOfMonth(),
+        s3Utils.getFullUri(queryResult.getUri()));
   }
 
   private PostInfoDto buildExhibitionInformation(Exhibit exhibit) {
