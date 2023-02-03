@@ -17,6 +17,7 @@ import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.service.UserService;
 import com.yapp.artie.global.util.DateUtils;
+import com.yapp.artie.global.util.S3Utils;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -31,13 +32,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ExhibitService {
 
-  @Value("${cloud.aws.cloudfront.domain}")
-  private String cdnDomain;
 
   private final ExhibitRepository exhibitRepository;
   private final ArtworkRepository artworkRepository;
   private final UserService userService;
   private final CategoryService categoryService;
+  private final S3Utils s3Utils;
 
   public PostInfoDto getExhibitInformation(Long id, Long userId) {
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
@@ -119,7 +119,7 @@ public class ExhibitService {
 
   private String getMainImageUri(Exhibit exhibit) {
     return artworkRepository.findMainArtworkByExhibitId(exhibit)
-        .map(artwork -> artwork.getContents().getFullUri(cdnDomain)).orElse(null);
+        .map(artwork -> s3Utils.getFullUri(artwork.getContents().getUri())).orElse(null);
   }
 
   // TODO : public이 아니도록 수정
