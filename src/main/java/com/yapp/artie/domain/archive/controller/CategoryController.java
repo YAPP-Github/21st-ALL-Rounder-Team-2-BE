@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,7 @@ public class CategoryController {
   })
   @GetMapping()
   public ResponseEntity<List<CategoryDto>> getCategories(Authentication authentication) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     List<CategoryDto> categories = categoryService.categoriesOf(userId);
 
     return ResponseEntity.ok(categories);
@@ -58,7 +59,7 @@ public class CategoryController {
   @PostMapping()
   public ResponseEntity<CreateCategoryResponseDto> createCategories(Authentication authentication,
       @RequestBody CreateCategoryRequestDto createCategoryRequestDto) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     Long id = categoryService.create(createCategoryRequestDto, userId);
 
     return ResponseEntity.status(HttpStatus.CREATED)
@@ -76,7 +77,7 @@ public class CategoryController {
   public ResponseEntity<? extends HttpEntity> updateCategory(Authentication authentication,
       @PathVariable("id") Long id, @RequestBody
   UpdateCategoryRequestDto updateCategoryRequestDto) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     categoryService.update(updateCategoryRequestDto, id, userId);
 
     return ResponseEntity.noContent().build();
@@ -92,7 +93,7 @@ public class CategoryController {
   @DeleteMapping("/{id}")
   public ResponseEntity<? extends HttpEntity> deleteCategory(Authentication authentication,
       @PathVariable("id") Long id) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     categoryService.delete(id, userId);
 
     return ResponseEntity.noContent().build();
@@ -110,9 +111,17 @@ public class CategoryController {
   @PutMapping("/sequence")
   public ResponseEntity<? extends HttpEntity> updateCategorySequence(
       Authentication authentication, @RequestBody CategoryDto[] changeCategorySequenceDtos) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     categoryService.shuffle(List.of(changeCategorySequenceDtos), userId);
 
     return ResponseEntity.noContent().build();
+  }
+
+  // TODO : 앱 배포했을 때에는 0L 대신에 exception을 던지도록 변경해야 합니다.
+  private Long getUserId(Authentication authentication) {
+    if (Optional.ofNullable(authentication).isPresent()) {
+      return Long.parseLong(authentication.getName());
+    }
+    return 1L;
   }
 }
