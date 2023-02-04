@@ -10,7 +10,6 @@ import com.yapp.artie.domain.archive.dto.cateogry.UpdateCategoryRequestDto;
 import com.yapp.artie.domain.archive.exception.CategoryAlreadyExistException;
 import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
 import com.yapp.artie.domain.archive.exception.ChangeCategoryWrongLengthException;
-import com.yapp.artie.domain.archive.exception.ChangeDefaultCategoryException;
 import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.user.domain.User;
@@ -48,115 +47,101 @@ class CategoryServiceTest {
 
   @BeforeEach
   void setUp() {
-    User user = new User();
-    user.setName("test");
-    user.setUid("tu1");
-    em.persist(user);
+    createUser("test", "1");
+    createUser("test2", "2");
+  }
 
-    User user2 = new User();
-    user2.setName("test2");
-    user2.setUid("tu2");
-    em.persist(user2);
+  private void createUser(String name, String uid) {
+    User user = new User();
+    user.setName(name);
+    user.setUid(uid);
+    em.persist(user);
+  }
+
+  private User findUser(String uid) {
+    return userRepository.findByUid(uid).get();
+  }
+
+
+  private void createCategoryBy(User user, int count) {
+    for (int sequence = 1; sequence <= count; sequence++) {
+      createCategory(user, Integer.toString(sequence));
+    }
+  }
+
+  private Long createCategory(User user, String name) {
+    return categoryService.create(new CreateCategoryRequestDto(name), user.getId());
+  }
+
+  private Category findCategory(Long id) {
+    return em.find(Category.class, id);
   }
 
   @Test
   public void findCategoryWithUser_해당_id의_카테고리가_존재하지_않으면_예외를_발생한다() throws Exception {
-    User user = userRepository.findByUid("tu1").get();
     assertThatThrownBy(() -> {
-      categoryService.findCategoryWithUser(1L, user.getId());
+      categoryService.findCategoryWithUser(1L, findUser("1").getId());
     }).isInstanceOf(CategoryNotFoundException.class);
   }
 
   @Test
   public void findCategoryWithUser_카테고리와_함께_유저_프록시도_초기화_해야한다() throws Exception {
-    User user = userRepository.findByUid("tu1").get();
-    CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto("test");
-    Long created = categoryService.create(createCategoryRequestDto, user.getId());
+    User user = findUser("1");
+    Long created = createCategory(user, "test");
     Category categoryWithUser = categoryService.findCategoryWithUser(created, user.getId());
+
     assertThat(emf.getPersistenceUnitUtil().isLoaded(categoryWithUser.getUser())).isTrue();
   }
 
   @Test
   public void categoriesOf_카테고리가_하나도_존재하지_않으면_예외를_발생한다() throws Exception {
-    User user = userRepository.findByUid("tu1").get();
     assertThatThrownBy(() -> {
-      categoryService.categoriesOf(user.getId());
+      categoryService.categoriesOf(findUser("1").getId());
     }).isInstanceOf(CategoryNotFoundException.class);
   }
 
   @Test
   public void create_카테고리를_생성한다() throws Exception {
-    User user = userRepository.findByUid("tu1").get();
-    CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto("test");
-    Long created = categoryService.create(createCategoryRequestDto, user.getId());
-    Category find = em.find(Category.class, created);
-    assertThat(find.getId()).isEqualTo(created);
+    Long created = createCategory(findUser("1"), "test");
+    assertThat(findCategory(created).getId()).isEqualTo(created);
   }
 
   @Test
   public void create_이미_존재하는_카테고리를_생성하려_시도할_경우_예외를_발생한다() throws Exception {
-    User user = userRepository.findByUid("tu1").get();
     assertThatThrownBy(() -> {
-      CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto("test");
-      categoryService.create(createCategoryRequestDto, user.getId());
-      categoryService.create(createCategoryRequestDto, user.getId());
+      createCategory(findUser("1"), "test");
+      createCategory(findUser("1"), "test");
     }).isInstanceOf(CategoryAlreadyExistException.class);
   }
 
   @Test
   public void create_카테고리의_갯수가_5개_이상일_경우_생성하려_시도할_경우_예외를_발생한다() throws Exception {
-    User user = userRepository.findByUid("tu1").get();
     assertThatThrownBy(() -> {
-      for (int sequence = 0; sequence < 6; sequence++) {
-        CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto(
-            "test" + sequence);
-        categoryService.create(createCategoryRequestDto, user.getId());
-      }
+      createCategoryBy(findUser("1"), 6);
     }).isInstanceOf(ExceededCategoryCountException.class);
   }
 
-  @Test
-  public void createDefault_기본_카테고리를_생성한다() throws Exception {
-    User user = userRepository.findByUid("tu1").get();
-    Long created = categoryService.createDefault(user.getId());
-    Category find = em.find(Category.class, created);
-    assertThat(find.getName()).isEqualTo("전체 기록");
-  }
 
   @Test
   public void delete_카테고리를_삭제한다() throws Exception {
-    User user = userRepository.findByUid("tu1").get();
-    CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto("test");
-    Long created = categoryService.create(createCategoryRequestDto, user.getId());
+    User user = findUser("1");
+    Long created = createCategory(user, "test");
     categoryService.delete(created, user.getId());
-    Category find = em.find(Category.class, created);
-    assertThat(Optional.ofNullable(find)).isNotPresent();
-  }
-
-  @Test
-  public void delete_기본_카테고리를_삭제하면_예외를_발생한다() throws Exception {
-    User user = userRepository.findByUid("tu1").get();
-    Long created = categoryService.createDefault(user.getId());
-
-    assertThatThrownBy(() -> {
-      categoryService.delete(created, user.getId());
-    }).isInstanceOf(ChangeDefaultCategoryException.class);
+    assertThat(Optional.ofNullable(findCategory(created))).isNotPresent();
   }
 
   @Test
   public void delete_존재하지_않는_카테고리를_삭제하면_예외를_발생한다() throws Exception {
-    User user = userRepository.findByUid("tu1").get();
     assertThatThrownBy(() -> {
-      categoryService.delete(1L, user.getId());
+      categoryService.delete(1L, findUser("1").getId());
     }).isInstanceOf(CategoryNotFoundException.class);
   }
 
   @Test
   public void delete_다른사람의_카테고리를_삭제하려_시도할_경우_예외를_발생한다() throws Exception {
-    User user1 = userRepository.findByUid("tu1").get();
-    User user2 = userRepository.findByUid("tu2").get();
-    CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto("test");
-    Long created = categoryService.create(createCategoryRequestDto, user2.getId());
+    User user1 = findUser("1");
+    User user2 = findUser("2");
+    Long created = createCategory(user2, "test");
 
     assertThatThrownBy(() -> {
       categoryService.delete(created, user1.getId());
@@ -165,29 +150,17 @@ class CategoryServiceTest {
 
   @Test
   public void update_카테고리를_수정한다() throws Exception {
-    User user = userRepository.findByUid("tu1").get();
-    CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto("test");
-    Long created = categoryService.create(createCategoryRequestDto, user.getId());
+    User user = findUser("1");
+    Long created = createCategory(user, "test");
     categoryService.update(new UpdateCategoryRequestDto("rename"), created, user.getId());
-    assertThat(em.find(Category.class, created).getName()).isEqualTo("rename");
-  }
-
-  @Test
-  public void update_기본_카테고리를_수정하려_시도할_경우_예외를_발생한다() throws Exception {
-    User user = userRepository.findByUid("tu1").get();
-    Long created = categoryService.createDefault(user.getId());
-
-    assertThatThrownBy(() -> {
-      categoryService.update(new UpdateCategoryRequestDto("rename"), created, user.getId());
-    }).isInstanceOf(ChangeDefaultCategoryException.class);
+    assertThat(findCategory(created).getName()).isEqualTo("rename");
   }
 
   @Test
   public void update_다른사람의_카테고리를_수정하려_시도할_경우_예외를_발생한다() throws Exception {
-    User user1 = userRepository.findByUid("tu1").get();
-    User user2 = userRepository.findByUid("tu2").get();
-    CreateCategoryRequestDto createCategoryRequestDto = new CreateCategoryRequestDto("test");
-    Long created = categoryService.create(createCategoryRequestDto, user2.getId());
+    User user1 = findUser("1");
+    User user2 = findUser("2");
+    Long created = createCategory(user2, "test");
 
     assertThatThrownBy(() -> {
       categoryService.update(new UpdateCategoryRequestDto("rename"), created, user1.getId());
@@ -196,80 +169,64 @@ class CategoryServiceTest {
 
   @Test
   public void sequence_카테고리_생성_시_시퀀스가_오름차순으로_생성된다() throws Exception {
-    User user = userRepository.findByUid("tu1").get();
-    categoryService.createDefault(user.getId());
-    for (int sequence = 1; sequence < 5; sequence++) {
-      categoryService.create(new CreateCategoryRequestDto("test" + sequence), user.getId());
-    }
-
+    User user = findUser("1");
+    createCategoryBy(user, 5);
     List<CategoryDto> categories = categoryService.categoriesOf(user.getId());
-    for (int expected = 0; expected < categories.size(); expected++) {
-      assertThat(categories.get(expected).getSequence())
+    for (int expected = 1; expected <= categories.size(); expected++) {
+      assertThat(categories.get(expected - 1).getSequence())
           .isEqualTo(expected);
     }
   }
 
   @ParameterizedTest(name = "[시퀀스 벌크성 업데이트 테스트 #{index}] => {0}번 카테고리가 삭제될 경우")
-  @ValueSource(ints = {1, 2, 3, 4})
+  @ValueSource(ints = {1, 2, 3, 4, 5})
   public void sequence_카테고리_삭제_시_시퀀스가_누락된_숫자없이_오름차순으로_정렬된다(int target) throws Exception {
-    User user = userRepository.findByUid("tu1").get();
-    categoryService.createDefault(user.getId());
-    for (int sequence = 1; sequence < 5; sequence++) {
-      categoryService.create(new CreateCategoryRequestDto("test" + sequence), user.getId());
-    }
+    User user = findUser("1");
+    createCategoryBy(user, 5);
 
     List<CategoryDto> categories = categoryService.categoriesOf(user.getId());
-    CategoryDto deleted = categories.get(target);
+    CategoryDto deleted = categories.get(target - 1);
     categoryService.delete(deleted.getId(), user.getId());
 
     List<CategoryDto> actualCategories = categoryService.categoriesOf(user.getId());
-    for (int expected = 0; expected < actualCategories.size(); expected++) {
-      assertThat(actualCategories.get(expected).getSequence())
+    for (int expected = 1; expected <= actualCategories.size(); expected++) {
+      assertThat(actualCategories.get(expected - 1).getSequence())
           .isEqualTo(expected);
     }
   }
 
   @ParameterizedTest(name = "[카테고리 순서 변경 테스트 #{index}] => {0}순으로 재배열하는 경우")
-  @ValueSource(strings = {"1234", "1243", "1423", "4321", "2134", "2431"})
+  @ValueSource(strings = {"12345", "12435", "14523", "43215", "52134", "25431", "12354", "12534",
+      "43521", "32145", "32514"})
   public void shuffle_카테고리의_순서를_변경한다(String expected) throws Exception {
+    //given
     List<Integer> expectedList = Arrays.stream(expected.split(""))
         .mapToInt(Integer::parseInt)
         .boxed()
         .collect(Collectors.toList());
+    User user = findUser("1");
+    createCategoryBy(user, 5);
 
-    User user = userRepository.findByUid("tu1").get();
-    categoryService.createDefault(user.getId());
-    for (int sequence = 1; sequence < 5; sequence++) {
-      categoryService.create(new CreateCategoryRequestDto(Integer.toString(sequence)),
-          user.getId());
-    }
+    //when
     List<CategoryDto> shuffled = new ArrayList<>();
     List<CategoryDto> categories = categoryService.categoriesOf(user.getId());
     expectedList.forEach(index -> {
-      shuffled.add(categories.get(index));
+      shuffled.add(categories.get(index - 1));
     });
-
     categoryService.shuffle(shuffled, user.getId());
+
+    //then
     StringBuilder actual = new StringBuilder();
     categoryService.categoriesOf(user.getId())
-        .forEach(categoryDto -> {
-              if (categoryDto.getSequence() != 0) {
-                actual.append(categoryDto.getName());
-              }
-            }
-        );
+        .forEach(categoryDto -> actual.append(categoryDto.getName()));
 
     assertThat(actual.toString()).isEqualTo(expected);
   }
 
   @Test
   public void shuffle_주어진_리스트가_원본_카테고리의_수와_같지않으면_예외를_발생한다() throws Exception {
-    User user = userRepository.findByUid("tu1").get();
-    categoryService.createDefault(user.getId());
-    for (int sequence = 1; sequence < 5; sequence++) {
-      categoryService.create(new CreateCategoryRequestDto(Integer.toString(sequence)),
-          user.getId());
-    }
+    User user = findUser("1");
+    createCategoryBy(user, 5);
 
     assertThatThrownBy(() -> {
       categoryService.shuffle(List.of(new CategoryDto(1L, "test", 1)), user.getId());

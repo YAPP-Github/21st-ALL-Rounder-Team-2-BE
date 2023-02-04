@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
+import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
@@ -49,7 +50,7 @@ class ExhibitServiceTest {
     user.setName(name);
     user.setUid(uid);
     em.persist(user);
-    categoryService.createDefault(user.getId());
+    categoryService.create(new CreateCategoryRequestDto("test"), user.getId());
 
     return user;
   }

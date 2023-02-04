@@ -95,7 +95,7 @@ public class ExhibitController {
     return ResponseEntity.ok().body(exhibitService.getDraftExhibits(userId));
   }
 
-  @Operation(summary = "홈 화면 전시 조회", description =
+  @Operation(summary = "홈 화면 전시 조회(특정 카테고리)", description =
       "저장된 전시 중 페이지네이션을 이용해 값을 가져온다. 이곳의 id는 category id를 의미하며 "
           + "size의 기본값은 20이다. sort는 기본값이 최신 순이고, ?sort=contents.date,ASC 는 오래된 순이다. "
           + "오래된 순의 예시처럼 콤마를 기준으로 [<정렬 컬럼>,<정렬 타입 형식>]으로 쿼리 파라미터를 전달해야 한다."
@@ -103,7 +103,7 @@ public class ExhibitController {
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "200",
-          description = "홈 화면 전시 목록이 성공적으로 조회됨",
+          description = "홈 화면 전시 목록(특정 카테고리)이 성공적으로 조회됨",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDetailInfo.class))),
   })
   @GetMapping("/home/{id}")
@@ -116,6 +116,26 @@ public class ExhibitController {
       @PathVariable("id") Long id) {
     Long userId = Long.parseLong(authentication.getName());
     Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(id, userId, pageable);
+
+    return ResponseEntity.ok().body(pageResult);
+  }
+
+  @Operation(summary = "홈 화면 전시 조회(전체 기록)", description = "용례는 홈 화면 전시 조회(특정 카테고리)와 같다.")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200",
+          description = "홈 화면 전시 목록(전체 기록)이 성공적으로 조회됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDetailInfo.class))),
+  })
+  @GetMapping("/home")
+  public ResponseEntity<Page<PostDetailInfo>> getAllPostPage(
+      Authentication authentication,
+      @PageableDefault(
+          size = 20, sort = {"contents.date"}, direction = Sort.Direction.DESC
+      )
+      Pageable pageable) {
+    Long userId = Long.parseLong(authentication.getName());
+    Page<PostDetailInfo> pageResult = exhibitService.getAllExhibitByPage(userId, pageable);
 
     return ResponseEntity.ok().body(pageResult);
   }

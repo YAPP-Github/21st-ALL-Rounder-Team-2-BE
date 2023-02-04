@@ -7,7 +7,6 @@ import com.yapp.artie.domain.archive.dto.cateogry.UpdateCategoryRequestDto;
 import com.yapp.artie.domain.archive.exception.CategoryAlreadyExistException;
 import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
 import com.yapp.artie.domain.archive.exception.ChangeCategoryWrongLengthException;
-import com.yapp.artie.domain.archive.exception.ChangeDefaultCategoryException;
 import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
@@ -26,7 +25,6 @@ public class CategoryService {
 
   private final CategoryRepository categoryRepository;
   private final UserService userService;
-  private final String DEFAULT_CATEGORY_NAME = "전체 기록";
   private final int CATEGORY_LIMIT_COUNT = 5;
 
   public Category findCategoryWithUser(Long id, Long userId) {
@@ -47,14 +45,6 @@ public class CategoryService {
   }
 
   @Transactional
-  public Long createDefault(Long userId) {
-    User user = findUser(userId);
-    validateDuplicateCategory(DEFAULT_CATEGORY_NAME, user);
-
-    return createCategory(DEFAULT_CATEGORY_NAME, user).getId();
-  }
-
-  @Transactional
   public Long create(CreateCategoryRequestDto createCategoryRequestDto, Long userId) {
     User user = findUser(userId);
     String name = createCategoryRequestDto.getName();
@@ -68,7 +58,6 @@ public class CategoryService {
     User user = findUser(userId);
     Category category = categoryRepository.findCategoryEntityGraphById(id);
     validateValidPair(user, category);
-    validateDefaultCategory(category);
 
     categoryRepository.bulkSequenceMinus(user, category.getSequence());
     categoryRepository.deleteById(id);
@@ -79,7 +68,6 @@ public class CategoryService {
     User user = findUser(userId);
     Category category = categoryRepository.findCategoryEntityGraphById(id);
     validateValidPair(user, category);
-    validateDefaultCategory(category);
 
     category.rename(updateCategoryRequestDto.getName());
   }
@@ -93,23 +81,27 @@ public class CategoryService {
     int sequence = 1;
     for (CategoryDto changeCategorySequenceDto : changeCategorySequenceDtos) {
       int originSequence = changeCategorySequenceDto.getSequence();
-      Category category = categories.get(originSequence);
+      Category category = categories.get(originSequence - 1);
 
       category.rearrange(sequence++);
     }
   }
 
   private Category createCategory(String name, User user) {
-    int sequence = categoryRepository.countCategoriesByUser(user);
+    int sequence = getSequence(user) ;
     validateExceedLimitCategoryCount(sequence);
 
-    Category category = Category.create(user, name, sequence);
+    Category category = Category.create(user, name, sequence + 1);
     categoryRepository.save(category);
     return category;
   }
 
   private User findUser(Long userId) {
     return userService.findById(userId);
+  }
+
+  private int getSequence(User user) {
+    return categoryRepository.countCategoriesByUser(user);
   }
 
   private void validateExistAtLeastOneCategory(List<CategoryDto> categories) {
@@ -146,12 +138,6 @@ public class CategoryService {
     }
   }
 
-  private void validateDefaultCategory(Category category) {
-    if (category.getName().equals(DEFAULT_CATEGORY_NAME)) {
-      throw new ChangeDefaultCategoryException();
-    }
-  }
-
   private void validateExceedLimitCategoryCount(int sequence) {
     if (sequence >= CATEGORY_LIMIT_COUNT) {
       throw new ExceededCategoryCountException();
@@ -161,7 +147,7 @@ public class CategoryService {
   private void validateChangeCategoriesLengthWithOriginal(
       List<CategoryDto> changeCategorySequenceDtos,
       List<Category> categories) {
-    if (categories.size() - 1 != changeCategorySequenceDtos.size()) {
+    if (categories.size() != changeCategorySequenceDtos.size()) {
       throw new ChangeCategoryWrongLengthException();
     }
   }
