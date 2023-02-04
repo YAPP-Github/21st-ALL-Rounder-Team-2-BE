@@ -58,4 +58,8 @@ public class Artwork extends BaseEntity {
     ArtworkContents contents = new ArtworkContents.Builder(uri).build();
     return new Artwork(exhibit, isMain, contents);
   }
+
+  public void setMainArtwork() {
+    this.isMain = true;
+  }
 }

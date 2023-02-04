@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.Headers;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import java.util.Date;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +19,9 @@ public class S3Utils {
 
   @Value("${cloud.aws.s3.bucket}")
   private String bucketName;
+
+  @Value("${cloud.aws.cloudfront.domain}")
+  private String cdnDomain;
 
   private final AmazonS3Client amazonS3Client;
 
@@ -33,6 +37,13 @@ public class S3Utils {
 
   public void deleteObject(String objectKey) {
     amazonS3Client.deleteObject(bucketName, objectKey);
+  }
+
+  public String getFullUri(String uri) {
+    if (Optional.ofNullable(uri).isEmpty()) {
+      return null;
+    }
+    return cdnDomain + uri;
   }
 
   private Date convertExpirationMinIntoDate(long expirationMin) {

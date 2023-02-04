@@ -10,16 +10,15 @@ import com.yapp.artie.domain.archive.dto.artwork.UpdateArtworkRequestDto;
 import com.yapp.artie.domain.archive.dto.tag.TagDto;
 import com.yapp.artie.domain.archive.exception.ArtworkNotFoundException;
 import com.yapp.artie.domain.archive.repository.ArtworkRepository;
-import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.s3.service.S3Service;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.service.UserService;
+import com.yapp.artie.global.util.S3Utils;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,16 +29,13 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ArtworkService {
 
-  @Value("${cloud.aws.cloudfront.domain}")
-  private String cdnDomain;
-
   private final UserService userService;
   private final TagService tagService;
   private final ExhibitService exhibitService;
   private final ArtworkTagService artworkTagService;
   private final S3Service s3Service;
-  private final ExhibitRepository exhibitRepository;
   private final ArtworkRepository artworkRepository;
+  private final S3Utils s3Utils;
 
   @Transactional
   public Long create(CreateArtworkRequestDto createArtworkRequestDto, Long userId) {
@@ -115,10 +111,17 @@ public class ArtworkService {
     }
   }
 
+  @Transactional
+  public void setMainArtwork(Long artworkId, Long userId) {
+    Artwork artwork = findById(artworkId, userId);
+    artworkRepository.updateArtworkNotMainByExhibit(artwork.getExhibit());
+    artwork.setMainArtwork();
+  }
+
   private ArtworkThumbnailDto buildArtworkThumbnail(Artwork artwork) {
     return ArtworkThumbnailDto.builder()
         .id(artwork.getId())
-        .imageURL(artwork.getContents().getFullUri(cdnDomain))
+        .imageURL(s3Utils.getFullUri(artwork.getContents().getUri()))
         .name(artwork.getContents().getName())
         .artist(artwork.getContents().getArtist())
         .build();
@@ -127,7 +130,7 @@ public class ArtworkService {
   private ArtworkInfoDto buildArtworkInfo(Artwork artwork, List<TagDto> tags) {
     return ArtworkInfoDto.builder()
         .id(artwork.getId())
-        .imageURL(artwork.getContents().getFullUri(cdnDomain))
+        .imageURL(s3Utils.getFullUri(artwork.getContents().getUri()))
         .name(artwork.getContents().getName())
         .artist(artwork.getContents().getArtist())
         .tags(tags)
@@ -136,7 +139,7 @@ public class ArtworkService {
 
   private ArtworkBrowseThumbnailDto buildArtworkBrowseThumbnail(Artwork artwork) {
     return new ArtworkBrowseThumbnailDto(artwork.getId(),
-        artwork.getContents().getFullUri(cdnDomain));
+        s3Utils.getFullUri(artwork.getContents().getUri()));
   }
 
   private Artwork findById(Long id, Long userId) {

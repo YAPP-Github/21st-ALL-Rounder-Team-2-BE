@@ -7,6 +7,7 @@ services:
     environment:
       MYSQL_DATABASE: archive-db
       MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Seoul
     volumes:
       - .dbdata:/var/lib/mysql
     ports:

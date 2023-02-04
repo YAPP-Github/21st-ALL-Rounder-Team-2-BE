@@ -1,11 +1,10 @@
 package com.yapp.artie.domain.archive.service;
 
-import com.yapp.artie.domain.archive.domain.artwork.Artwork;
-import com.yapp.artie.domain.archive.domain.artwork.NullArtwork;
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
+import com.yapp.artie.domain.archive.dto.exhibit.CalenderQueryResultDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
@@ -17,10 +16,12 @@ import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.service.UserService;
 import com.yapp.artie.global.util.DateUtils;
+import com.yapp.artie.global.util.S3Utils;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -31,13 +32,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ExhibitService {
 
-  @Value("${cloud.aws.cloudfront.domain}")
-  private String cdnDomain;
 
   private final ExhibitRepository exhibitRepository;
   private final ArtworkRepository artworkRepository;
   private final UserService userService;
   private final CategoryService categoryService;
+  private final S3Utils s3Utils;
 
   public PostInfoDto getExhibitInformation(Long id, Long userId) {
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
@@ -52,32 +52,28 @@ public class ExhibitService {
         .orElseThrow(ExhibitNotFoundException::new);
     validateOwnedByUser(findUser(userId), exhibit);
 
-    String mainImageUri = artworkRepository.findMainArtworkByExhibitId(exhibit)
-        .map(artwork -> artwork.getContents().getFullUri(cdnDomain)).orElse(null);
-    return buildDetailExhibitionInformation(exhibit, mainImageUri);
+    return buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit));
   }
 
   public List<PostInfoDto> getDraftExhibits(Long userId) {
     return exhibitRepository.findDraftExhibitDto(findUser(userId));
   }
 
-  // TODO : buildDetailExhibitionInformation 사용하도록 변경 필요
-  public Page<PostInfoDto> getExhibitByPage(Long id, Long userId, Pageable pageable) {
+  public Page<PostDetailInfo> getExhibitByPage(Long id, Long userId, Pageable pageable) {
     Category category = categoryService.findCategoryWithUser(id, userId);
     return exhibitRepository.findExhibitAllCountBy(pageable, findUser(userId), category)
-        .map(this::buildExhibitionInformation);
+        .map(exhibit -> buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit)));
   }
 
   public List<CalendarExhibitResponseDto> getExhibitByMonthly(
       CalendarExhibitRequestDto calendarExhibitRequestDto, Long userId) {
-    User user = findUser(userId);
     int year = calendarExhibitRequestDto.getYear();
     int month = calendarExhibitRequestDto.getMonth();
-
-    return exhibitRepository.findAllExhibitForCalendar(
-            DateUtils.getFirstDayOf(year, month), DateUtils.getLastDayOf(year, month), user).stream()
-        .map(this::buildCalendarExhibitInformation)
-        .collect(Collectors.toList());
+    return exhibitRepository.findExhibitAsCalenderByDay(
+            DateUtils.getFirstDayOf(year, month),
+            DateUtils.getLastDayOf(year, month), userId).stream()
+        .map(this::buildCalendarExhibitInformation).collect(
+            Collectors.toList());
   }
 
   @Transactional
@@ -120,22 +116,24 @@ public class ExhibitService {
     return userService.findById(userId);
   }
 
+  private String getMainImageUri(Exhibit exhibit) {
+    return artworkRepository.findMainArtworkByExhibitId(exhibit)
+        .map(artwork -> s3Utils.getFullUri(artwork.getContents().getUri())).orElse(null);
+  }
+
+  // TODO : public이 아니도록 수정
   public void validateOwnedByUser(User user, Exhibit exhibit) {
     if (!exhibit.ownedBy(user)) {
       throw new NotOwnerOfExhibitException();
     }
   }
 
-  private CalendarExhibitResponseDto buildCalendarExhibitInformation(Exhibit exhibit) {
-    Artwork mainArtwork = artworkRepository.findMainArtworkByExhibitId(exhibit)
-        .orElseGet(NullArtwork::create);
-
-    return new CalendarExhibitResponseDto(
-        exhibit.contents().getDate().getYear(),
-        exhibit.contents().getDate().getMonthValue(),
-        exhibit.contents().getDate().getDayOfMonth(),
-        mainArtwork.getContents().getFullUri(cdnDomain),
-        exhibit.isPublished());
+  private CalendarExhibitResponseDto buildCalendarExhibitInformation(
+      CalenderQueryResultDto queryResult) {
+    LocalDate date = LocalDate.parse(queryResult.getDate(), DateTimeFormatter.ISO_DATE);
+    return new CalendarExhibitResponseDto(date.getYear(),
+        date.getMonthValue(), date.getDayOfMonth(),
+        s3Utils.getFullUri(queryResult.getUri()));
   }
 
   private PostInfoDto buildExhibitionInformation(Exhibit exhibit) {

@@ -1,6 +1,5 @@
 package com.yapp.artie.domain.archive.domain.artwork;
 
-import java.util.Optional;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -56,13 +55,6 @@ public class ArtworkContents {
     public ArtworkContents build() {
       return new ArtworkContents(this);
     }
-  }
-
-  public String getFullUri(String cdnDomain) {
-    if (Optional.ofNullable(uri).isEmpty()) {
-      return null;
-    }
-    return cdnDomain + uri;
   }
 
   public void updateArtist(String artist) {

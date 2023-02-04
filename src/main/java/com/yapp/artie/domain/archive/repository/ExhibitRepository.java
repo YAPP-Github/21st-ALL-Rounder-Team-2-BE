@@ -2,6 +2,7 @@ package com.yapp.artie.domain.archive.repository;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
+import com.yapp.artie.domain.archive.dto.exhibit.CalenderQueryResultDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.user.domain.User;
 import java.time.LocalDate;
@@ -39,12 +40,12 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
   Page<Exhibit> findExhibitAllCountBy(Pageable pageable, @Param("user") User user,
       @Param("category") Category category);
 
-  @Query("select e from Exhibit e "
-      + "where e.user = :user "
-      + "and e.contents.date between :start and :end "
-      + "order by e.contents.date asc, e.createdAt asc"
-  )
-  List<Exhibit> findAllExhibitForCalendar(@Param("start") LocalDate start,
-      @Param("end") LocalDate end,
-      @Param("user") User user);
+  @Query(value = " SELECT p.post_date as date, p.post_id, p.post_num, image. `uri` FROM "
+      + "( SELECT post_date, min(id) AS post_id, count(*) post_num FROM post "
+      + "WHERE post_date BETWEEN :start AND :end AND user_id = :user_id "
+      + "GROUP BY post_date ORDER BY post_date ASC) AS p "
+      + "LEFT OUTER JOIN image ON p.post_id = image.post_id AND image.is_main_image = TRUE"
+      , nativeQuery = true)
+  List<CalenderQueryResultDto> findExhibitAsCalenderByDay(@Param("start") LocalDate start,
+      @Param("end") LocalDate end, @Param("user_id") Long userId);
 }
