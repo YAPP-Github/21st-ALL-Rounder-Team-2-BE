@@ -69,7 +69,7 @@ public class ExhibitController {
           content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CalendarExhibitResponseDto.class)))),
   })
   @GetMapping("/monthly")
-  public ResponseEntity<List<CalendarExhibitResponseDto>> getPostByMonthly(
+  public ResponseEntity<List<CalendarExhibitResponseDto>> getPostsByMonthly(
       Authentication authentication,
       @Parameter(example = "2023", description = "yyyy")
       @RequestParam("year") int year,
