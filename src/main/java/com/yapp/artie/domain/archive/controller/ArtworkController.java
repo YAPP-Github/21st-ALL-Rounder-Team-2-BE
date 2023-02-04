@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
+import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
@@ -82,7 +83,7 @@ public class ArtworkController {
       @RequestBody @Valid
       CreateArtworkRequestDto createArtworkRequestDto) {
 
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     Long id = artworkService.create(createArtworkRequestDto, userId);
 
     return ResponseEntity.status(HttpStatus.CREATED)
@@ -118,7 +119,7 @@ public class ArtworkController {
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long exhibitId,
       @PageableDefault(size = 20, sort = {
           "createdAt"}, direction = Sort.Direction.DESC) Pageable pageable) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     return ResponseEntity.ok().body(artworkService.getArtworkAsPage(exhibitId, userId, pageable));
   }
 
@@ -153,7 +154,7 @@ public class ArtworkController {
   public ResponseEntity<ArtworkInfoDto> getArtworkInfo(
       Authentication authentication,
       @Parameter(name = "id", description = "작품 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long artworkId) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     return ResponseEntity.ok().body(artworkService.getArtworkInfo(artworkId, userId));
   }
 
@@ -189,7 +190,7 @@ public class ArtworkController {
       Authentication authentication,
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long exhibitId) {
 
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     return ResponseEntity.ok().body(artworkService.getArtworkBrowseThumbnail(exhibitId, userId));
   }
 
@@ -225,7 +226,7 @@ public class ArtworkController {
       Authentication authentication,
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long id) {
 
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     artworkService.delete(id, userId);
     return ResponseEntity.noContent().build();
   }
@@ -266,7 +267,7 @@ public class ArtworkController {
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long exhibitId,
       @RequestBody @Valid CreateArtworkBatchRequestDto createArtworkBatchRequestDtoRequestDto) {
 
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
 
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new CreateArtworkBatchResponseDto(
@@ -311,7 +312,7 @@ public class ArtworkController {
       @RequestBody @Valid
       UpdateArtworkRequestDto updateArtworkRequestDto) {
 
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     artworkService.update(artworkId, userId, updateArtworkRequestDto);
     return ResponseEntity.noContent().build();
   }
@@ -347,8 +348,16 @@ public class ArtworkController {
   public ResponseEntity<? extends HttpEntity> setMainArtwork(Authentication authentication,
       @Parameter(name = "id", description = "작품 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long artworkId) {
 
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     artworkService.setMainArtwork(artworkId, userId);
     return ResponseEntity.noContent().build();
+  }
+
+  // TODO : 앱 배포했을 때에는 0L 대신에 exception을 던지도록 변경해야 합니다.
+  private Long getUserId(Authentication authentication) {
+    if (Optional.ofNullable(authentication).isPresent()) {
+      return Long.parseLong(authentication.getName());
+    }
+    return 1L;
   }
 }
