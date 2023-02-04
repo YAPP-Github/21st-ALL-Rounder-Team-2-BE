@@ -13,6 +13,7 @@ import com.yapp.artie.global.exception.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -65,10 +66,10 @@ public class ExhibitController {
       @ApiResponse(
           responseCode = "200",
           description = "월별 전시가 성공적으로 조회됨",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = CalendarExhibitResponseDto.class))),
+          content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CalendarExhibitResponseDto.class)))),
   })
   @GetMapping("/monthly")
-  public ResponseEntity<List<CalendarExhibitResponseDto>> getPostByMonthly(
+  public ResponseEntity<List<CalendarExhibitResponseDto>> getPostsByMonthly(
       Authentication authentication,
       @Parameter(example = "2023", description = "yyyy")
       @RequestParam("year") int year,
@@ -163,7 +164,6 @@ public class ExhibitController {
   @PutMapping("/publish/{id}")
   public ResponseEntity<? extends HttpEntity> publishPost(Authentication authentication,
       @PathVariable("id") Long id) {
-
     Long userId = Long.parseLong(authentication.getName());
     exhibitService.publish(id, userId);
     return ResponseEntity.noContent().build();
