@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ExhibitService {
 
-
   private final ExhibitRepository exhibitRepository;
   private final ArtworkRepository artworkRepository;
   private final UserService userService;
@@ -108,6 +107,15 @@ public class ExhibitService {
     validateOwnedByUser(findUser(userId), exhibit);
 
     exhibit.update(updateExhibitRequestDto.getName(), updateExhibitRequestDto.getPostDate());
+  }
+
+  @Transactional
+  public void delete(Long id, Long userId) {
+    Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
+        .orElseThrow(ExhibitNotFoundException::new);
+    validateOwnedByUser(findUser(userId), exhibit);
+
+    exhibitRepository.deleteById(id);
   }
 
   public Exhibit getExhibitByUser(Long id, Long userId) {
