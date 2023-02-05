@@ -105,8 +105,11 @@ public class ExhibitService {
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
         .orElseThrow(ExhibitNotFoundException::new);
     validateOwnedByUser(findUser(userId), exhibit);
+    Category category = categoryService.findCategoryWithUser(
+        updateExhibitRequestDto.getCategoryId(), userId);
 
-    exhibit.update(updateExhibitRequestDto.getName(), updateExhibitRequestDto.getPostDate());
+    exhibit.update(updateExhibitRequestDto.getName(), updateExhibitRequestDto.getPostDate(),
+        category);
   }
 
   @Transactional
