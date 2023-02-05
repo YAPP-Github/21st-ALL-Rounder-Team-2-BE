@@ -24,9 +24,8 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -110,13 +109,16 @@ public class ExhibitController {
   @GetMapping("/home/{id}")
   public ResponseEntity<Page<PostDetailInfo>> getPostPage(
       Authentication authentication,
-      @PageableDefault(
-          size = 20, sort = {"contents.date"}, direction = Sort.Direction.DESC
-      )
-      Pageable pageable,
+      @Parameter(name = "size", description = "페이지네이션의 페이지당 데이터 수", in = ParameterIn.QUERY)
+      @RequestParam(value = "size", required = false, defaultValue = "20") int size,
+      @Parameter(name = "page", description = "페이지네이션의 페이지 넘버. 0부터 시작함", in = ParameterIn.QUERY)
+      @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+      @Parameter(name = "direction", description = "페이지네이션의 정렬기준. DESC=최신순, ASC=오래된순", in = ParameterIn.QUERY)
+      @RequestParam(name = "direction", required = false, defaultValue = "DESC") Direction direction,
       @PathVariable("id") Long id) {
     Long userId = getUserId(authentication);
-    Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(id, userId, pageable);
+    Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(id, userId,
+        PageRequest.of(page, size, direction, "contents.date"));
 
     return ResponseEntity.ok().body(pageResult);
   }
@@ -131,12 +133,16 @@ public class ExhibitController {
   @GetMapping("/home")
   public ResponseEntity<Page<PostDetailInfo>> getAllPostPage(
       Authentication authentication,
-      @PageableDefault(
-          size = 20, sort = {"contents.date"}, direction = Sort.Direction.DESC
-      )
-      Pageable pageable) {
+      @Parameter(name = "size", description = "페이지네이션의 페이지당 데이터 수", in = ParameterIn.QUERY)
+      @RequestParam(value = "size", required = false, defaultValue = "20") int size,
+      @Parameter(name = "page", description = "페이지네이션의 페이지 넘버. 0부터 시작함", in = ParameterIn.QUERY)
+      @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+      @Parameter(name = "direction", description = "페이지네이션의 정렬기준. DESC=최신순, ASC=오래된순", in = ParameterIn.QUERY)
+      @RequestParam(name = "direction", required = false, defaultValue = "DESC") Direction direction) {
+
     Long userId = getUserId(authentication);
-    Page<PostDetailInfo> pageResult = exhibitService.getAllExhibitByPage(userId, pageable);
+    Page<PostDetailInfo> pageResult = exhibitService.getAllExhibitByPage(userId,
+        PageRequest.of(page, size, direction, "contents.date"));
 
     return ResponseEntity.ok().body(pageResult);
   }
