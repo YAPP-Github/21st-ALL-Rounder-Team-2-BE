@@ -6,6 +6,7 @@ import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
+import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfoPage;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
 import com.yapp.artie.domain.archive.service.ExhibitService;
@@ -104,7 +105,7 @@ public class ExhibitController {
       @ApiResponse(
           responseCode = "200",
           description = "홈 화면 전시 목록(특정 카테고리)이 성공적으로 조회됨",
-          content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PostDetailInfo.class)))),
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDetailInfoPage.class))),
   })
   @GetMapping("/home/{id}")
   public ResponseEntity<Page<PostDetailInfo>> getPostPage(
@@ -128,7 +129,7 @@ public class ExhibitController {
       @ApiResponse(
           responseCode = "200",
           description = "홈 화면 전시 목록(전체 기록)이 성공적으로 조회됨",
-          content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PostDetailInfo.class)))),
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDetailInfoPage.class))),
   })
   @GetMapping("/home")
   public ResponseEntity<Page<PostDetailInfo>> getAllPostPage(
