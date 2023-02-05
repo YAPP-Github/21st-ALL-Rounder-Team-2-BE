@@ -137,6 +137,21 @@ class ExhibitServiceTest {
   }
 
   @Test
+  public void delete_전시를_삭제한다() throws Exception {
+    User user = createUser("user", "tu");
+    CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);
+    CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
+        defaultCateogry.getId(),
+        LocalDate.now());
+    Long created = exhibitService.create(exhibitRequestDto, user.getId());
+    exhibitService.publish(created, user.getId());
+
+    exhibitService.delete(created, user.getId());
+
+    assertThat(em.find(Exhibit.class, created)).isNull();
+  }
+
+  @Test
   public void getExhibitByMonthly_월_별로_전시를_조회한다() throws Exception {
     User user = createUser("user", "tu");
     CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);

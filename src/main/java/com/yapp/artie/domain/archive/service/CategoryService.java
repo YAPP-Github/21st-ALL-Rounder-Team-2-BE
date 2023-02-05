@@ -75,7 +75,7 @@ public class CategoryService {
   @Transactional
   public void shuffle(List<CategoryDto> changeCategorySequenceDtos, Long userId) {
     User user = findUser(userId);
-    List<Category> categories = categoryRepository.findCategoriesByUser(user);
+    List<Category> categories = categoryRepository.findCategoriesByUserOrderBySequence(user);
     validateChangeCategoriesLengthWithOriginal(changeCategorySequenceDtos, categories);
 
     int sequence = 1;

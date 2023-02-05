@@ -197,7 +197,7 @@ class CategoryServiceTest {
 
   @ParameterizedTest(name = "[카테고리 순서 변경 테스트 #{index}] => {0}순으로 재배열하는 경우")
   @ValueSource(strings = {"12345", "12435", "14523", "43215", "52134", "25431", "12354", "12534",
-      "43521", "32145", "32514"})
+      "43521", "32145", "32514", "1234", "4321", "321", "231", "132", "21", "12", "1"})
   public void shuffle_카테고리의_순서를_변경한다(String expected) throws Exception {
     //given
     List<Integer> expectedList = Arrays.stream(expected.split(""))
@@ -205,7 +205,7 @@ class CategoryServiceTest {
         .boxed()
         .collect(Collectors.toList());
     User user = findUser("1");
-    createCategoryBy(user, 5);
+    createCategoryBy(user, expected.length());
 
     //when
     List<CategoryDto> shuffled = new ArrayList<>();
