@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
+import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
@@ -55,7 +56,7 @@ public class ExhibitController {
   @GetMapping("/{id}")
   public ResponseEntity<PostInfoDto> getPost(Authentication authentication,
       @PathVariable("id") Long id) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     PostInfoDto exhibitInformation = exhibitService.getExhibitInformation(id, userId);
 
     return ResponseEntity.ok().body(exhibitInformation);
@@ -75,7 +76,7 @@ public class ExhibitController {
       @RequestParam("year") int year,
       @Parameter(example = "02", description = "mm")
       @RequestParam("month") int month) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
 
     return ResponseEntity.ok()
         .body(
@@ -91,7 +92,7 @@ public class ExhibitController {
   })
   @GetMapping("/draft")
   public ResponseEntity<List<PostInfoDto>> getDraftPosts(Authentication authentication) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     return ResponseEntity.ok().body(exhibitService.getDraftExhibits(userId));
   }
 
@@ -114,7 +115,7 @@ public class ExhibitController {
       )
       Pageable pageable,
       @PathVariable("id") Long id) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(id, userId, pageable);
 
     return ResponseEntity.ok().body(pageResult);
@@ -134,7 +135,7 @@ public class ExhibitController {
           size = 20, sort = {"contents.date"}, direction = Sort.Direction.DESC
       )
       Pageable pageable) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     Page<PostDetailInfo> pageResult = exhibitService.getAllExhibitByPage(userId, pageable);
 
     return ResponseEntity.ok().body(pageResult);
@@ -150,7 +151,7 @@ public class ExhibitController {
   @PostMapping()
   public ResponseEntity<CreateExhibitResponseDto> createPost(Authentication authentication,
       @RequestBody CreateExhibitRequestDto createExhibitRequestDto) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     Long id = exhibitService.create(createExhibitRequestDto, userId);
 
     return ResponseEntity.status(HttpStatus.CREATED)
@@ -168,7 +169,7 @@ public class ExhibitController {
   public ResponseEntity<? extends HttpEntity> updatePost(Authentication authentication,
       @PathVariable("id") Long id, @RequestBody
   UpdateExhibitRequestDto updateExhibitRequestDto) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
 
     exhibitService.update(updateExhibitRequestDto, id, userId);
     return ResponseEntity.noContent().build();
@@ -184,7 +185,7 @@ public class ExhibitController {
   @PutMapping("/publish/{id}")
   public ResponseEntity<? extends HttpEntity> publishPost(Authentication authentication,
       @PathVariable("id") Long id) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     exhibitService.publish(id, userId);
     return ResponseEntity.noContent().build();
   }
@@ -220,7 +221,15 @@ public class ExhibitController {
   public ResponseEntity<PostDetailInfo> getPostInfoWithCategory(
       Authentication authentication,
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long id) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     return ResponseEntity.ok().body(exhibitService.getDetailExhibitInformation(id, userId));
+  }
+
+  // TODO : 앱 배포했을 때에는 1L 대신에 exception을 던지도록 변경해야 합니다.
+  private Long getUserId(Authentication authentication) {
+    if (Optional.ofNullable(authentication).isPresent()) {
+      return Long.parseLong(authentication.getName());
+    }
+    return 1L;
   }
 }
