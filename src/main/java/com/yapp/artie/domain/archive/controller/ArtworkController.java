@@ -95,7 +95,7 @@ public class ArtworkController {
       @ApiResponse(
           responseCode = "200",
           description = "전시 작품 목록 조회",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArtworkThumbnailDtoPage.class))),
+          content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ArtworkThumbnailDtoPage.class)))),
       @ApiResponse(
           responseCode = "400",
           description = "잘못된 입력",

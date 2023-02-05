@@ -6,6 +6,7 @@ import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryResponseDto;
 import com.yapp.artie.domain.archive.dto.cateogry.UpdateCategoryRequestDto;
 import com.yapp.artie.domain.archive.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -39,7 +40,7 @@ public class CategoryController {
       @ApiResponse(
           responseCode = "200",
           description = "카테고리가 성공적으로 조회됨",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = CategoryDto.class))),
+          content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CategoryDto.class)))),
   })
   @GetMapping()
   public ResponseEntity<List<CategoryDto>> getCategories(Authentication authentication) {

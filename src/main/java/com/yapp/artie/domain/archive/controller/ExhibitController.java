@@ -88,7 +88,7 @@ public class ExhibitController {
       @ApiResponse(
           responseCode = "200",
           description = "임시 저장된 전시 목록이 성공적으로 조회됨",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostInfoDto.class))),
+          content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PostInfoDto.class)))),
   })
   @GetMapping("/draft")
   public ResponseEntity<List<PostInfoDto>> getDraftPosts(Authentication authentication) {
@@ -105,7 +105,7 @@ public class ExhibitController {
       @ApiResponse(
           responseCode = "200",
           description = "홈 화면 전시 목록(특정 카테고리)이 성공적으로 조회됨",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDetailInfo.class))),
+          content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PostDetailInfo.class)))),
   })
   @GetMapping("/home/{id}")
   public ResponseEntity<Page<PostDetailInfo>> getPostPage(
@@ -126,7 +126,7 @@ public class ExhibitController {
       @ApiResponse(
           responseCode = "200",
           description = "홈 화면 전시 목록(전체 기록)이 성공적으로 조회됨",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDetailInfo.class))),
+          content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PostDetailInfo.class)))),
   })
   @GetMapping("/home")
   public ResponseEntity<Page<PostDetailInfo>> getAllPostPage(
