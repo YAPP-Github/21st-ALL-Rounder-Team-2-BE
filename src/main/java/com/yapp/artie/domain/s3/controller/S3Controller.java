@@ -60,7 +60,8 @@ public class S3Controller {
       Authentication authentication,
       @RequestBody @Valid GetPresignedUrlRequestDto getPresignedUrlRequestDto,
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.QUERY) @Valid @RequestParam(required = true, value = "id") Long postId) {
-    Long userId = Long.parseLong(authentication.getName());
+    // Long userId = Long.parseLong(authentication.getName());
+    Long userId = 1L;
     userService.findById(userId);
 
     AtomicInteger index = new AtomicInteger(1);

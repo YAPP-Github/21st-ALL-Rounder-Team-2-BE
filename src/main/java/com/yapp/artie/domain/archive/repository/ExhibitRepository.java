@@ -37,8 +37,16 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
           + "and e.publication.isPublished = true",
       countQuery = "select count(e.id) from Exhibit e"
   )
-  Page<Exhibit> findExhibitAllCountBy(Pageable pageable, @Param("user") User user,
+  Page<Exhibit> findCategoryExhibitPageBy(Pageable pageable, @Param("user") User user,
       @Param("category") Category category);
+
+  @Query(
+      value = "select e from Exhibit e "
+          + "where e.user = :user "
+          + "and e.publication.isPublished = true",
+      countQuery = "select count(e.id) from Exhibit e"
+  )
+  Page<Exhibit> findAllExhibitPageBy(Pageable pageable, @Param("user") User user);
 
   @Query(value = " SELECT p.post_date as date, p.post_id, p.post_num, image. `uri` FROM "
       + "( SELECT post_date, min(id) AS post_id, count(*) post_num FROM post "

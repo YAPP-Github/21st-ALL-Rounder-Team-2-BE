@@ -19,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
+import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
@@ -55,7 +56,7 @@ public class ExhibitController {
   @GetMapping("/{id}")
   public ResponseEntity<PostInfoDto> getPost(Authentication authentication,
       @PathVariable("id") Long id) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     PostInfoDto exhibitInformation = exhibitService.getExhibitInformation(id, userId);
 
     return ResponseEntity.ok().body(exhibitInformation);
@@ -75,7 +76,7 @@ public class ExhibitController {
       @RequestParam("year") int year,
       @Parameter(example = "02", description = "mm")
       @RequestParam("month") int month) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
 
     return ResponseEntity.ok()
         .body(
@@ -91,11 +92,11 @@ public class ExhibitController {
   })
   @GetMapping("/draft")
   public ResponseEntity<List<PostInfoDto>> getDraftPosts(Authentication authentication) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     return ResponseEntity.ok().body(exhibitService.getDraftExhibits(userId));
   }
 
-  @Operation(summary = "홈 화면 전시 조회", description =
+  @Operation(summary = "홈 화면 전시 조회(특정 카테고리)", description =
       "저장된 전시 중 페이지네이션을 이용해 값을 가져온다. 이곳의 id는 category id를 의미하며 "
           + "size의 기본값은 20이다. sort는 기본값이 최신 순이고, ?sort=contents.date,ASC 는 오래된 순이다. "
           + "오래된 순의 예시처럼 콤마를 기준으로 [<정렬 컬럼>,<정렬 타입 형식>]으로 쿼리 파라미터를 전달해야 한다."
@@ -103,7 +104,7 @@ public class ExhibitController {
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "200",
-          description = "홈 화면 전시 목록이 성공적으로 조회됨",
+          description = "홈 화면 전시 목록(특정 카테고리)이 성공적으로 조회됨",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDetailInfo.class))),
   })
   @GetMapping("/home/{id}")
@@ -114,8 +115,28 @@ public class ExhibitController {
       )
       Pageable pageable,
       @PathVariable("id") Long id) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(id, userId, pageable);
+
+    return ResponseEntity.ok().body(pageResult);
+  }
+
+  @Operation(summary = "홈 화면 전시 조회(전체 기록)", description = "용례는 홈 화면 전시 조회(특정 카테고리)와 같다.")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200",
+          description = "홈 화면 전시 목록(전체 기록)이 성공적으로 조회됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDetailInfo.class))),
+  })
+  @GetMapping("/home")
+  public ResponseEntity<Page<PostDetailInfo>> getAllPostPage(
+      Authentication authentication,
+      @PageableDefault(
+          size = 20, sort = {"contents.date"}, direction = Sort.Direction.DESC
+      )
+      Pageable pageable) {
+    Long userId = getUserId(authentication);
+    Page<PostDetailInfo> pageResult = exhibitService.getAllExhibitByPage(userId, pageable);
 
     return ResponseEntity.ok().body(pageResult);
   }
@@ -130,7 +151,7 @@ public class ExhibitController {
   @PostMapping()
   public ResponseEntity<CreateExhibitResponseDto> createPost(Authentication authentication,
       @RequestBody CreateExhibitRequestDto createExhibitRequestDto) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     Long id = exhibitService.create(createExhibitRequestDto, userId);
 
     return ResponseEntity.status(HttpStatus.CREATED)
@@ -148,7 +169,7 @@ public class ExhibitController {
   public ResponseEntity<? extends HttpEntity> updatePost(Authentication authentication,
       @PathVariable("id") Long id, @RequestBody
   UpdateExhibitRequestDto updateExhibitRequestDto) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
 
     exhibitService.update(updateExhibitRequestDto, id, userId);
     return ResponseEntity.noContent().build();
@@ -164,7 +185,7 @@ public class ExhibitController {
   @PutMapping("/publish/{id}")
   public ResponseEntity<? extends HttpEntity> publishPost(Authentication authentication,
       @PathVariable("id") Long id) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     exhibitService.publish(id, userId);
     return ResponseEntity.noContent().build();
   }
@@ -200,7 +221,15 @@ public class ExhibitController {
   public ResponseEntity<PostDetailInfo> getPostInfoWithCategory(
       Authentication authentication,
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long id) {
-    Long userId = Long.parseLong(authentication.getName());
+    Long userId = getUserId(authentication);
     return ResponseEntity.ok().body(exhibitService.getDetailExhibitInformation(id, userId));
+  }
+
+  // TODO : 앱 배포했을 때에는 1L 대신에 exception을 던지도록 변경해야 합니다.
+  private Long getUserId(Authentication authentication) {
+    if (Optional.ofNullable(authentication).isPresent()) {
+      return Long.parseLong(authentication.getName());
+    }
+    return 1L;
   }
 }

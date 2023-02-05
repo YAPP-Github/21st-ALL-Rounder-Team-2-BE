@@ -61,7 +61,12 @@ public class ExhibitService {
 
   public Page<PostDetailInfo> getExhibitByPage(Long id, Long userId, Pageable pageable) {
     Category category = categoryService.findCategoryWithUser(id, userId);
-    return exhibitRepository.findExhibitAllCountBy(pageable, findUser(userId), category)
+    return exhibitRepository.findCategoryExhibitPageBy(pageable, findUser(userId), category)
+        .map(exhibit -> buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit)));
+  }
+
+  public Page<PostDetailInfo> getAllExhibitByPage(Long userId, Pageable pageable) {
+    return exhibitRepository.findAllExhibitPageBy(pageable, findUser(userId))
         .map(exhibit -> buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit)));
   }
 
@@ -109,6 +114,7 @@ public class ExhibitService {
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
         .orElseThrow(ExhibitNotFoundException::new);
     validateOwnedByUser(findUser(userId), exhibit);
+
     return exhibit;
   }
 
