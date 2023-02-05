@@ -96,8 +96,9 @@ public class Exhibit extends BaseEntity {
     return new Exhibit(user, category, contents, publication);
   }
 
-  public void update(String name, LocalDate postDate) {
+  public void update(String name, LocalDate postDate, Category category) {
     this.contents = new ExhibitContents(name, contents().getReview(),
         contents().getAttachedLink(), postDate);
+    categorize(category);
   }
 }

@@ -127,7 +127,8 @@ class ExhibitServiceTest {
     Exhibit exhibit = em.find(Exhibit.class, created);
 
     String updatedName = "rename";
-    exhibitService.update(new UpdateExhibitRequestDto(updatedName, LocalDate.now()),
+    exhibitService.update(
+        new UpdateExhibitRequestDto(updatedName, LocalDate.now(), defaultCateogry.getId()),
         exhibit.getId(),
         user.getId());
 
