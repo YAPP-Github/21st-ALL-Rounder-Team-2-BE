@@ -2,6 +2,7 @@ package com.yapp.artie.domain.archive.repository;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
+import com.yapp.artie.domain.archive.domain.exhibit.PinType;
 import com.yapp.artie.domain.archive.dto.exhibit.CalenderQueryResultDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.user.domain.User;
@@ -56,4 +57,10 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
       , nativeQuery = true)
   List<CalenderQueryResultDto> findExhibitAsCalenderByDay(@Param("start") LocalDate start,
       @Param("end") LocalDate end, @Param("user_id") Long userId);
+
+  @Query("SELECT e FROM Exhibit e WHERE e.pinType IN :types AND e.category = :category")
+  Optional<Exhibit> findPinnedExhibitWithCategory(Category category, PinType[] types);
+
+  @Query("SELECT e FROM Exhibit e WHERE e.pinType IN :types")
+  Optional<Exhibit> findPinnedExhibit(PinType[] types);
 }

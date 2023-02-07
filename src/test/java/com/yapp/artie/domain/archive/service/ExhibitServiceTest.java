@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
+import com.yapp.artie.domain.archive.domain.exhibit.PinType;
 import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
@@ -13,6 +14,7 @@ import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
 import com.yapp.artie.domain.archive.exception.ExhibitAlreadyPublishedException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
+import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import java.time.LocalDate;
@@ -38,6 +40,9 @@ class ExhibitServiceTest {
 
   @Autowired
   UserRepository userRepository;
+
+  @Autowired
+  ExhibitRepository exhibitRepository;
 
   @Autowired
   ExhibitService exhibitService;
@@ -172,6 +177,106 @@ class ExhibitServiceTest {
 
       assertThat(exhibitByMonthly.size()).isEqualTo(1);
     }
+  }
+
+  @Test
+  public void updatePostPinType_카테고리_상단_설정_CATEGORY_TO_NONE() {
+    User user = createUser("user", "tu");
+    CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
+    CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
+        defaultCategory.getId(),
+        LocalDate.now());
+    Long exhibitId1 = exhibitService.create(exhibitRequestDto, user.getId());
+    Long exhibitId2 = exhibitService.create(exhibitRequestDto, user.getId());
+
+    exhibitService.updatePostPinType(user.getId(), exhibitId2, true, true);
+    exhibitService.updatePostPinType(user.getId(), exhibitId1, true, true);
+
+    Optional<Exhibit> exhibit1 = exhibitRepository.findExhibitEntityGraphById(exhibitId1);
+    Optional<Exhibit> exhibit2 = exhibitRepository.findExhibitEntityGraphById(exhibitId2);
+    assertThat(exhibit1.isPresent()).isTrue();
+    assertThat(exhibit1.get().getPinType()).isEqualTo(PinType.CATEGORY);
+    assertThat(exhibit2.isPresent()).isTrue();
+    assertThat(exhibit2.get().getPinType()).isEqualTo(PinType.NONE);
+  }
+
+  @Test
+  public void updatePostPinType_전체기록_상단_설정_BOTH_TO_HOME() {
+    User user = createUser("user", "tu");
+    CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
+    CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
+        defaultCategory.getId(),
+        LocalDate.now());
+    Long exhibitId1 = exhibitService.create(exhibitRequestDto, user.getId());
+    Long exhibitId2 = exhibitService.create(exhibitRequestDto, user.getId());
+
+    exhibitService.updatePostPinType(user.getId(), exhibitId2, false, true);
+    exhibitService.updatePostPinType(user.getId(), exhibitId2, true, true);
+    exhibitService.updatePostPinType(user.getId(), exhibitId1, false, true);
+
+    Optional<Exhibit> exhibit1 = exhibitRepository.findExhibitEntityGraphById(exhibitId1);
+    Optional<Exhibit> exhibit2 = exhibitRepository.findExhibitEntityGraphById(exhibitId2);
+    assertThat(exhibit1.isPresent()).isTrue();
+    assertThat(exhibit1.get().getPinType()).isEqualTo(PinType.HOME);
+    assertThat(exhibit2.isPresent()).isTrue();
+    assertThat(exhibit2.get().getPinType()).isEqualTo(PinType.CATEGORY);
+  }
+
+  @Test
+  public void updatePostPinType_전체기록_상단_설정_CATEGORY_TO_BOTH() {
+    User user = createUser("user", "tu");
+    CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
+    CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
+        defaultCategory.getId(),
+        LocalDate.now());
+    Long exhibitId1 = exhibitService.create(exhibitRequestDto, user.getId());
+    Long exhibitId2 = exhibitService.create(exhibitRequestDto, user.getId());
+
+    exhibitService.updatePostPinType(user.getId(), exhibitId2, false, true);
+    exhibitService.updatePostPinType(user.getId(), exhibitId1, false, true);
+    exhibitService.updatePostPinType(user.getId(), exhibitId1, true, true);
+
+    Optional<Exhibit> exhibit1 = exhibitRepository.findExhibitEntityGraphById(exhibitId1);
+    Optional<Exhibit> exhibit2 = exhibitRepository.findExhibitEntityGraphById(exhibitId2);
+    assertThat(exhibit1.isPresent()).isTrue();
+    assertThat(exhibit1.get().getPinType()).isEqualTo(PinType.BOTH);
+    assertThat(exhibit2.isPresent()).isTrue();
+    assertThat(exhibit2.get().getPinType()).isEqualTo(PinType.NONE);
+  }
+
+  @Test
+  public void updatePostPinType_카테고리_상단_설정_해제() {
+    User user = createUser("user", "tu");
+    CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
+    CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
+        defaultCategory.getId(),
+        LocalDate.now());
+    Long exhibitId1 = exhibitService.create(exhibitRequestDto, user.getId());
+
+    exhibitService.updatePostPinType(user.getId(), exhibitId1, true, true);
+    exhibitService.updatePostPinType(user.getId(), exhibitId1, true, false);
+
+    Optional<Exhibit> exhibit1 = exhibitRepository.findExhibitEntityGraphById(exhibitId1);
+    assertThat(exhibit1.isPresent()).isTrue();
+    assertThat(exhibit1.get().getPinType()).isEqualTo(PinType.NONE);
+  }
+
+  @Test
+  public void updatePostPinType_전체기록_상단_설정_해제() {
+    User user = createUser("user", "tu");
+    CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
+    CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
+        defaultCategory.getId(),
+        LocalDate.now());
+    Long exhibitId1 = exhibitService.create(exhibitRequestDto, user.getId());
+
+    exhibitService.updatePostPinType(user.getId(), exhibitId1, true, true);
+    exhibitService.updatePostPinType(user.getId(), exhibitId1, false, true);
+    exhibitService.updatePostPinType(user.getId(), exhibitId1, true, false);
+
+    Optional<Exhibit> exhibit1 = exhibitRepository.findExhibitEntityGraphById(exhibitId1);
+    assertThat(exhibit1.isPresent()).isTrue();
+    assertThat(exhibit1.get().getPinType()).isEqualTo(PinType.HOME);
   }
 }
 

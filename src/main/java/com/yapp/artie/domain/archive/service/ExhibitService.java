@@ -2,6 +2,7 @@ package com.yapp.artie.domain.archive.service;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
+import com.yapp.artie.domain.archive.domain.exhibit.PinType;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalenderQueryResultDto;
@@ -20,6 +21,7 @@ import com.yapp.artie.global.util.S3Utils;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -129,6 +131,19 @@ public class ExhibitService {
     return exhibit;
   }
 
+  @Transactional
+  public void updatePostPinType(Long userId, Long exhibitId, boolean categoryType, boolean pinned) {
+    Exhibit exhibit = exhibitRepository.findDetailExhibitEntityGraphById(exhibitId)
+        .orElseThrow(ExhibitNotFoundException::new);
+    validateOwnedByUser(findUser(userId), exhibit);
+
+    if (pinned) {
+      setExhibitPin(categoryType, exhibit);
+    } else {
+      setExhibitNotPin(categoryType, exhibit);
+    }
+  }
+
   private User findUser(Long userId) {
     return userService.findById(userId);
   }
@@ -137,8 +152,8 @@ public class ExhibitService {
     return artworkRepository.findMainArtworkByExhibitId(exhibit)
         .map(artwork -> s3Utils.getFullUri(artwork.getContents().getUri())).orElse(null);
   }
-
   // TODO : public이 아니도록 수정
+
   public void validateOwnedByUser(User user, Exhibit exhibit) {
     if (!exhibit.ownedBy(user)) {
       throw new NotOwnerOfExhibitException();
@@ -168,5 +183,36 @@ public class ExhibitService {
         .categoryName(exhibit.getCategory().getName())
         .mainImage(imageUri)
         .build();
+  }
+
+  private void setExhibitPin(boolean categoryType, Exhibit exhibit) {
+    PinType newPinType;
+    if (categoryType) {
+      Optional<Exhibit> pinnedExhibit = exhibitRepository.findPinnedExhibitWithCategory(
+          exhibit.getCategory(),
+          new PinType[]{PinType.BOTH, PinType.CATEGORY});
+      pinnedExhibit.ifPresent(value -> value.updatePinType(value
+          .getPinType() == PinType.BOTH ? PinType.HOME : PinType.NONE));
+
+      newPinType = exhibit.getPinType() == PinType.HOME ? PinType.BOTH : PinType.CATEGORY;
+    } else {
+      Optional<Exhibit> pinnedExhibit = exhibitRepository.findPinnedExhibit(
+          new PinType[]{PinType.BOTH, PinType.HOME});
+      pinnedExhibit.ifPresent(value -> value.updatePinType(value
+          .getPinType() == PinType.BOTH ? PinType.CATEGORY : PinType.NONE));
+
+      newPinType = exhibit.getPinType() == PinType.CATEGORY ? PinType.BOTH : PinType.HOME;
+    }
+    exhibit.updatePinType(newPinType);
+  }
+
+  private void setExhibitNotPin(boolean categoryType, Exhibit exhibit) {
+    PinType newPinType;
+    if (categoryType) {
+      newPinType = exhibit.getPinType() == PinType.BOTH ? PinType.HOME : PinType.NONE;
+    } else {
+      newPinType = exhibit.getPinType() == PinType.BOTH ? PinType.CATEGORY : PinType.NONE;
+    }
+    exhibit.updatePinType(newPinType);
   }
 }

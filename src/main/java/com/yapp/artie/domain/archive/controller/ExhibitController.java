@@ -32,6 +32,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -247,6 +248,30 @@ public class ExhibitController {
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long id) {
     Long userId = getUserId(authentication);
     return ResponseEntity.ok().body(exhibitService.getDetailExhibitInformation(id, userId));
+  }
+
+  @Operation(summary = "전시 상단 고정 설정", description = "특정 전시를 홈페이지에서 전체 기록 혹은 특정 카테고리에 대해 상단에 고정되어 조회할 수 있도록 설정")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "204",
+          description = "성공적으로 상단 고정 설정됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))),
+  })
+  @PatchMapping("/pin")
+  public ResponseEntity<? extends HttpEntity> updatePostPinType(
+      Authentication authentication,
+      @Parameter(name = "id", description = "전시 ID", in = ParameterIn.QUERY)
+      @RequestParam(value = "id", required = true) Long exhibitId,
+      @Parameter(name = "category", description = "카테고리에 고정하는지의 여부. "
+          + "true일 경우, 해당 전시의 카테고리 상단 고정으로, false일 경우 전체 기록의 상단 고정 설정으로 처리",
+          in = ParameterIn.QUERY)
+      @RequestParam(value = "category", required = true, defaultValue = "true") boolean categoryType,
+      @Parameter(name = "pinned", description = "고정 여부. 고정하도록 설정한다면 true, 고정 해제하도록 설정한다면 false", in = ParameterIn.QUERY)
+      @RequestParam(value = "pinned", required = true, defaultValue = "true") boolean pinned
+  ) {
+    Long userId = getUserId(authentication);
+    exhibitService.updatePostPinType(userId, exhibitId, categoryType, pinned);
+    return ResponseEntity.noContent().build();
   }
 
   // TODO : 앱 배포했을 때에는 1L 대신에 exception을 던지도록 변경해야 합니다.
