@@ -64,7 +64,7 @@ class CategoryServiceTest {
 
 
   private void createCategoryBy(User user, int count) {
-    for (int sequence = 1; sequence <= count; sequence++) {
+    for (int sequence = 0; sequence < count; sequence++) {
       createCategory(user, Integer.toString(sequence));
     }
   }
@@ -172,8 +172,8 @@ class CategoryServiceTest {
     User user = findUser("1");
     createCategoryBy(user, 5);
     List<CategoryDto> categories = categoryService.categoriesOf(user.getId());
-    for (int expected = 1; expected <= categories.size(); expected++) {
-      assertThat(categories.get(expected - 1).getSequence())
+    for (int expected = 0; expected < categories.size(); expected++) {
+      assertThat(categories.get(expected).getSequence())
           .isEqualTo(expected);
     }
   }
@@ -189,15 +189,15 @@ class CategoryServiceTest {
     categoryService.delete(deleted.getId(), user.getId());
 
     List<CategoryDto> actualCategories = categoryService.categoriesOf(user.getId());
-    for (int expected = 1; expected <= actualCategories.size(); expected++) {
-      assertThat(actualCategories.get(expected - 1).getSequence())
+    for (int expected = 0; expected < actualCategories.size(); expected++) {
+      assertThat(actualCategories.get(expected).getSequence())
           .isEqualTo(expected);
     }
   }
 
   @ParameterizedTest(name = "[카테고리 순서 변경 테스트 #{index}] => {0}순으로 재배열하는 경우")
-  @ValueSource(strings = {"12345", "12435", "14523", "43215", "52134", "25431", "12354", "12534",
-      "43521", "32145", "32514", "1234", "4321", "321", "231", "132", "21", "12", "1"})
+  @ValueSource(strings = {"01234", "12430", "14023", "43210", "02134", "20431", "12304", "12034",
+      "43021", "32140", "32014", "1230", "0321", "021", "201", "102", "01", "10", "0"})
   public void shuffle_카테고리의_순서를_변경한다(String expected) throws Exception {
     //given
     List<Integer> expectedList = Arrays.stream(expected.split(""))
@@ -211,7 +211,7 @@ class CategoryServiceTest {
     List<CategoryDto> shuffled = new ArrayList<>();
     List<CategoryDto> categories = categoryService.categoriesOf(user.getId());
     expectedList.forEach(index -> {
-      shuffled.add(categories.get(index - 1));
+      shuffled.add(categories.get(index));
     });
     categoryService.shuffle(shuffled, user.getId());
 

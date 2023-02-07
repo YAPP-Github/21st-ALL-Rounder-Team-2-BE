@@ -78,10 +78,10 @@ public class CategoryService {
     List<Category> categories = categoryRepository.findCategoriesByUserOrderBySequence(user);
     validateChangeCategoriesLengthWithOriginal(changeCategorySequenceDtos, categories);
 
-    int sequence = 1;
+    int sequence = 0;
     for (CategoryDto changeCategorySequenceDto : changeCategorySequenceDtos) {
       int originSequence = changeCategorySequenceDto.getSequence();
-      Category category = categories.get(originSequence - 1);
+      Category category = categories.get(originSequence);
 
       category.rearrange(sequence++);
     }
@@ -91,7 +91,7 @@ public class CategoryService {
     int sequence = getSequence(user) ;
     validateExceedLimitCategoryCount(sequence);
 
-    Category category = Category.create(user, name, sequence + 1);
+    Category category = Category.create(user, name, sequence);
     categoryRepository.save(category);
     return category;
   }
