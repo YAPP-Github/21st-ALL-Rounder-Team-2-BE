@@ -97,6 +97,24 @@ public class ExhibitService {
             Collectors.toList());
   }
 
+  public Exhibit getExhibitByUser(Long id, Long userId) {
+    Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
+        .orElseThrow(ExhibitNotFoundException::new);
+    validateOwnedByUser(findUser(userId), exhibit);
+
+    return exhibit;
+  }
+
+  public Page<PostInfoByCategoryDto> getExhibitThumbnailByCategory(Long userId, Long categoryId,
+      int page, int size) {
+
+    Category category = categoryService.findCategoryWithUser(categoryId, userId);
+    return exhibitRepository.findExhibitByCategoryAsPage(
+            PageRequest.of(page, size, JpaSort.by(Direction.DESC, "createdAt")),
+            findUser(userId), category)
+        .map(this::buildPostInfoByCategoryDto);
+  }
+
   @Transactional
   public Long create(CreateExhibitRequestDto createExhibitRequestDto, Long userId) {
     Category category = categoryService.findCategoryWithUser(
@@ -138,14 +156,6 @@ public class ExhibitService {
     exhibitRepository.deleteById(id);
   }
 
-  public Exhibit getExhibitByUser(Long id, Long userId) {
-    Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
-        .orElseThrow(ExhibitNotFoundException::new);
-    validateOwnedByUser(findUser(userId), exhibit);
-
-    return exhibit;
-  }
-
   @Transactional
   public void updatePostPinType(Long userId, Long exhibitId, boolean categoryType, boolean pinned) {
     Exhibit exhibit = exhibitRepository.findDetailExhibitEntityGraphById(exhibitId)
@@ -157,16 +167,6 @@ public class ExhibitService {
     } else {
       setExhibitNotPin(categoryType, exhibit);
     }
-  }
-
-  public Page<PostInfoByCategoryDto> getExhibitThumbnailByCategory(Long userId, Long categoryId,
-      int page, int size) {
-
-    Category category = categoryService.findCategoryWithUser(categoryId, userId);
-    return exhibitRepository.findExhibitByCategoryAsPage(
-            PageRequest.of(page, size, JpaSort.by(Direction.DESC, "createdAt")),
-            findUser(userId), category)
-        .map(this::buildPostInfoByCategoryDto);
   }
 
   private User findUser(Long userId) {
@@ -245,7 +245,7 @@ public class ExhibitService {
     }
     exhibit.updatePinType(newPinType);
   }
-  
+
   private JpaSort getSortCondition(PinType pinType, Direction direction) {
     return JpaSort.unsafe(Direction.ASC,
             String.format("case when e.pinType in ('BOTH','%s') then 1 else 2 end", pinType))
