@@ -145,8 +145,8 @@ public class ExhibitController {
       @RequestParam(name = "direction", required = false, defaultValue = "DESC") Direction direction) {
 
     Long userId = getUserId(authentication);
-    Page<PostDetailInfo> pageResult = exhibitService.getAllExhibitByPage(userId,
-        PageRequest.of(page, size, direction, "contents.date"));
+    Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(null, userId,
+        PageRequest.of(page, size), direction);
 
     return ResponseEntity.ok().body(pageResult);
   }

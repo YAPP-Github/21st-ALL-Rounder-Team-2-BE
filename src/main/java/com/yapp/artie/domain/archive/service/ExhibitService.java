@@ -64,16 +64,26 @@ public class ExhibitService {
 
   public Page<PostDetailInfo> getExhibitByPage(Long categoryId, Long userId, Pageable pageable,
       Direction direction) {
+    if (categoryId != null) {
+      return getExhibitByCategoryAsPage(categoryId, userId, pageable, direction);
+    }
+
+    JpaSort sort = JpaSort.unsafe(Direction.ASC,
+            "case when e.pinType in ('BOTH','HOME') then 1 else 2 end")
+        .andUnsafe(direction, "createdAt");
+    return exhibitRepository.findExhibitAsPage(pageable, findUser(userId), sort)
+        .map(exhibit -> buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit)));
+  }
+
+  public Page<PostDetailInfo> getExhibitByCategoryAsPage(Long categoryId, Long userId,
+      Pageable pageable,
+      Direction direction) {
+
     Category category = categoryService.findCategoryWithUser(categoryId, userId);
     JpaSort sort = JpaSort.unsafe(Direction.ASC,
             "case when e.pinType in ('BOTH','CATEGORY') then 1 else 2 end")
         .andUnsafe(direction, "createdAt");
-    return exhibitRepository.findCategoryExhibitPageBy(pageable, findUser(userId), category, sort)
-        .map(exhibit -> buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit)));
-  }
-
-  public Page<PostDetailInfo> getAllExhibitByPage(Long userId, Pageable pageable) {
-    return exhibitRepository.findAllExhibitPageBy(pageable, findUser(userId))
+    return exhibitRepository.findExhibitByCategoryAsPage(pageable, findUser(userId), category, sort)
         .map(exhibit -> buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit)));
   }
 
