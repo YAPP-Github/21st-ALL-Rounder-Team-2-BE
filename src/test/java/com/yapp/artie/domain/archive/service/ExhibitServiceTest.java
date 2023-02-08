@@ -22,6 +22,7 @@ import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
@@ -58,6 +59,9 @@ class ExhibitServiceTest {
 
   @Autowired
   CategoryService categoryService;
+
+  @Autowired
+  ArtworkService artworkService;
 
   User createUser(String name, String uid) {
     User user = new User();
@@ -345,6 +349,42 @@ class ExhibitServiceTest {
     assertThat(results.getNumber()).isEqualTo(0);
     assertThat(results.getContent().get(0).getId()).isEqualTo(exhibit.getId());
     assertThat(results.getContent().get(0).getName()).isEqualTo(exhibit.contents().getName());
+  }
+
+  @Test
+  public void getExhibitThumbnailByCategory_카테고리별_전시목록은_상단고정이_반영되지_않아야힙니다() {
+    User user = createUser("user", "tu");
+    Category defaultCategory = categoryService.findCategoryWithUser(
+        categoryService.categoriesOf(user.getId()).get(0).getId(), user.getId());
+    List<String> imageUriList = new ArrayList<>();
+    imageUriList.add("sample-uri");
+
+    Exhibit exhibit = exhibitRepository.save(
+        Exhibit.create(String.format("test-0"), LocalDate.now(), defaultCategory,
+            user));
+    exhibit.publish();
+    artworkService.createBatch(imageUriList, exhibit.getId(), user.getId());
+    for (int i = 1; i <= 10; i++) {
+      Exhibit exhibitTest = exhibitRepository.save(
+          Exhibit.create(String.format("test-%d", i), LocalDate.now(), defaultCategory,
+              user));
+      exhibitTest.publish();
+      artworkService.createBatch(imageUriList, exhibitTest.getId(), user.getId());
+    }
+
+    exhibitService.updatePostPinType(user.getId(), exhibit.getId(), false, true);
+    exhibitService.updatePostPinType(user.getId(), exhibit.getId(), true, true);
+
+    Page<PostInfoByCategoryDto> results = exhibitService.getExhibitThumbnailByCategory(user.getId(),
+        defaultCategory.getId(), 0, 5);
+
+    assertThat(exhibit.getPinType()).isEqualTo(PinType.BOTH);
+    assertThat(results.getSize()).isEqualTo(5);
+    assertThat(results.getTotalPages()).isEqualTo(3);
+    assertThat(results.getTotalElements()).isEqualTo(11);
+    assertThat(results.getNumber()).isEqualTo(0);
+    assertThat(results.getContent().get(0).getId()).isNotEqualTo(exhibit.getId());
+    assertThat(results.getContent().get(0).getName()).isEqualTo("test-10");
   }
 }
 

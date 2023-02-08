@@ -160,6 +160,16 @@ public class ExhibitService {
     }
   }
 
+  public Page<PostInfoByCategoryDto> getExhibitThumbnailByCategory(Long userId, Long categoryId,
+      int page, int size) {
+
+    Category category = categoryService.findCategoryWithUser(categoryId, userId);
+    return exhibitRepository.findExhibitByCategoryAsPage(
+            PageRequest.of(page, size, JpaSort.by(Direction.DESC, "createdAt")),
+            findUser(userId), category)
+        .map(this::buildPostInfoByCategoryDto);
+  }
+
   private User findUser(Long userId) {
     return userService.findById(userId);
   }
@@ -199,6 +209,11 @@ public class ExhibitService {
         .categoryName(exhibit.getCategory().getName())
         .mainImage(imageUri)
         .build();
+  }
+
+  private PostInfoByCategoryDto buildPostInfoByCategoryDto(Exhibit exhibit) {
+    return new PostInfoByCategoryDto(exhibit.getId(), exhibit.contents().getName(),
+        getMainImageUri(exhibit));
   }
 
   private void setExhibitPin(boolean categoryType, Exhibit exhibit) {

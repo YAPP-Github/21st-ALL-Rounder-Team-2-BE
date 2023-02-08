@@ -7,6 +7,8 @@ import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfoPage;
+import com.yapp.artie.domain.archive.dto.exhibit.PostInfoByCategoryDto;
+import com.yapp.artie.domain.archive.dto.exhibit.PostInfoByCategoryDtoPage;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
 import com.yapp.artie.domain.archive.service.ExhibitService;
@@ -273,6 +275,26 @@ public class ExhibitController {
     Long userId = getUserId(authentication);
     exhibitService.updatePostPinType(userId, exhibitId, categoryType, pinned);
     return ResponseEntity.noContent().build();
+  }
+
+  @Operation(summary = "카테고리별 전시 목록 조회(카테고리 페이지)", description = "카테고리 페이지에서 카테고리별 전시 목록을 조회할 때, 상단 고정 설정이 반영되지 않은 전시 목록 조회")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200", description = "카테고리별 전시 목록 반환", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostInfoByCategoryDtoPage.class)))
+  })
+  @GetMapping("/post/category/{id}")
+  public ResponseEntity<Page<PostInfoByCategoryDto>> getExhibitThumbnailByCategory(
+      Authentication authentication,
+      @Parameter(name = "page", description = "페이지네이션의 페이지 넘버. 0부터 시작함", in = ParameterIn.QUERY)
+      @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+      @Parameter(name = "size", description = "페이지네이션의 페이지당 데이터 수", in = ParameterIn.QUERY)
+      @RequestParam(value = "size", required = false, defaultValue = "20") int size,
+      @Parameter(name = "id", description = "카테고리 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long categoryId
+  ) {
+
+    Long userId = getUserId(authentication);
+    return ResponseEntity.ok(
+        exhibitService.getExhibitThumbnailByCategory(userId, categoryId, page, size));
   }
 
   // TODO : 앱 배포했을 때에는 1L 대신에 exception을 던지도록 변경해야 합니다.
