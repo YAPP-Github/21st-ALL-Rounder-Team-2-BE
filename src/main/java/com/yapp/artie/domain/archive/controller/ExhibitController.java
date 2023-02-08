@@ -27,7 +27,6 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -121,10 +120,10 @@ public class ExhibitController {
       @Parameter(name = "direction", description = "페이지네이션의 정렬기준. DESC=최신순, ASC=오래된순", in = ParameterIn.QUERY)
       @RequestParam(name = "direction", required = false, defaultValue = "DESC") Direction direction,
       @PathVariable("id") Long id) {
-    
+
     Long userId = getUserId(authentication);
-    Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(id, userId,
-        PageRequest.of(page, size), direction);
+    Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(id, userId, page, size,
+        direction);
 
     return ResponseEntity.ok().body(pageResult);
   }
@@ -147,8 +146,8 @@ public class ExhibitController {
       @RequestParam(name = "direction", required = false, defaultValue = "DESC") Direction direction) {
 
     Long userId = getUserId(authentication);
-    Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(null, userId,
-        PageRequest.of(page, size), direction);
+    Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(null, userId, page, size,
+        direction);
 
     return ResponseEntity.ok().body(pageResult);
   }

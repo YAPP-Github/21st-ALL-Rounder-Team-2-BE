@@ -8,6 +8,7 @@ import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalenderQueryResultDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
+import com.yapp.artie.domain.archive.dto.exhibit.PostInfoByCategoryDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
 import com.yapp.artie.domain.archive.exception.ExhibitNotFoundException;
@@ -25,7 +26,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
@@ -62,28 +63,29 @@ public class ExhibitService {
     return exhibitRepository.findDraftExhibitDto(findUser(userId));
   }
 
-  public Page<PostDetailInfo> getExhibitByPage(Long categoryId, Long userId, Pageable pageable,
+  public Page<PostDetailInfo> getExhibitByPage(Long categoryId, Long userId, int page, int size,
       Direction direction) {
     if (categoryId != null) {
-      return getExhibitByCategoryAsPage(categoryId, userId, pageable, direction);
+      return getExhibitByCategoryAsPage(categoryId, userId, page, size, direction);
     }
 
     JpaSort sort = JpaSort.unsafe(Direction.ASC,
             "case when e.pinType in ('BOTH','HOME') then 1 else 2 end")
         .andUnsafe(direction, "createdAt");
-    return exhibitRepository.findExhibitAsPage(pageable, findUser(userId), sort)
+    return exhibitRepository.findExhibitAsPage(
+            PageRequest.of(page, size, sort), findUser(userId))
         .map(exhibit -> buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit)));
   }
 
   public Page<PostDetailInfo> getExhibitByCategoryAsPage(Long categoryId, Long userId,
-      Pageable pageable,
-      Direction direction) {
+      int page, int size, Direction direction) {
 
     Category category = categoryService.findCategoryWithUser(categoryId, userId);
     JpaSort sort = JpaSort.unsafe(Direction.ASC,
             "case when e.pinType in ('BOTH','CATEGORY') then 1 else 2 end")
         .andUnsafe(direction, "createdAt");
-    return exhibitRepository.findExhibitByCategoryAsPage(pageable, findUser(userId), category, sort)
+    return exhibitRepository.findExhibitByCategoryAsPage(PageRequest.of(page, size, sort),
+            findUser(userId), category)
         .map(exhibit -> buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit)));
   }
 

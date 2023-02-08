@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -38,7 +37,7 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
           + "and e.publication.isPublished = true",
       countQuery = "select count(e.id) from Exhibit e"
   )
-  Page<Exhibit> findExhibitAsPage(Pageable pageable, @Param("user") User user, JpaSort sort);
+  Page<Exhibit> findExhibitAsPage(Pageable pageable, @Param("user") User user);
 
   @Query(
       value = "select e from Exhibit e "
@@ -48,7 +47,7 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
       countQuery = "select count(e.id) from Exhibit e"
   )
   Page<Exhibit> findExhibitByCategoryAsPage(Pageable pageable, @Param("user") User user,
-      @Param("category") Category category, JpaSort sort);
+      @Param("category") Category category);
 
   @Query(value = " SELECT p.post_date as date, p.post_id, p.post_num, image. `uri` FROM "
       + "( SELECT post_date, min(id) AS post_id, count(*) post_num FROM post "

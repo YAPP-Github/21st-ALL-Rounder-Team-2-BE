@@ -12,6 +12,7 @@ import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
+import com.yapp.artie.domain.archive.dto.exhibit.PostInfoByCategoryDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
 import com.yapp.artie.domain.archive.exception.ExhibitAlreadyPublishedException;
@@ -31,7 +32,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -310,8 +310,7 @@ class ExhibitServiceTest {
     exhibitService.updatePostPinType(user.getId(), exhibit.getId(), true, true);
 
     Page<PostDetailInfo> results = exhibitService.getExhibitByPage(defaultCategory.getId(),
-        user.getId(), PageRequest.of(0, 5),
-        Direction.DESC);
+        user.getId(), 0, 5, Direction.DESC);
 
     assertThat(exhibit.getPinType()).isEqualTo(PinType.BOTH);
     assertThat(results.getSize()).isEqualTo(5);
@@ -340,7 +339,7 @@ class ExhibitServiceTest {
     exhibitService.updatePostPinType(user.getId(), exhibit.getId(), true, true);
 
     Page<PostDetailInfo> results = exhibitService.getExhibitByPage(null, user.getId(),
-        PageRequest.of(0, 5), Direction.DESC);
+        0, 5, Direction.DESC);
 
     assertThat(exhibit.getPinType()).isEqualTo(PinType.BOTH);
     assertThat(results.getSize()).isEqualTo(5);
