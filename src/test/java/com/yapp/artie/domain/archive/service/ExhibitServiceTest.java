@@ -291,7 +291,6 @@ class ExhibitServiceTest {
   @Test
   public void getExhibitByPage_상단고정포함_카테고리_전시목록() {
     User user = createUser("user", "tu");
-    int cnt = exhibitRepository.findAll().size();
     Category defaultCategory = categoryService.findCategoryWithUser(
         categoryService.categoriesOf(user.getId()).get(0).getId(), user.getId());
     Exhibit exhibit = exhibitRepository.save(
@@ -322,7 +321,6 @@ class ExhibitServiceTest {
   @Test
   public void getExhibitByPage_상단고정포함_전체_전시목록() {
     User user = createUser("user", "tu");
-    int cnt = exhibitRepository.findAll().size();
     Category defaultCategory = categoryService.findCategoryWithUser(
         categoryService.categoriesOf(user.getId()).get(0).getId(), user.getId());
     Exhibit exhibit = exhibitRepository.save(
@@ -337,9 +335,8 @@ class ExhibitServiceTest {
     exhibitService.updatePostPinType(user.getId(), exhibit.getId(), false, true);
     exhibitService.updatePostPinType(user.getId(), exhibit.getId(), true, true);
 
-    Page<PostDetailInfo> results = exhibitService.getExhibitByPage(defaultCategory.getId(),
-        user.getId(), PageRequest.of(0, 5),
-        Direction.DESC);
+    Page<PostDetailInfo> results = exhibitService.getExhibitByPage(null, user.getId(),
+        PageRequest.of(0, 5), Direction.DESC);
 
     assertThat(exhibit.getPinType()).isEqualTo(PinType.BOTH);
     assertThat(results.getSize()).isEqualTo(5);
