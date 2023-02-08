@@ -214,7 +214,7 @@ class ExhibitServiceTest {
   }
 
   @Test
-  public void updatePostPinType_전체기록_상단_설정_BOTH_TO_HOME() {
+  public void updatePostPinType_전체기록_상단_설정_BOTH_TO_ALL() {
     User user = createUser("user", "tu");
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
@@ -230,7 +230,7 @@ class ExhibitServiceTest {
     Optional<Exhibit> exhibit1 = exhibitRepository.findExhibitEntityGraphById(exhibitId1);
     Optional<Exhibit> exhibit2 = exhibitRepository.findExhibitEntityGraphById(exhibitId2);
     assertThat(exhibit1.isPresent()).isTrue();
-    assertThat(exhibit1.get().getPinType()).isEqualTo(PinType.HOME);
+    assertThat(exhibit1.get().getPinType()).isEqualTo(PinType.ALL);
     assertThat(exhibit2.isPresent()).isTrue();
     assertThat(exhibit2.get().getPinType()).isEqualTo(PinType.CATEGORY);
   }
@@ -289,7 +289,7 @@ class ExhibitServiceTest {
 
     Optional<Exhibit> exhibit1 = exhibitRepository.findExhibitEntityGraphById(exhibitId1);
     assertThat(exhibit1.isPresent()).isTrue();
-    assertThat(exhibit1.get().getPinType()).isEqualTo(PinType.HOME);
+    assertThat(exhibit1.get().getPinType()).isEqualTo(PinType.ALL);
   }
 
   @Test

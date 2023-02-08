@@ -70,7 +70,7 @@ public class ExhibitService {
     }
 
     JpaSort sort = JpaSort.unsafe(Direction.ASC,
-            "case when e.pinType in ('BOTH','HOME') then 1 else 2 end")
+            "case when e.pinType in ('BOTH','ALL') then 1 else 2 end")
         .andUnsafe(direction, "createdAt");
     return exhibitRepository.findExhibitAsPage(
             PageRequest.of(page, size, sort), findUser(userId))
@@ -225,16 +225,16 @@ public class ExhibitService {
           exhibit.getCategory(),
           new PinType[]{PinType.BOTH, PinType.CATEGORY});
       pinnedExhibit.ifPresent(value -> value.updatePinType(value
-          .getPinType() == PinType.BOTH ? PinType.HOME : PinType.NONE));
+          .getPinType() == PinType.BOTH ? PinType.ALL : PinType.NONE));
 
-      newPinType = exhibit.getPinType() == PinType.HOME ? PinType.BOTH : PinType.CATEGORY;
+      newPinType = exhibit.getPinType() == PinType.ALL ? PinType.BOTH : PinType.CATEGORY;
     } else {
       Optional<Exhibit> pinnedExhibit = exhibitRepository.findPinnedExhibit(
-          new PinType[]{PinType.BOTH, PinType.HOME});
+          new PinType[]{PinType.BOTH, PinType.ALL});
       pinnedExhibit.ifPresent(value -> value.updatePinType(value
           .getPinType() == PinType.BOTH ? PinType.CATEGORY : PinType.NONE));
 
-      newPinType = exhibit.getPinType() == PinType.CATEGORY ? PinType.BOTH : PinType.HOME;
+      newPinType = exhibit.getPinType() == PinType.CATEGORY ? PinType.BOTH : PinType.ALL;
     }
     exhibit.updatePinType(newPinType);
   }
@@ -242,7 +242,7 @@ public class ExhibitService {
   private void setExhibitNotPin(boolean categoryType, Exhibit exhibit) {
     PinType newPinType;
     if (categoryType) {
-      newPinType = exhibit.getPinType() == PinType.BOTH ? PinType.HOME : PinType.NONE;
+      newPinType = exhibit.getPinType() == PinType.BOTH ? PinType.ALL : PinType.NONE;
     } else {
       newPinType = exhibit.getPinType() == PinType.BOTH ? PinType.CATEGORY : PinType.NONE;
     }
