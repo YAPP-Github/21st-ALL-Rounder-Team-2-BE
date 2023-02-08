@@ -100,9 +100,7 @@ public class ExhibitController {
   }
 
   @Operation(summary = "홈 화면 전시 조회(특정 카테고리)", description =
-      "저장된 전시 중 페이지네이션을 이용해 값을 가져온다. 이곳의 id는 category id를 의미하며 "
-          + "size의 기본값은 20이다. sort는 기본값이 최신 순이고, ?sort=contents.date,ASC 는 오래된 순이다. "
-          + "오래된 순의 예시처럼 콤마를 기준으로 [<정렬 컬럼>,<정렬 타입 형식>]으로 쿼리 파라미터를 전달해야 한다."
+      "해당 API는 [GET] /post/home API와 통합되어, deprecated될 예정입니다. "
   )
   @ApiResponses(value = {
       @ApiResponse(
@@ -128,11 +126,11 @@ public class ExhibitController {
     return ResponseEntity.ok().body(pageResult);
   }
 
-  @Operation(summary = "홈 화면 전시 조회(전체 기록)", description = "용례는 홈 화면 전시 조회(특정 카테고리)와 같다.")
+  @Operation(summary = "홈 화면 전시 조회(전체 기록/특정 카테고리)", description = "홈 화면의 전체 기록 혹은 특정 카테고리 별, 상단 고정 설정을 반영한 전시 목록 조회")
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "200",
-          description = "홈 화면 전시 목록(전체 기록)이 성공적으로 조회됨",
+          description = "홈 화면 전시 목록이 성공적으로 조회됨",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDetailInfoPage.class))),
   })
   @GetMapping("/home")
@@ -143,10 +141,14 @@ public class ExhibitController {
       @Parameter(name = "page", description = "페이지네이션의 페이지 넘버. 0부터 시작함", in = ParameterIn.QUERY)
       @RequestParam(value = "page", required = false, defaultValue = "0") int page,
       @Parameter(name = "direction", description = "페이지네이션의 정렬기준. DESC=최신순, ASC=오래된순", in = ParameterIn.QUERY)
-      @RequestParam(name = "direction", required = false, defaultValue = "DESC") Direction direction) {
+      @RequestParam(name = "direction", required = false, defaultValue = "DESC") Direction direction,
+      @Parameter(name = "category", description = "카테고리 ID. 홈 화면의 카테고리별 전시 목록 조회시 해당 파라미터를 입력해야함.", in = ParameterIn.QUERY)
+      @RequestParam(name = "category", required = false) Long categoryId
+  ) {
 
     Long userId = getUserId(authentication);
-    Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(null, userId, page, size,
+    Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(categoryId, userId, page,
+        size,
         direction);
 
     return ResponseEntity.ok().body(pageResult);
