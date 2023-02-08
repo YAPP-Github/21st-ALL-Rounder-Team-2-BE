@@ -119,9 +119,10 @@ public class ExhibitController {
       @Parameter(name = "direction", description = "페이지네이션의 정렬기준. DESC=최신순, ASC=오래된순", in = ParameterIn.QUERY)
       @RequestParam(name = "direction", required = false, defaultValue = "DESC") Direction direction,
       @PathVariable("id") Long id) {
+    
     Long userId = getUserId(authentication);
     Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(id, userId,
-        PageRequest.of(page, size, direction, "contents.date"));
+        PageRequest.of(page, size), direction);
 
     return ResponseEntity.ok().body(pageResult);
   }

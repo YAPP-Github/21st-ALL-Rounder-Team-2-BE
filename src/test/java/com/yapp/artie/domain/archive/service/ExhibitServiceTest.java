@@ -3,6 +3,7 @@ package com.yapp.artie.domain.archive.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.archive.domain.exhibit.PinType;
 import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
@@ -10,10 +11,12 @@ import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
+import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
 import com.yapp.artie.domain.archive.exception.ExhibitAlreadyPublishedException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
+import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
@@ -26,6 +29,9 @@ import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
@@ -43,6 +49,9 @@ class ExhibitServiceTest {
 
   @Autowired
   ExhibitRepository exhibitRepository;
+
+  @Autowired
+  CategoryRepository categoryRepository;
 
   @Autowired
   ExhibitService exhibitService;
@@ -277,6 +286,68 @@ class ExhibitServiceTest {
     Optional<Exhibit> exhibit1 = exhibitRepository.findExhibitEntityGraphById(exhibitId1);
     assertThat(exhibit1.isPresent()).isTrue();
     assertThat(exhibit1.get().getPinType()).isEqualTo(PinType.HOME);
+  }
+
+  @Test
+  public void getExhibitByPage_상단고정포함_카테고리_전시목록() {
+    User user = createUser("user", "tu");
+    int cnt = exhibitRepository.findAll().size();
+    Category defaultCategory = categoryService.findCategoryWithUser(
+        categoryService.categoriesOf(user.getId()).get(0).getId(), user.getId());
+    Exhibit exhibit = exhibitRepository.save(
+        Exhibit.create("test-0", LocalDate.now(), defaultCategory,
+            user));
+    exhibit.publish();
+    for (int i = 1; i <= 10; i++) {
+      exhibitRepository.save(
+          Exhibit.create(String.format("test-%d", i), LocalDate.now(), defaultCategory,
+              user)).publish();
+    }
+    exhibitService.updatePostPinType(user.getId(), exhibit.getId(), false, true);
+    exhibitService.updatePostPinType(user.getId(), exhibit.getId(), true, true);
+
+    Page<PostDetailInfo> results = exhibitService.getExhibitByPage(defaultCategory.getId(),
+        user.getId(), PageRequest.of(0, 5),
+        Direction.DESC);
+
+    assertThat(exhibit.getPinType()).isEqualTo(PinType.BOTH);
+    assertThat(results.getSize()).isEqualTo(5);
+    assertThat(results.getTotalPages()).isEqualTo(3);
+    assertThat(results.getTotalElements()).isEqualTo(11);
+    assertThat(results.getNumber()).isEqualTo(0);
+    assertThat(results.getContent().get(0).getId()).isEqualTo(exhibit.getId());
+    assertThat(results.getContent().get(0).getName()).isEqualTo(exhibit.contents().getName());
+  }
+
+  @Test
+  public void getExhibitByPage_상단고정포함_전체_전시목록() {
+    User user = createUser("user", "tu");
+    int cnt = exhibitRepository.findAll().size();
+    Category defaultCategory = categoryService.findCategoryWithUser(
+        categoryService.categoriesOf(user.getId()).get(0).getId(), user.getId());
+    Exhibit exhibit = exhibitRepository.save(
+        Exhibit.create("test-0", LocalDate.now(), defaultCategory,
+            user));
+    exhibit.publish();
+    for (int i = 1; i <= 10; i++) {
+      exhibitRepository.save(
+          Exhibit.create(String.format("test-%d", i), LocalDate.now(), defaultCategory,
+              user)).publish();
+    }
+    exhibitService.updatePostPinType(user.getId(), exhibit.getId(), false, true);
+    exhibitService.updatePostPinType(user.getId(), exhibit.getId(), true, true);
+
+    Page<PostDetailInfo> results = exhibitService.getExhibitByPage(defaultCategory.getId(),
+        user.getId(), PageRequest.of(0, 5),
+        Direction.DESC);
+
+    assertThat(exhibit.getPinType()).isEqualTo(PinType.BOTH);
+    assertThat(results.getSize()).isEqualTo(5);
+    assertThat(results.getTotalPages()).isEqualTo(3);
+    assertThat(results.getTotalElements()).isEqualTo(11);
+    assertThat(results.getNumber()).isEqualTo(0);
+    assertThat(results.getContent().get(0).getId()).isEqualTo(exhibit.getId());
+    assertThat(results.getContent().get(0).getName()).isEqualTo(exhibit.contents().getName());
   }
 }
 

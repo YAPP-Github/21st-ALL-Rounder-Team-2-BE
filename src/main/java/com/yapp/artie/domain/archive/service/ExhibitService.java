@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,9 +62,13 @@ public class ExhibitService {
     return exhibitRepository.findDraftExhibitDto(findUser(userId));
   }
 
-  public Page<PostDetailInfo> getExhibitByPage(Long id, Long userId, Pageable pageable) {
-    Category category = categoryService.findCategoryWithUser(id, userId);
-    return exhibitRepository.findCategoryExhibitPageBy(pageable, findUser(userId), category)
+  public Page<PostDetailInfo> getExhibitByPage(Long categoryId, Long userId, Pageable pageable,
+      Direction direction) {
+    Category category = categoryService.findCategoryWithUser(categoryId, userId);
+    JpaSort sort = JpaSort.unsafe(Direction.ASC,
+            "case when e.pinType in ('BOTH','CATEGORY') then 1 else 2 end")
+        .andUnsafe(direction, "createdAt");
+    return exhibitRepository.findCategoryExhibitPageBy(pageable, findUser(userId), category, sort)
         .map(exhibit -> buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit)));
   }
 
