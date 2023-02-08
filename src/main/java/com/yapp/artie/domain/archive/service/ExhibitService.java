@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
@@ -69,23 +70,19 @@ public class ExhibitService {
       return getExhibitByCategoryAsPage(categoryId, userId, page, size, direction);
     }
 
-    JpaSort sort = JpaSort.unsafe(Direction.ASC,
-            "case when e.pinType in ('BOTH','ALL') then 1 else 2 end")
-        .andUnsafe(direction, "createdAt");
-    return exhibitRepository.findExhibitAsPage(
-            PageRequest.of(page, size, sort), findUser(userId))
+    Pageable pageable = PageRequest.of(page, size, getSortCondition(PinType.ALL, direction));
+    return exhibitRepository
+        .findExhibitAsPage(pageable, findUser(userId))
         .map(exhibit -> buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit)));
   }
 
-  public Page<PostDetailInfo> getExhibitByCategoryAsPage(Long categoryId, Long userId,
+  private Page<PostDetailInfo> getExhibitByCategoryAsPage(Long categoryId, Long userId,
       int page, int size, Direction direction) {
 
     Category category = categoryService.findCategoryWithUser(categoryId, userId);
-    JpaSort sort = JpaSort.unsafe(Direction.ASC,
-            "case when e.pinType in ('BOTH','CATEGORY') then 1 else 2 end")
-        .andUnsafe(direction, "createdAt");
-    return exhibitRepository.findExhibitByCategoryAsPage(PageRequest.of(page, size, sort),
-            findUser(userId), category)
+    Pageable pageable = PageRequest.of(page, size, getSortCondition(PinType.CATEGORY, direction));
+    return exhibitRepository
+        .findExhibitByCategoryAsPage(pageable, findUser(userId), category)
         .map(exhibit -> buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit)));
   }
 
@@ -247,5 +244,11 @@ public class ExhibitService {
       newPinType = exhibit.getPinType() == PinType.BOTH ? PinType.CATEGORY : PinType.NONE;
     }
     exhibit.updatePinType(newPinType);
+  }
+  
+  private JpaSort getSortCondition(PinType pinType, Direction direction) {
+    return JpaSort.unsafe(Direction.ASC,
+            String.format("case when e.pinType in ('BOTH','%s') then 1 else 2 end", pinType))
+        .andUnsafe(direction, "createdAt");
   }
 }
