@@ -47,7 +47,7 @@
 
 ## 5. 실행
 
-데이터베이스 실행 :
+### 5.1 데이터베이스 실행 :
 
 ```shell
 # mysql 실행
@@ -61,23 +61,34 @@ $ cd docker
 $ docker-compose down
 ```
 
-profile 환경변수 설정 :
+### 5.2 profile 환경변수 설정 :
 
 1. 인텔리제이 메뉴 Run > Edit Configurations 설정 접속 혹은 스크린 샷과 같이 접속
    <img width="863" alt="스크린샷 2023-01-07 오후 4 06 05" src="https://user-images.githubusercontent.com/42285463/211137975-87d0e79c-7f8b-4640-9eae-0ad03d68fef5.png">
 2. Active profiles에 develop 입력 ( 개발용의 경우 develop, production의 경우 prod 입력 )
    <img width="1042" alt="스크린샷 2023-01-07 오후 4 07 21" src="https://user-images.githubusercontent.com/42285463/211138359-e071c6ff-6fa5-432e-87e0-101e759b6037.png">
 
-환경 변수 추가 및 변경 시 ( production ) :
+### 5.3 환경 변수 추가 및 변경 시 ( production ) :
 
 - application-dev.yml에 해당하는 환경변수를 추가하고, 환경변수 구조 파악을 위하여 application-prod.yml에 추가되는 환경변수의 이름을 추가.
 - 실제 환경변수 값이 포함된 application-prod.yml을 base 64로 인코딩하여 Github Secrets에 업데이트
 
-인텔리제이에 환경변수 추가 :
+### 5.4 인텔리제이에 환경변수 추가 :
 
 1. 인텔리제이 메뉴 Run > Edit Configurations 설정 접속 ( profile 환경변수 설정 섹션 참고 )
 2. Modify Options > Environment Variables 체크
 3. 해당하는 환경변수 추가
+
+### 5.5 테스트 시 환경변수를 템플릿으로 설정 :
+
+테스트를 수행할 때마다, 환경변수를 설정하는 작업을, 인텔리제이에서 템플릿으로 설정하면 테스트마다 설정하지 않아도 됩니다.
+
+1. 인텔리제이 메뉴 Run > Edit Configurations 설정 접속 혹은 스크린 샷과 같이 접속
+   <img width="863" alt="스크린샷 2023-01-07 오후 4 06 05" src="https://user-images.githubusercontent.com/42285463/211137975-87d0e79c-7f8b-4640-9eae-0ad03d68fef5.png">
+2. 좌측 하단 Edit configuration templates 클릭
+   ![스크린샷 2023-02-08 오후 4 34 00](https://user-images.githubusercontent.com/42285463/217463831-b6ff6405-ffd6-4783-83c4-30db0bdfa8f0.png)
+3. JUnit을 선택한 후, 테스트 실행시와 동일한 설정값을 입력하고, 환경변수 입력한다. 그리고 테스트 설정을 설정할 범위를 'All in directory'에 명세한다.
+   ![스크린샷 2023-02-08 오후 4 34 47](https://user-images.githubusercontent.com/42285463/217464007-55927e00-94db-41bb-b1f7-56de17f3358e.png)
 
 ## 6. 배포
 
