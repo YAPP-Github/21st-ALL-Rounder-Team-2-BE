@@ -9,7 +9,7 @@ spring:
       hibernate:
         auto_quote_keyword: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: create-drop
 
 logging:
   level:
