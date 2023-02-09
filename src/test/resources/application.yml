@@ -9,9 +9,23 @@ spring:
       hibernate:
         auto_quote_keyword: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
 
 logging:
   level:
     org.hibernate.sql: debug
     org.hibernate.type: trace
+
+cloud:
+  aws:
+    credentials:
+      secret-key: ${AWS_SECRET_ACCESS_KEY}
+      access-key: ${AWS_ACCESS_KEY_ID}
+    s3:
+      bucket: ${AWS_S3_BUCKET}
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    cloudfront:
+      domain: ${AWS_CDN_DOMAIN}

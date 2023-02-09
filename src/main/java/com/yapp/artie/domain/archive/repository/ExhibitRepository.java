@@ -2,6 +2,7 @@ package com.yapp.artie.domain.archive.repository;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
+import com.yapp.artie.domain.archive.domain.exhibit.PinType;
 import com.yapp.artie.domain.archive.dto.exhibit.CalenderQueryResultDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.user.domain.User;
@@ -37,7 +38,7 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
           + "and e.publication.isPublished = true",
       countQuery = "select count(e.id) from Exhibit e"
   )
-  Page<Exhibit> findCategoryExhibitPageBy(Pageable pageable, @Param("user") User user,
+  Page<Exhibit> findExhibitByCategoryAsPage(Pageable pageable, @Param("user") User user,
       @Param("category") Category category);
 
   @Query(
@@ -46,7 +47,7 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
           + "and e.publication.isPublished = true",
       countQuery = "select count(e.id) from Exhibit e"
   )
-  Page<Exhibit> findAllExhibitPageBy(Pageable pageable, @Param("user") User user);
+  Page<Exhibit> findExhibitAsPage(Pageable pageable, @Param("user") User user);
 
   @Query(value = " SELECT p.post_date as date, p.post_id, p.post_num, image. `uri` FROM "
       + "( SELECT post_date, min(id) AS post_id, count(*) post_num FROM post "
@@ -56,4 +57,10 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
       , nativeQuery = true)
   List<CalenderQueryResultDto> findExhibitAsCalenderByDay(@Param("start") LocalDate start,
       @Param("end") LocalDate end, @Param("user_id") Long userId);
+
+  @Query("SELECT e FROM Exhibit e WHERE e.pinType IN :types AND e.category = :category")
+  Optional<Exhibit> findPinnedExhibitWithCategory(Category category, PinType[] types);
+
+  @Query("SELECT e FROM Exhibit e WHERE e.pinType IN :types")
+  Optional<Exhibit> findPinnedExhibit(PinType[] types);
 }

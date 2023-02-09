@@ -7,6 +7,8 @@ import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfoPage;
+import com.yapp.artie.domain.archive.dto.exhibit.PostInfoByCategoryDto;
+import com.yapp.artie.domain.archive.dto.exhibit.PostInfoByCategoryDtoPage;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
 import com.yapp.artie.domain.archive.service.ExhibitService;
@@ -25,13 +27,13 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -98,9 +100,7 @@ public class ExhibitController {
   }
 
   @Operation(summary = "홈 화면 전시 조회(특정 카테고리)", description =
-      "저장된 전시 중 페이지네이션을 이용해 값을 가져온다. 이곳의 id는 category id를 의미하며 "
-          + "size의 기본값은 20이다. sort는 기본값이 최신 순이고, ?sort=contents.date,ASC 는 오래된 순이다. "
-          + "오래된 순의 예시처럼 콤마를 기준으로 [<정렬 컬럼>,<정렬 타입 형식>]으로 쿼리 파라미터를 전달해야 한다."
+      "해당 API는 [GET] /post/home API와 통합되어, deprecated될 예정입니다. "
   )
   @ApiResponses(value = {
       @ApiResponse(
@@ -118,18 +118,19 @@ public class ExhibitController {
       @Parameter(name = "direction", description = "페이지네이션의 정렬기준. DESC=최신순, ASC=오래된순", in = ParameterIn.QUERY)
       @RequestParam(name = "direction", required = false, defaultValue = "DESC") Direction direction,
       @PathVariable("id") Long id) {
+
     Long userId = getUserId(authentication);
-    Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(id, userId,
-        PageRequest.of(page, size, direction, "contents.date"));
+    Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(id, userId, page, size,
+        direction);
 
     return ResponseEntity.ok().body(pageResult);
   }
 
-  @Operation(summary = "홈 화면 전시 조회(전체 기록)", description = "용례는 홈 화면 전시 조회(특정 카테고리)와 같다.")
+  @Operation(summary = "홈 화면 전시 조회(전체 기록/특정 카테고리)", description = "홈 화면의 전체 기록 혹은 특정 카테고리 별, 상단 고정 설정을 반영한 전시 목록 조회")
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "200",
-          description = "홈 화면 전시 목록(전체 기록)이 성공적으로 조회됨",
+          description = "홈 화면 전시 목록이 성공적으로 조회됨",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostDetailInfoPage.class))),
   })
   @GetMapping("/home")
@@ -140,11 +141,15 @@ public class ExhibitController {
       @Parameter(name = "page", description = "페이지네이션의 페이지 넘버. 0부터 시작함", in = ParameterIn.QUERY)
       @RequestParam(value = "page", required = false, defaultValue = "0") int page,
       @Parameter(name = "direction", description = "페이지네이션의 정렬기준. DESC=최신순, ASC=오래된순", in = ParameterIn.QUERY)
-      @RequestParam(name = "direction", required = false, defaultValue = "DESC") Direction direction) {
+      @RequestParam(name = "direction", required = false, defaultValue = "DESC") Direction direction,
+      @Parameter(name = "category", description = "카테고리 ID. 홈 화면의 카테고리별 전시 목록 조회시 해당 파라미터를 입력해야함.", in = ParameterIn.QUERY)
+      @RequestParam(name = "category", required = false) Long categoryId
+  ) {
 
     Long userId = getUserId(authentication);
-    Page<PostDetailInfo> pageResult = exhibitService.getAllExhibitByPage(userId,
-        PageRequest.of(page, size, direction, "contents.date"));
+    Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(categoryId, userId, page,
+        size,
+        direction);
 
     return ResponseEntity.ok().body(pageResult);
   }
@@ -247,6 +252,50 @@ public class ExhibitController {
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long id) {
     Long userId = getUserId(authentication);
     return ResponseEntity.ok().body(exhibitService.getDetailExhibitInformation(id, userId));
+  }
+
+  @Operation(summary = "전시 상단 고정 설정", description = "특정 전시를 홈페이지에서 전체 기록 혹은 특정 카테고리에 대해 상단에 고정되어 조회할 수 있도록 설정")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "204",
+          description = "성공적으로 상단 고정 설정됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))),
+  })
+  @PatchMapping("/pin")
+  public ResponseEntity<? extends HttpEntity> updatePostPinType(
+      Authentication authentication,
+      @Parameter(name = "id", description = "전시 ID", in = ParameterIn.QUERY)
+      @RequestParam(value = "id", required = true) Long exhibitId,
+      @Parameter(name = "category", description = "카테고리에 고정하는지의 여부. "
+          + "true일 경우, 해당 전시의 카테고리 상단 고정으로, false일 경우 전체 기록의 상단 고정 설정으로 처리",
+          in = ParameterIn.QUERY)
+      @RequestParam(value = "category", required = true, defaultValue = "true") boolean categoryType,
+      @Parameter(name = "pinned", description = "고정 여부. 고정하도록 설정한다면 true, 고정 해제하도록 설정한다면 false", in = ParameterIn.QUERY)
+      @RequestParam(value = "pinned", required = true, defaultValue = "true") boolean pinned
+  ) {
+    Long userId = getUserId(authentication);
+    exhibitService.updatePostPinType(userId, exhibitId, categoryType, pinned);
+    return ResponseEntity.noContent().build();
+  }
+
+  @Operation(summary = "카테고리별 전시 목록 조회(카테고리 페이지)", description = "카테고리 페이지에서 카테고리별 전시 목록을 조회할 때, 상단 고정 설정이 반영되지 않은 전시 목록 조회")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200", description = "카테고리별 전시 목록 반환", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostInfoByCategoryDtoPage.class)))
+  })
+  @GetMapping("/post/category/{id}")
+  public ResponseEntity<Page<PostInfoByCategoryDto>> getExhibitThumbnailByCategory(
+      Authentication authentication,
+      @Parameter(name = "page", description = "페이지네이션의 페이지 넘버. 0부터 시작함", in = ParameterIn.QUERY)
+      @RequestParam(value = "page", required = false, defaultValue = "0") int page,
+      @Parameter(name = "size", description = "페이지네이션의 페이지당 데이터 수", in = ParameterIn.QUERY)
+      @RequestParam(value = "size", required = false, defaultValue = "20") int size,
+      @Parameter(name = "id", description = "카테고리 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long categoryId
+  ) {
+
+    Long userId = getUserId(authentication);
+    return ResponseEntity.ok(
+        exhibitService.getExhibitThumbnailByCategory(userId, categoryId, page, size));
   }
 
   // TODO : 앱 배포했을 때에는 1L 대신에 exception을 던지도록 변경해야 합니다.

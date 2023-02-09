@@ -2,11 +2,13 @@ package com.yapp.artie.domain.archive.service;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
+import com.yapp.artie.domain.archive.domain.exhibit.PinType;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalenderQueryResultDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
+import com.yapp.artie.domain.archive.dto.exhibit.PostInfoByCategoryDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
 import com.yapp.artie.domain.archive.exception.ExhibitNotFoundException;
@@ -20,10 +22,14 @@ import com.yapp.artie.global.util.S3Utils;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.JpaSort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,14 +64,25 @@ public class ExhibitService {
     return exhibitRepository.findDraftExhibitDto(findUser(userId));
   }
 
-  public Page<PostDetailInfo> getExhibitByPage(Long id, Long userId, Pageable pageable) {
-    Category category = categoryService.findCategoryWithUser(id, userId);
-    return exhibitRepository.findCategoryExhibitPageBy(pageable, findUser(userId), category)
+  public Page<PostDetailInfo> getExhibitByPage(Long categoryId, Long userId, int page, int size,
+      Direction direction) {
+    if (categoryId != null) {
+      return getExhibitByCategoryAsPage(categoryId, userId, page, size, direction);
+    }
+
+    Pageable pageable = PageRequest.of(page, size, getSortCondition(PinType.ALL, direction));
+    return exhibitRepository
+        .findExhibitAsPage(pageable, findUser(userId))
         .map(exhibit -> buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit)));
   }
 
-  public Page<PostDetailInfo> getAllExhibitByPage(Long userId, Pageable pageable) {
-    return exhibitRepository.findAllExhibitPageBy(pageable, findUser(userId))
+  private Page<PostDetailInfo> getExhibitByCategoryAsPage(Long categoryId, Long userId,
+      int page, int size, Direction direction) {
+
+    Category category = categoryService.findCategoryWithUser(categoryId, userId);
+    Pageable pageable = PageRequest.of(page, size, getSortCondition(PinType.CATEGORY, direction));
+    return exhibitRepository
+        .findExhibitByCategoryAsPage(pageable, findUser(userId), category)
         .map(exhibit -> buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit)));
   }
 
@@ -78,6 +95,24 @@ public class ExhibitService {
             DateUtils.getLastDayOf(year, month), userId).stream()
         .map(this::buildCalendarExhibitInformation).collect(
             Collectors.toList());
+  }
+
+  public Exhibit getExhibitByUser(Long id, Long userId) {
+    Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
+        .orElseThrow(ExhibitNotFoundException::new);
+    validateOwnedByUser(findUser(userId), exhibit);
+
+    return exhibit;
+  }
+
+  public Page<PostInfoByCategoryDto> getExhibitThumbnailByCategory(Long userId, Long categoryId,
+      int page, int size) {
+
+    Category category = categoryService.findCategoryWithUser(categoryId, userId);
+    return exhibitRepository.findExhibitByCategoryAsPage(
+            PageRequest.of(page, size, JpaSort.by(Direction.DESC, "createdAt")),
+            findUser(userId), category)
+        .map(this::buildPostInfoByCategoryDto);
   }
 
   @Transactional
@@ -121,12 +156,17 @@ public class ExhibitService {
     exhibitRepository.deleteById(id);
   }
 
-  public Exhibit getExhibitByUser(Long id, Long userId) {
-    Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
+  @Transactional
+  public void updatePostPinType(Long userId, Long exhibitId, boolean categoryType, boolean pinned) {
+    Exhibit exhibit = exhibitRepository.findDetailExhibitEntityGraphById(exhibitId)
         .orElseThrow(ExhibitNotFoundException::new);
     validateOwnedByUser(findUser(userId), exhibit);
 
-    return exhibit;
+    if (pinned) {
+      setExhibitPin(categoryType, exhibit);
+    } else {
+      setExhibitNotPin(categoryType, exhibit);
+    }
   }
 
   private User findUser(Long userId) {
@@ -137,8 +177,8 @@ public class ExhibitService {
     return artworkRepository.findMainArtworkByExhibitId(exhibit)
         .map(artwork -> s3Utils.getFullUri(artwork.getContents().getUri())).orElse(null);
   }
-
   // TODO : public이 아니도록 수정
+
   public void validateOwnedByUser(User user, Exhibit exhibit) {
     if (!exhibit.ownedBy(user)) {
       throw new NotOwnerOfExhibitException();
@@ -168,5 +208,47 @@ public class ExhibitService {
         .categoryName(exhibit.getCategory().getName())
         .mainImage(imageUri)
         .build();
+  }
+
+  private PostInfoByCategoryDto buildPostInfoByCategoryDto(Exhibit exhibit) {
+    return new PostInfoByCategoryDto(exhibit.getId(), exhibit.contents().getName(),
+        getMainImageUri(exhibit));
+  }
+
+  private void setExhibitPin(boolean categoryType, Exhibit exhibit) {
+    PinType newPinType;
+    if (categoryType) {
+      Optional<Exhibit> pinnedExhibit = exhibitRepository.findPinnedExhibitWithCategory(
+          exhibit.getCategory(),
+          new PinType[]{PinType.BOTH, PinType.CATEGORY});
+      pinnedExhibit.ifPresent(value -> value.updatePinType(value
+          .getPinType() == PinType.BOTH ? PinType.ALL : PinType.NONE));
+
+      newPinType = exhibit.getPinType() == PinType.ALL ? PinType.BOTH : PinType.CATEGORY;
+    } else {
+      Optional<Exhibit> pinnedExhibit = exhibitRepository.findPinnedExhibit(
+          new PinType[]{PinType.BOTH, PinType.ALL});
+      pinnedExhibit.ifPresent(value -> value.updatePinType(value
+          .getPinType() == PinType.BOTH ? PinType.CATEGORY : PinType.NONE));
+
+      newPinType = exhibit.getPinType() == PinType.CATEGORY ? PinType.BOTH : PinType.ALL;
+    }
+    exhibit.updatePinType(newPinType);
+  }
+
+  private void setExhibitNotPin(boolean categoryType, Exhibit exhibit) {
+    PinType newPinType;
+    if (categoryType) {
+      newPinType = exhibit.getPinType() == PinType.BOTH ? PinType.ALL : PinType.NONE;
+    } else {
+      newPinType = exhibit.getPinType() == PinType.BOTH ? PinType.CATEGORY : PinType.NONE;
+    }
+    exhibit.updatePinType(newPinType);
+  }
+
+  private JpaSort getSortCondition(PinType pinType, Direction direction) {
+    return JpaSort.unsafe(Direction.ASC,
+            String.format("case when e.pinType in ('BOTH','%s') then 1 else 2 end", pinType))
+        .andUnsafe(direction, "createdAt");
   }
 }
