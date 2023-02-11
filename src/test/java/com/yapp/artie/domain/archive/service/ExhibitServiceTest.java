@@ -83,10 +83,10 @@ class ExhibitServiceTest {
   @Test
   public void getExhibitCount_전시의_개수를_반환한다() throws Exception {
     User user = createUser("user", "tu1");
-    CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);
+    CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     for (int i = 0; i < 5; i++) {
       CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
-          defaultCateogry.getId(),
+          defaultCategory.getId(),
           LocalDate.now());
       Long created = exhibitService.create(exhibitRequestDto, user.getId());
       exhibitService.publish(created,user.getId());
@@ -98,9 +98,9 @@ class ExhibitServiceTest {
   @Test
   public void create_전시를_생성한다() throws Exception {
     User user = createUser("user", "tu1");
-    CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);
+    CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
-        defaultCateogry.getId(),
+        defaultCategory.getId(),
         LocalDate.now());
 
     Long created = exhibitService.create(exhibitRequestDto, user.getId());
@@ -113,9 +113,9 @@ class ExhibitServiceTest {
   public void create_다른_사용자의_카테고리에_전시를_생성하려고_하는_경우_예외를_발생한다() throws Exception {
     User user = createUser("user", "tu");
     User userAnother = createUser("userAnother", "tu2");
-    CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);
+    CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
-        defaultCateogry.getId(),
+        defaultCategory.getId(),
         LocalDate.now());
 
     assertThatThrownBy(() -> {
@@ -126,9 +126,9 @@ class ExhibitServiceTest {
   @Test
   public void publish_임시저장된_전시를_영구저장한다() throws Exception {
     User user = createUser("user", "tu");
-    CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);
+    CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
-        defaultCateogry.getId(),
+        defaultCategory.getId(),
         LocalDate.now());
 
     Long created = exhibitService.create(exhibitRequestDto, user.getId());
@@ -141,9 +141,9 @@ class ExhibitServiceTest {
   @Test
   public void publish_이미_발행된_전시를_영구_저장_요청하면_예외를_발생한다() throws Exception {
     User user = createUser("user", "tu");
-    CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);
+    CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
-        defaultCateogry.getId(),
+        defaultCategory.getId(),
         LocalDate.now());
 
     Long created = exhibitService.create(exhibitRequestDto, user.getId());
@@ -158,9 +158,9 @@ class ExhibitServiceTest {
   @Test
   public void update_전시를_수정한다() throws Exception {
     User user = createUser("user", "tu");
-    CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);
+    CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
-        defaultCateogry.getId(),
+        defaultCategory.getId(),
         LocalDate.now());
     Long created = exhibitService.create(exhibitRequestDto, user.getId());
     exhibitService.publish(created, user.getId());
@@ -168,7 +168,7 @@ class ExhibitServiceTest {
 
     String updatedName = "rename";
     exhibitService.update(
-        new UpdateExhibitRequestDto(updatedName, LocalDate.now(), defaultCateogry.getId()),
+        new UpdateExhibitRequestDto(updatedName, LocalDate.now(), defaultCategory.getId()),
         exhibit.getId(),
         user.getId());
 
@@ -180,9 +180,9 @@ class ExhibitServiceTest {
   @Test
   public void delete_전시를_삭제한다() throws Exception {
     User user = createUser("user", "tu");
-    CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);
+    CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
-        defaultCateogry.getId(),
+        defaultCategory.getId(),
         LocalDate.now());
     Long created = exhibitService.create(exhibitRequestDto, user.getId());
     exhibitService.publish(created, user.getId());
