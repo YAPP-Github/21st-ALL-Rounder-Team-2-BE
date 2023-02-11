@@ -81,6 +81,21 @@ class ExhibitServiceTest {
   }
 
   @Test
+  public void getExhibitCount_전시의_개수를_반환한다() throws Exception {
+    User user = createUser("user", "tu1");
+    CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);
+    for (int i = 0; i < 5; i++) {
+      CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
+          defaultCateogry.getId(),
+          LocalDate.now());
+      Long created = exhibitService.create(exhibitRequestDto, user.getId());
+      exhibitService.publish(created,user.getId());
+    }
+    int exhibitCount = exhibitService.getExhibitCount(user.getId());
+    assertThat(exhibitCount).isEqualTo(5);
+  }
+
+  @Test
   public void create_전시를_생성한다() throws Exception {
     User user = createUser("user", "tu1");
     CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);
