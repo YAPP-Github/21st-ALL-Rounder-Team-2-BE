@@ -1,6 +1,7 @@
 package com.yapp.artie.domain.notice.controller;
 
 
+import com.yapp.artie.domain.notice.dto.NoticeDetailInfo;
 import com.yapp.artie.domain.notice.dto.NoticeDto;
 import com.yapp.artie.domain.notice.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +14,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,5 +35,17 @@ public class NoticeController {
   @GetMapping()
   public ResponseEntity<List<NoticeDto>> getNotices() {
     return ResponseEntity.ok(noticeService.notices());
+  }
+
+  @Operation(summary = "공지사항 상세 조회", description = "특정 공지사항 상세를 조회")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200",
+          description = "공지사항 상세가 성공적으로 조회됨",
+          content = @Content(mediaType = "application/json", schema =  @Schema(implementation = NoticeDetailInfo.class))),
+  })
+  @GetMapping("/{id}")
+  public ResponseEntity<NoticeDetailInfo> getNoticeDetail(@PathVariable("id") Long id) {
+    return ResponseEntity.ok(noticeService.notice(id));
   }
 }
