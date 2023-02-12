@@ -46,6 +46,10 @@ public class ExhibitService {
   private final CategoryService categoryService;
   private final S3Utils s3Utils;
 
+  public int getExhibitCount(Long userId) {
+    return exhibitRepository.countExhibit(findUser(userId));
+  }
+
   public PostInfoDto getExhibitInformation(Long id, Long userId) {
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
         .orElseThrow(ExhibitNotFoundException::new);
@@ -191,7 +195,6 @@ public class ExhibitService {
         .map(artwork -> s3Utils.getFullUri(artwork.getContents().getUri())).orElse(null);
   }
   // TODO : public이 아니도록 수정
-
   public void validateOwnedByUser(User user, Exhibit exhibit) {
     if (!exhibit.ownedBy(user)) {
       throw new NotOwnerOfExhibitException();
