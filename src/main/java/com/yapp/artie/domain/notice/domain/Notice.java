@@ -29,4 +29,14 @@ public class Notice {
   @Column(nullable = false, updatable = false)
   @CreatedDate
   private LocalDateTime createdAt;
+
+  private Notice(String title, String contents) {
+    this.title = title;
+    this.contents = contents;
+    this.createdAt = LocalDateTime.now();
+  }
+
+  public static Notice create(String title, String contents) {
+    return new Notice(title, contents);
+  }
 }
