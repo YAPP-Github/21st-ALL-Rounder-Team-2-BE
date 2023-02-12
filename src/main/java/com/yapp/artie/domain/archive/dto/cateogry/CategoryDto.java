@@ -11,13 +11,13 @@ import lombok.NoArgsConstructor;
 public class CategoryDto {
 
   @Schema(description = "카테고리 아이디")
-  private  Long id;
+  private Long id;
 
   @Schema(description = "카테고리 명")
-  private  String name;
+  private String name;
 
   @Schema(description = "카테고리 순서")
-  private  int sequence;
+  private int sequence;
 
   public CategoryDto(Long id, String name, int sequence) {
     this.id = id;
