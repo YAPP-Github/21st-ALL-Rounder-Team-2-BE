@@ -20,6 +20,7 @@ import com.yapp.artie.domain.user.service.UserService;
 import com.yapp.artie.global.util.DateUtils;
 import com.yapp.artie.global.util.S3Utils;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -90,9 +91,12 @@ public class ExhibitService {
       CalendarExhibitRequestDto calendarExhibitRequestDto, Long userId) {
     int year = calendarExhibitRequestDto.getYear();
     int month = calendarExhibitRequestDto.getMonth();
-    return exhibitRepository.findExhibitAsCalenderByDay(
-            DateUtils.getFirstDayOf(year, month),
-            DateUtils.getLastDayOf(year, month), userId).stream()
+
+    LocalDateTime start = DateUtils.getFirstDayOf(year, month);
+    LocalDateTime end = DateUtils.getLastDayOf(year, month);
+
+    return exhibitRepository.findExhibitAsCalenderByDay(start, end, userId)
+        .stream()
         .map(this::buildCalendarExhibitInformation).collect(
             Collectors.toList());
   }
@@ -187,10 +191,10 @@ public class ExhibitService {
 
   private CalendarExhibitResponseDto buildCalendarExhibitInformation(
       CalenderQueryResultDto queryResult) {
-    LocalDate date = LocalDate.parse(queryResult.getDate(), DateTimeFormatter.ISO_DATE);
+    LocalDate date = LocalDate.parse(queryResult.getCalenderDate(), DateTimeFormatter.ISO_DATE);
     return new CalendarExhibitResponseDto(date.getYear(),
         date.getMonthValue(), date.getDayOfMonth(),
-        s3Utils.getFullUri(queryResult.getUri()));
+        s3Utils.getFullUri(queryResult.getUri()), queryResult.getPostNum());
   }
 
   private PostInfoDto buildExhibitionInformation(Exhibit exhibit) {

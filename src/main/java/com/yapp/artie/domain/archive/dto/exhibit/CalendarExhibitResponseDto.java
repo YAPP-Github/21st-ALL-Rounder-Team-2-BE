@@ -24,4 +24,7 @@ public class CalendarExhibitResponseDto {
 
   @Schema(description = "대표 이미지")
   private final String imageURL;
+
+  @Schema(description = "해당 날짜의 전시 수")
+  private final Long postNum;
 }
