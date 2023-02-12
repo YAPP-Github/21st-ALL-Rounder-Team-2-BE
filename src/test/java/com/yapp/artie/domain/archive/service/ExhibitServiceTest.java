@@ -203,6 +203,7 @@ class ExhibitServiceTest {
     assertThat(results.get(0).getMonth()).isEqualTo(1);
     assertThat(results.get(0).getDay()).isEqualTo(1);
     assertThat(results.get(0).getPostNum()).isEqualTo(2);
+    assertThat(results.get(0).getPostId()).isEqualTo(5L);
     assertThat(results.get(1).getDay()).isEqualTo(2);
   }
 
