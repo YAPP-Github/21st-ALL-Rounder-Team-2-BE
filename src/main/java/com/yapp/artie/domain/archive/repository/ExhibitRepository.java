@@ -22,6 +22,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
 
+  @Query("select count(e.id) from Exhibit e "
+      + "where e.user = :user "
+      + "and  e.publication.isPublished = true")
+  int countExhibit(@Param("user") User user);
+
   @EntityGraph(attributePaths = {"user"})
   Optional<Exhibit> findExhibitEntityGraphById(Long id);
 

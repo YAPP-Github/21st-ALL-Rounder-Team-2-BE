@@ -75,6 +75,17 @@ public class SwaggerConfig {
   }
 
   @Bean
+  public GroupedOpenApi noticeApi() {
+    String[] paths = {"/notice/**"};
+
+    return GroupedOpenApi
+        .builder()
+        .group("공지사항 API")
+        .pathsToMatch(paths)
+        .addOpenApiCustomiser(buildSecurityOpenApi()).build();
+  }
+
+  @Bean
   public GroupedOpenApi s3Api() {
     String[] paths = {"/s3/**"};
 

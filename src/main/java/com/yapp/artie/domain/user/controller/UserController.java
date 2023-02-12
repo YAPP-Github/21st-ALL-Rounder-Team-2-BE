@@ -3,7 +3,9 @@ package com.yapp.artie.domain.user.controller;
 import com.google.firebase.auth.FirebaseToken;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
+import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
 import com.yapp.artie.domain.user.service.UserService;
+import com.yapp.artie.domain.user.service.UserThumbnailService;
 import com.yapp.artie.global.authentication.JwtService;
 import com.yapp.artie.global.exception.common.InvalidValueException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserService userService;
+  private final UserThumbnailService userThumbnailService;
   private final JwtService jwtService;
 
   @Operation(summary = "유저 생성", description = "Firebase를 통해 생성한 UID 기반 유저 생성")
@@ -64,6 +67,20 @@ public class UserController {
     User user = userService.findById(userId);
 
     return ResponseEntity.ok().body(user);
+  }
+
+  @Operation(summary = "마이페이지 썸네일 조회", description = "사용자 닉네임, 전시 개수 조회")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "200",
+          description = "썸네일이 성공적으로 조회됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+  })
+  @GetMapping("/my-page")
+  public ResponseEntity<UserThumbnailResponseDto> my(Authentication authentication) {
+    // Long userId = Long.parseLong(authentication.getName());
+    Long userId = 1L;
+    return ResponseEntity.ok().body(userThumbnailService.getUserThumbnail(userId));
   }
 
   private void validateUidWithToken(String uid, FirebaseToken decodedToken) {
