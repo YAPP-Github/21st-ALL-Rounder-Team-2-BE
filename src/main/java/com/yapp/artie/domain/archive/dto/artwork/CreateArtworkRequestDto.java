@@ -36,4 +36,9 @@ public class CreateArtworkRequestDto {
   @Valid
   @Schema(description = "작품 할당 태그")
   private List<CreateArtworkTagDto> tags = new ArrayList<>();
+
+  public CreateArtworkRequestDto(Long postId, String imageUri) {
+    this.postId = postId;
+    this.imageUri = imageUri;
+  }
 }

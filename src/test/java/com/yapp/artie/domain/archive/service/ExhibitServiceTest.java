@@ -3,6 +3,7 @@ package com.yapp.artie.domain.archive.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.archive.domain.exhibit.PinType;
@@ -11,18 +12,21 @@ import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
+import com.yapp.artie.domain.archive.dto.exhibit.ExhibitByDateResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoByCategoryDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
 import com.yapp.artie.domain.archive.exception.ExhibitAlreadyPublishedException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
+import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import java.time.LocalDate;
-import java.time.Month;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -53,6 +57,9 @@ class ExhibitServiceTest {
 
   @Autowired
   CategoryRepository categoryRepository;
+
+  @Autowired
+  ArtworkRepository artworkRepository;
 
   @Autowired
   ExhibitService exhibitService;
@@ -173,23 +180,32 @@ class ExhibitServiceTest {
   @Test
   public void getExhibitByMonthly_월_별로_전시를_조회한다() throws Exception {
     User user = createUser("user", "tu");
-    CategoryDto defaultCateogry = categoryService.categoriesOf(user.getId()).get(0);
+    Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
 
-    for (int i = 1; i <= 12; i++) {
-      CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
-          defaultCateogry.getId(),
-          LocalDate.of(2023, Month.of(i), 1));
-      exhibitService.create(exhibitRequestDto, user.getId());
+    for (int i = 1; i <= 5; i++) {
+      Exhibit exhibit = Exhibit.create("test", LocalDate.now(), defaultCategory, user);
+      exhibitRepository.save(exhibit);
+      exhibit.publish();
+      LocalDateTime mockedCreatedAt = i < 5 ?
+          YearMonth.of(2023, 1).atDay(i).atStartOfDay()
+          : YearMonth.of(2023, 1).atDay(1).atTime(9, 0);
+      exhibitRepository.updateExhibitCreatedAt(mockedCreatedAt, exhibit.getId());
+      artworkRepository.save(
+          Artwork.create(exhibit, true, null, null, String.format("test-%d", i)));
     }
 
-    for (int i = 1; i <= 12; i++) {
-      CalendarExhibitRequestDto calendarExhibitRequestDto = new CalendarExhibitRequestDto(2023, i);
-      List<CalendarExhibitResponseDto> exhibitByMonthly = exhibitService.getExhibitByMonthly(
-          calendarExhibitRequestDto,
-          user.getId());
+    List<CalendarExhibitResponseDto> results = exhibitService.getExhibitByMonthly(
+        new CalendarExhibitRequestDto(2023, 1),
+        user.getId());
 
-      assertThat(exhibitByMonthly.size()).isEqualTo(1);
-    }
+    assertThat(results.size()).isEqualTo(4);
+    assertThat(results.get(0).getImageURL().endsWith("test-5")).isTrue();
+    assertThat(results.get(0).getYear()).isEqualTo(2023);
+    assertThat(results.get(0).getMonth()).isEqualTo(1);
+    assertThat(results.get(0).getDay()).isEqualTo(1);
+    assertThat(results.get(0).getPostNum()).isEqualTo(2);
+    assertThat(results.get(0).getPostId()).isEqualTo(5L);
+    assertThat(results.get(1).getDay()).isEqualTo(2);
   }
 
   @Test
@@ -384,6 +400,27 @@ class ExhibitServiceTest {
     assertThat(results.getNumber()).isEqualTo(0);
     assertThat(results.getContent().get(0).getId()).isNotEqualTo(exhibit.getId());
     assertThat(results.getContent().get(0).getName()).isEqualTo("test-10");
+  }
+
+
+  @Test
+  public void getExhibitsByDate_특정_일자의_전시_목록_조회() throws Exception {
+    User user = createUser("user", "tu");
+    Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
+
+    for (int i = 1; i <= 2; i++) {
+      exhibitRepository.save(
+              Exhibit.create(String.format("test-%d", i), LocalDate.now(), defaultCategory, user))
+          .publish();
+    }
+
+    List<ExhibitByDateResponseDto> results = exhibitService.getExhibitsByDate(
+        user.getId(), LocalDate.now().getYear(), LocalDate.now().getMonthValue(), LocalDate.now()
+            .getDayOfMonth());
+
+    assertThat(results.size()).isEqualTo(2);
+    assertThat(results.get(0).getPostId()).isEqualTo(2L);
+    assertThat(results.get(0).getPostName()).isEqualTo("test-2");
   }
 }
 

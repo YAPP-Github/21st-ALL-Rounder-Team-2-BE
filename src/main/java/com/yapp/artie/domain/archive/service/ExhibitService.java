@@ -7,6 +7,7 @@ import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalenderQueryResultDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
+import com.yapp.artie.domain.archive.dto.exhibit.ExhibitByDateResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoByCategoryDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
@@ -20,6 +21,7 @@ import com.yapp.artie.domain.user.service.UserService;
 import com.yapp.artie.global.util.DateUtils;
 import com.yapp.artie.global.util.S3Utils;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
@@ -90,9 +92,12 @@ public class ExhibitService {
       CalendarExhibitRequestDto calendarExhibitRequestDto, Long userId) {
     int year = calendarExhibitRequestDto.getYear();
     int month = calendarExhibitRequestDto.getMonth();
-    return exhibitRepository.findExhibitAsCalenderByDay(
-            DateUtils.getFirstDayOf(year, month),
-            DateUtils.getLastDayOf(year, month), userId).stream()
+
+    LocalDateTime start = DateUtils.getFirstDayOf(year, month);
+    LocalDateTime end = DateUtils.getLastDayOf(year, month);
+
+    return exhibitRepository.findExhibitAsCalenderByDay(start, end, userId)
+        .stream()
         .map(this::buildCalendarExhibitInformation).collect(
             Collectors.toList());
   }
@@ -113,6 +118,14 @@ public class ExhibitService {
             PageRequest.of(page, size, JpaSort.by(Direction.DESC, "createdAt")),
             findUser(userId), category)
         .map(this::buildPostInfoByCategoryDto);
+  }
+
+  public List<ExhibitByDateResponseDto> getExhibitsByDate(Long userId, int year, int month,
+      int day) {
+
+    LocalDateTime start = DateUtils.getStartTimeOf(year, month, day);
+    LocalDateTime end = DateUtils.getEndTimeOf(year, month, day);
+    return exhibitRepository.findExhibitsByDate(findUser(userId), start, end);
   }
 
   @Transactional
@@ -187,10 +200,10 @@ public class ExhibitService {
 
   private CalendarExhibitResponseDto buildCalendarExhibitInformation(
       CalenderQueryResultDto queryResult) {
-    LocalDate date = LocalDate.parse(queryResult.getDate(), DateTimeFormatter.ISO_DATE);
+    LocalDate date = LocalDate.parse(queryResult.getCalenderDate(), DateTimeFormatter.ISO_DATE);
     return new CalendarExhibitResponseDto(date.getYear(),
-        date.getMonthValue(), date.getDayOfMonth(),
-        s3Utils.getFullUri(queryResult.getUri()));
+        date.getMonthValue(), date.getDayOfMonth(), queryResult.getPostId(),
+        s3Utils.getFullUri(queryResult.getUri()), queryResult.getPostNum());
   }
 
   private PostInfoDto buildExhibitionInformation(Exhibit exhibit) {
