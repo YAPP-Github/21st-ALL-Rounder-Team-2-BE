@@ -4,6 +4,7 @@ package com.yapp.artie.domain.notice.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.yapp.artie.domain.notice.domain.Notice;
+import com.yapp.artie.domain.notice.dto.NoticeDetailInfo;
 import com.yapp.artie.domain.notice.dto.NoticeDto;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -30,5 +31,14 @@ class NoticeServiceTest {
     }
     List<NoticeDto> notices = noticeService.notices();
     assertThat(notices.size()).isEqualTo(4);
+  }
+
+  @Test
+  public void notices_공지사항_상세를_조회한다() throws Exception {
+    String expectedContents = "sample data";
+    Notice notice = Notice.create("test1", expectedContents);
+    em.persist(notice);
+    NoticeDetailInfo detail = noticeService.notice(notice.getId());
+    assertThat(detail.getContents()).isEqualTo(expectedContents);
   }
 }
