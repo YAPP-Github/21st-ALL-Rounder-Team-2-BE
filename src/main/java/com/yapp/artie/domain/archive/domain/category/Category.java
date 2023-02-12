@@ -28,12 +28,6 @@ public class Category extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  private Category(User user, String name, int sequence) {
-    this.user = user;
-    this.name = name;
-    this.sequence = sequence;
-  }
-
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
@@ -46,6 +40,12 @@ public class Category extends BaseEntity {
 
   @Column(nullable = false, name = "seq")
   private int sequence;
+
+  private Category(User user, String name, int sequence) {
+    this.user = user;
+    this.name = name;
+    this.sequence = sequence;
+  }
 
   public static Category create(User user, String name, int sequence) {
     return new Category(user, name, sequence);
