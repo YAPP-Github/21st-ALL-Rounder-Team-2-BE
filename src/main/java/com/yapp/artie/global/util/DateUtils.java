@@ -15,6 +15,14 @@ public class DateUtils {
     return YearMonth.of(year, monthOf(month)).atEndOfMonth().atTime(LocalTime.MAX);
   }
 
+  public static LocalDateTime getStartTimeOf(int year, int month, int day) {
+    return YearMonth.of(year, monthOf(month)).atDay(day).atStartOfDay();
+  }
+
+  public static LocalDateTime getEndTimeOf(int year, int month, int day) {
+    return YearMonth.of(year, monthOf(month)).atDay(day).atTime(LocalTime.MAX);
+  }
+
   private static Month monthOf(int month) {
     return Month.of(month);
   }
