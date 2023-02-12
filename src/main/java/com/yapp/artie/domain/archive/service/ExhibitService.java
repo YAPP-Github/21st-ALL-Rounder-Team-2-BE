@@ -7,6 +7,7 @@ import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalenderQueryResultDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
+import com.yapp.artie.domain.archive.dto.exhibit.ExhibitByDateResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoByCategoryDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
@@ -117,6 +118,14 @@ public class ExhibitService {
             PageRequest.of(page, size, JpaSort.by(Direction.DESC, "createdAt")),
             findUser(userId), category)
         .map(this::buildPostInfoByCategoryDto);
+  }
+
+  public List<ExhibitByDateResponseDto> getExhibitsByDate(Long userId, int year, int month,
+      int day) {
+
+    LocalDateTime start = DateUtils.getStartTimeOf(year, month, day);
+    LocalDateTime end = DateUtils.getEndTimeOf(year, month, day);
+    return exhibitRepository.findExhibitsByDate(findUser(userId), start, end);
   }
 
   @Transactional

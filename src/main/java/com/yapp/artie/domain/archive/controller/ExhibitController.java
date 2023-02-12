@@ -5,6 +5,7 @@ import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitResponseDto;
+import com.yapp.artie.domain.archive.dto.exhibit.ExhibitByDateResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfoPage;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoByCategoryDto;
@@ -296,6 +297,28 @@ public class ExhibitController {
     Long userId = getUserId(authentication);
     return ResponseEntity.ok(
         exhibitService.getExhibitThumbnailByCategory(userId, categoryId, page, size));
+  }
+
+  @Operation(summary = "특정 날짜의 전시 정보 목록 조회(캘린더 페이지)", description = "캘린더 페이지에서 특정 날짜를 클릭했을 때, 해당 날짜의 전시가 여러개일 경우, 전시 목록을 조회할 수 있도록 정보를 반환하는 API")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "특정 날짜의 전시 정보 목록 반환",
+          content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ExhibitByDateResponseDto.class)))
+      )
+  })
+  @GetMapping("/date")
+  public ResponseEntity<List<ExhibitByDateResponseDto>> getExhibitsByDate(
+      Authentication authentication,
+      @Parameter(name = "year", description = "조회할 연도", in = ParameterIn.QUERY, example = "2023")
+      @RequestParam(value = "year", required = true) int year,
+      @Parameter(name = "month", description = "조회할 달", in = ParameterIn.QUERY, example = "1")
+      @RequestParam(value = "month", required = true) int month,
+      @Parameter(name = "day", description = "조회할 일", in = ParameterIn.QUERY, example = "1")
+      @RequestParam(value = "day", required = true) int day
+  ) {
+
+    Long userId = getUserId(authentication);
+    return ResponseEntity.ok(
+        exhibitService.getExhibitsByDate(userId, year, month, day));
   }
 
   // TODO : 앱 배포했을 때에는 1L 대신에 exception을 던지도록 변경해야 합니다.

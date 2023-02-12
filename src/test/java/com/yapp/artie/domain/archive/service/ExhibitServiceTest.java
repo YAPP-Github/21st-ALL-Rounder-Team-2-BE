@@ -12,6 +12,7 @@ import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
+import com.yapp.artie.domain.archive.dto.exhibit.ExhibitByDateResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostDetailInfo;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoByCategoryDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
@@ -399,6 +400,27 @@ class ExhibitServiceTest {
     assertThat(results.getNumber()).isEqualTo(0);
     assertThat(results.getContent().get(0).getId()).isNotEqualTo(exhibit.getId());
     assertThat(results.getContent().get(0).getName()).isEqualTo("test-10");
+  }
+
+
+  @Test
+  public void getExhibitsByDate_특정_일자의_전시_목록_조회() throws Exception {
+    User user = createUser("user", "tu");
+    Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
+
+    for (int i = 1; i <= 2; i++) {
+      exhibitRepository.save(
+              Exhibit.create(String.format("test-%d", i), LocalDate.now(), defaultCategory, user))
+          .publish();
+    }
+
+    List<ExhibitByDateResponseDto> results = exhibitService.getExhibitsByDate(
+        user.getId(), LocalDate.now().getYear(), LocalDate.now().getMonthValue(), LocalDate.now()
+            .getDayOfMonth());
+
+    assertThat(results.size()).isEqualTo(2);
+    assertThat(results.get(0).getPostId()).isEqualTo(2L);
+    assertThat(results.get(0).getPostName()).isEqualTo("test-2");
   }
 }
 

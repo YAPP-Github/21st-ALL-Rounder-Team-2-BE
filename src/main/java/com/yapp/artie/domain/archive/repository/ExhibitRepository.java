@@ -4,6 +4,7 @@ import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.archive.domain.exhibit.PinType;
 import com.yapp.artie.domain.archive.dto.exhibit.CalenderQueryResultDto;
+import com.yapp.artie.domain.archive.dto.exhibit.ExhibitByDateResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.user.domain.User;
 import java.time.LocalDateTime;
@@ -69,4 +70,13 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
   @Query("update Exhibit e set e.createdAt = :createdAt where e.id = :exhibitId")
   void updateExhibitCreatedAt(@Param("createdAt") LocalDateTime createdAt,
       @Param("exhibitId") Long exhibitId);
+
+  @Query(
+      "SELECT NEW com.yapp.artie.domain.archive.dto.exhibit.ExhibitByDateResponseDto(e.id, e.contents.name) FROM Exhibit e "
+          + "WHERE e.createdAt BETWEEN :start AND :end "
+          + "AND e.user = :user AND e.publication.isPublished = true "
+          + "ORDER BY e.createdAt DESC")
+  List<ExhibitByDateResponseDto> findExhibitsByDate(@Param("user") User user,
+      @Param("start") LocalDateTime start,
+      @Param("end") LocalDateTime end);
 }
