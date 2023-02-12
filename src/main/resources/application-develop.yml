@@ -10,8 +10,6 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: create
-      show_sql: true
-      format_sql: true
   
   logging.level:
     org.hibernate.SQL: debug
