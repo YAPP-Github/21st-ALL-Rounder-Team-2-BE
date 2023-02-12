@@ -284,7 +284,7 @@ public class ExhibitController {
       @ApiResponse(
           responseCode = "200", description = "카테고리별 전시 목록 반환", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PostInfoByCategoryDtoPage.class)))
   })
-  @GetMapping("/post/category/{id}")
+  @GetMapping("/category/{id}")
   public ResponseEntity<Page<PostInfoByCategoryDto>> getExhibitThumbnailByCategory(
       Authentication authentication,
       @Parameter(name = "page", description = "페이지네이션의 페이지 넘버. 0부터 시작함", in = ParameterIn.QUERY)
