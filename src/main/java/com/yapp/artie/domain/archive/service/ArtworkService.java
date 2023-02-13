@@ -42,14 +42,17 @@ public class ArtworkService {
     Exhibit exhibit = exhibitService.getExhibitByUser(createArtworkRequestDto.getPostId(), userId);
 
     Long artworkNum = artworkRepository.countArtworkByExhibitId(exhibit.getId());
-    boolean isMain = artworkNum <= 0;
 
     Artwork artwork = artworkRepository.save(
-        Artwork.create(exhibit, isMain, createArtworkRequestDto.getName(),
+        Artwork.create(exhibit, artworkNum <= 0, createArtworkRequestDto.getName(),
             createArtworkRequestDto.getArtist(), createArtworkRequestDto.getImageUri()));
 
     User user = userService.findById(userId);
     tagService.addTagsToArtwork(createArtworkRequestDto.getTags(), artwork, user);
+
+    if (artworkNum == 0) {
+      exhibit.publish();
+    }
 
     return artwork.getId();
   }

@@ -9,8 +9,10 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Getter
 @Schema(description = "전시 작품 생성 Request")
@@ -37,8 +39,13 @@ public class CreateArtworkRequestDto {
   @Schema(description = "작품 할당 태그")
   private List<CreateArtworkTagDto> tags = new ArrayList<>();
 
-  public CreateArtworkRequestDto(Long postId, String imageUri) {
+  @Builder
+  public CreateArtworkRequestDto(@NonNull Long postId, @NonNull String imageUri, String artist,
+      String name, List<CreateArtworkTagDto> tags) {
     this.postId = postId;
     this.imageUri = imageUri;
+    this.artist = artist;
+    this.name = name;
+    this.tags = tags;
   }
 }
