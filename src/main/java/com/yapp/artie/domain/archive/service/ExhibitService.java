@@ -225,6 +225,7 @@ public class ExhibitService {
         .categoryId(exhibit.getCategory().getId())
         .categoryName(exhibit.getCategory().getName())
         .mainImage(imageUri)
+        .attachedLink(exhibit.contents().getAttachedLink())
         .build();
   }
 
