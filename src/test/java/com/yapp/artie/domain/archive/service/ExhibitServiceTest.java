@@ -89,7 +89,7 @@ class ExhibitServiceTest {
           defaultCategory.getId(),
           LocalDate.now(), null);
       Long created = exhibitService.create(exhibitRequestDto, user.getId());
-      exhibitService.publish(created,user.getId());
+      exhibitService.publish(created, user.getId());
     }
     int exhibitCount = exhibitService.getExhibitCount(user.getId());
     assertThat(exhibitCount).isEqualTo(5);
@@ -167,14 +167,17 @@ class ExhibitServiceTest {
     Exhibit exhibit = em.find(Exhibit.class, created);
 
     String updatedName = "rename";
+    String updatedLink = "www.artie.com";
     exhibitService.update(
-        new UpdateExhibitRequestDto(updatedName, LocalDate.now(), defaultCategory.getId()),
+        new UpdateExhibitRequestDto(updatedName, LocalDate.now(), defaultCategory.getId(),
+            updatedLink),
         exhibit.getId(),
         user.getId());
 
     PostInfoDto actual = exhibitService.getExhibitInformation(exhibit.getId(),
         user.getId());
     assertThat(actual.getName()).isEqualTo(updatedName);
+    assertThat(actual.getAttachedLink()).isEqualTo(updatedLink);
   }
 
   @Test
