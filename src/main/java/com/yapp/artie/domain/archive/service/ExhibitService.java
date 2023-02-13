@@ -213,7 +213,7 @@ public class ExhibitService {
 
   private PostInfoDto buildExhibitionInformation(Exhibit exhibit) {
     return new PostInfoDto(exhibit.getId(), exhibit.contents().getName(),
-        exhibit.contents().getDate(), exhibit.isPublished());
+        exhibit.contents().getDate(), exhibit.contents().getAttachedLink(), exhibit.isPublished());
   }
 
   private PostDetailInfo buildDetailExhibitionInformation(Exhibit exhibit, String imageUri) {
