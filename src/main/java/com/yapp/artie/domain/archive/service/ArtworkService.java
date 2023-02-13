@@ -85,6 +85,9 @@ public class ArtworkService {
         .mapToObj(i -> Artwork.create(exhibit, i == 0 && emptyArtwork, imageUriList.get(i)))
         .collect(
             Collectors.toList());
+    if (emptyArtwork) {
+      exhibit.publish();
+    }
     return artworkRepository.saveAll(artworks).stream().map(Artwork::getId)
         .collect(Collectors.toList());
   }

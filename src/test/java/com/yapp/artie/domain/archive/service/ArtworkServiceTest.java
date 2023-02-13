@@ -106,5 +106,30 @@ class ArtworkServiceTest {
     assertThat(artwork1.get().getExhibit()).isEqualTo(exhibit);
     assertThat(artwork2.get().getExhibit()).isEqualTo(exhibit);
   }
+
+  @Test
+  @DisplayName("정상 다중 작품 등록")
+  public void createBatch_정상_다중_작품_등록() {
+    User user = createUser("user", "tu");
+    Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
+    Exhibit exhibit = exhibitRepository.save(
+        Exhibit.create("test", LocalDate.now(), defaultCategory, user));
+    List<String> uriList = new ArrayList<>();
+    uriList.add("sample-uri-1");
+    uriList.add("sample-uri-2");
+
+    List<Long> artworkIdList = artworkService.createBatch(uriList, exhibit.getId(), user.getId());
+
+    Optional<Artwork> artwork1 = artworkRepository.findById(artworkIdList.get(0));
+    Optional<Artwork> artwork2 = artworkRepository.findById(artworkIdList.get(1));
+    assertThat(artworkIdList.size()).isEqualTo(2);
+    assertThat(artwork1.isPresent()).isTrue();
+    assertThat(artwork2.isPresent()).isTrue();
+    assertThat(artwork1.get().getExhibit()).isEqualTo(exhibit);
+    assertThat(artwork2.get().getExhibit()).isEqualTo(exhibit);
+    assertThat(artwork1.get().isMain()).isTrue();
+    assertThat(artwork1.get().getContents().getUri()).isEqualTo("sample-uri-1");
+    assertThat(exhibit.isPublished()).isTrue();
+  }
 }
 
