@@ -137,7 +137,8 @@ public class ExhibitService {
     Category category = categoryService.findCategoryWithUser(
         createExhibitRequestDto.getCategoryId(), userId);
     Exhibit exhibit = Exhibit.create(createExhibitRequestDto.getName(),
-        createExhibitRequestDto.getPostDate(), category, findUser(userId), null);
+        createExhibitRequestDto.getPostDate(), category, findUser(userId),
+        createExhibitRequestDto.getAttachedLink());
 
     return exhibitRepository.save(exhibit)
         .getId();
@@ -194,6 +195,7 @@ public class ExhibitService {
     return artworkRepository.findMainArtworkByExhibitId(exhibit)
         .map(artwork -> s3Utils.getFullUri(artwork.getContents().getUri())).orElse(null);
   }
+
   // TODO : public이 아니도록 수정
   public void validateOwnedByUser(User user, Exhibit exhibit) {
     if (!exhibit.ownedBy(user)) {
