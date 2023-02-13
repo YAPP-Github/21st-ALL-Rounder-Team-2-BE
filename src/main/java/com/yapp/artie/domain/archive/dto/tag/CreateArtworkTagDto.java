@@ -4,10 +4,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @Schema(description = "전시 작품 추가시 할당될 태그 정보")
+@AllArgsConstructor
 public class CreateArtworkTagDto {
 
   @Positive

@@ -37,36 +37,6 @@ public class ArtworkService {
   private final ArtworkRepository artworkRepository;
   private final S3Utils s3Utils;
 
-  @Transactional
-  public Long create(CreateArtworkRequestDto createArtworkRequestDto, Long userId) {
-    Exhibit exhibit = exhibitService.getExhibitByUser(createArtworkRequestDto.getPostId(), userId);
-
-    Long artworkNum = artworkRepository.countArtworkByExhibitId(exhibit.getId());
-    boolean isMain = artworkNum <= 0;
-
-    Artwork artwork = artworkRepository.save(
-        Artwork.create(exhibit, isMain, createArtworkRequestDto.getName(),
-            createArtworkRequestDto.getArtist(), createArtworkRequestDto.getImageUri()));
-
-    User user = userService.findById(userId);
-    tagService.addTagsToArtwork(createArtworkRequestDto.getTags(), artwork, user);
-
-    return artwork.getId();
-  }
-
-  @Transactional
-  public List<Long> createBatch(List<String> imageUriList, Long exhibitId, Long userId) {
-    Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
-    boolean emptyArtwork = artworkRepository.countArtworkByExhibitId(exhibit.getId()) <= 0;
-
-    List<Artwork> artworks = IntStream.range(0, imageUriList.size())
-        .mapToObj(i -> Artwork.create(exhibit, i == 0 && emptyArtwork, imageUriList.get(i)))
-        .collect(
-            Collectors.toList());
-    return artworkRepository.saveAll(artworks).stream().map(Artwork::getId)
-        .collect(Collectors.toList());
-  }
-
   public Page<ArtworkThumbnailDto> getArtworkAsPage(Long exhibitId, Long userId,
       Pageable pageable) {
     Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
@@ -84,6 +54,42 @@ public class ArtworkService {
     Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
     return artworkRepository.findArtworksByExhibitOrderByCreatedAtDesc(exhibit).stream()
         .map(this::buildArtworkBrowseThumbnail).collect(Collectors.toList());
+  }
+
+  @Transactional
+  public Long create(CreateArtworkRequestDto createArtworkRequestDto, Long userId) {
+    Exhibit exhibit = exhibitService.getExhibitByUser(createArtworkRequestDto.getPostId(), userId);
+
+    Long artworkNum = artworkRepository.countArtworkByExhibitId(exhibit.getId());
+
+    Artwork artwork = artworkRepository.save(
+        Artwork.create(exhibit, artworkNum <= 0, createArtworkRequestDto.getName(),
+            createArtworkRequestDto.getArtist(), createArtworkRequestDto.getImageUri()));
+
+    User user = userService.findById(userId);
+    tagService.addTagsToArtwork(createArtworkRequestDto.getTags(), artwork, user);
+
+    if (artworkNum == 0) {
+      exhibit.publish();
+    }
+
+    return artwork.getId();
+  }
+
+  @Transactional
+  public List<Long> createBatch(List<String> imageUriList, Long exhibitId, Long userId) {
+    Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
+    boolean emptyArtwork = artworkRepository.countArtworkByExhibitId(exhibit.getId()) <= 0;
+
+    List<Artwork> artworks = IntStream.range(0, imageUriList.size())
+        .mapToObj(i -> Artwork.create(exhibit, i == 0 && emptyArtwork, imageUriList.get(i)))
+        .collect(
+            Collectors.toList());
+    if (emptyArtwork) {
+      exhibit.publish();
+    }
+    return artworkRepository.saveAll(artworks).stream().map(Artwork::getId)
+        .collect(Collectors.toList());
   }
 
   @Transactional

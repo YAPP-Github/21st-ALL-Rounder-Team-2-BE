@@ -47,7 +47,7 @@ public class ArtworkController {
 
   private final ArtworkService artworkService;
 
-  @Operation(summary = "전시 작품 추가", description = "작품(이미지)를 전시에 추가")
+  @Operation(summary = "전시 작품 등록", description = "작품(이미지)를 전시에 추가(등록)")
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "201",
