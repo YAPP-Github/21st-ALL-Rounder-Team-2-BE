@@ -162,7 +162,7 @@ public class ExhibitService {
         updateExhibitRequestDto.getCategoryId(), userId);
 
     exhibit.update(updateExhibitRequestDto.getName(), updateExhibitRequestDto.getPostDate(),
-        category);
+        updateExhibitRequestDto.getAttachedLink(), category);
   }
 
   @Transactional
