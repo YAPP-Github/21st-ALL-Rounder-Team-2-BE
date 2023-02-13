@@ -17,12 +17,17 @@ public class UpdateExhibitRequestDto {
   @Schema(description = "수정할 날짜")
   private LocalDate postDate;
 
-  @Schema(description = "변경할 카테고리 ID")
+  @Schema(description = "수정할 카테고리 ID")
   private Long categoryId;
 
-  public UpdateExhibitRequestDto(String name, LocalDate postDate, Long categoryId) {
+  @Schema(description = "수정할 전시 링크")
+  private String attachedLink;
+
+  public UpdateExhibitRequestDto(String name, LocalDate postDate, Long categoryId,
+      String attachedLink) {
     this.name = name;
     this.postDate = postDate;
     this.categoryId = categoryId;
+    this.attachedLink = attachedLink;
   }
 }
