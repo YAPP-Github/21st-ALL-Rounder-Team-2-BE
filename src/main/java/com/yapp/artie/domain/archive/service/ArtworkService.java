@@ -37,6 +37,25 @@ public class ArtworkService {
   private final ArtworkRepository artworkRepository;
   private final S3Utils s3Utils;
 
+  public Page<ArtworkThumbnailDto> getArtworkAsPage(Long exhibitId, Long userId,
+      Pageable pageable) {
+    Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
+    return artworkRepository.findAllArtworkAsPage(pageable, exhibit)
+        .map(this::buildArtworkThumbnail);
+  }
+
+  public ArtworkInfoDto getArtworkInfo(Long artworkId, Long userId) {
+    Artwork artwork = findById(artworkId, userId);
+    List<TagDto> tags = artworkTagService.getTagDtosFromArtwork(artwork);
+    return buildArtworkInfo(artwork, tags);
+  }
+
+  public List<ArtworkBrowseThumbnailDto> getArtworkBrowseThumbnail(Long exhibitId, Long userId) {
+    Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
+    return artworkRepository.findArtworksByExhibitOrderByCreatedAtDesc(exhibit).stream()
+        .map(this::buildArtworkBrowseThumbnail).collect(Collectors.toList());
+  }
+
   @Transactional
   public Long create(CreateArtworkRequestDto createArtworkRequestDto, Long userId) {
     Exhibit exhibit = exhibitService.getExhibitByUser(createArtworkRequestDto.getPostId(), userId);
@@ -68,25 +87,6 @@ public class ArtworkService {
             Collectors.toList());
     return artworkRepository.saveAll(artworks).stream().map(Artwork::getId)
         .collect(Collectors.toList());
-  }
-
-  public Page<ArtworkThumbnailDto> getArtworkAsPage(Long exhibitId, Long userId,
-      Pageable pageable) {
-    Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
-    return artworkRepository.findAllArtworkAsPage(pageable, exhibit)
-        .map(this::buildArtworkThumbnail);
-  }
-
-  public ArtworkInfoDto getArtworkInfo(Long artworkId, Long userId) {
-    Artwork artwork = findById(artworkId, userId);
-    List<TagDto> tags = artworkTagService.getTagDtosFromArtwork(artwork);
-    return buildArtworkInfo(artwork, tags);
-  }
-
-  public List<ArtworkBrowseThumbnailDto> getArtworkBrowseThumbnail(Long exhibitId, Long userId) {
-    Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
-    return artworkRepository.findArtworksByExhibitOrderByCreatedAtDesc(exhibit).stream()
-        .map(this::buildArtworkBrowseThumbnail).collect(Collectors.toList());
   }
 
   @Transactional
