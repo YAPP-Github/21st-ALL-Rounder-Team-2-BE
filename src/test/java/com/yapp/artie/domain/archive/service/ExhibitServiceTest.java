@@ -198,7 +198,7 @@ class ExhibitServiceTest {
     Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
 
     for (int i = 1; i <= 5; i++) {
-      Exhibit exhibit = Exhibit.create("test", LocalDate.now(), defaultCategory, user);
+      Exhibit exhibit = Exhibit.create("test", LocalDate.now(), defaultCategory, user, null);
       exhibitRepository.save(exhibit);
       exhibit.publish();
       LocalDateTime mockedCreatedAt = i < 5 ?
@@ -330,12 +330,12 @@ class ExhibitServiceTest {
         categoryService.categoriesOf(user.getId()).get(0).getId(), user.getId());
     Exhibit exhibit = exhibitRepository.save(
         Exhibit.create("test-0", LocalDate.now(), defaultCategory,
-            user));
+            user, null));
     exhibit.publish();
     for (int i = 1; i <= 10; i++) {
       exhibitRepository.save(
           Exhibit.create(String.format("test-%d", i), LocalDate.now(), defaultCategory,
-              user)).publish();
+              user, null)).publish();
     }
     exhibitService.updatePostPinType(user.getId(), exhibit.getId(), false, true);
     exhibitService.updatePostPinType(user.getId(), exhibit.getId(), true, true);
@@ -359,12 +359,12 @@ class ExhibitServiceTest {
         categoryService.categoriesOf(user.getId()).get(0).getId(), user.getId());
     Exhibit exhibit = exhibitRepository.save(
         Exhibit.create("test-0", LocalDate.now(), defaultCategory,
-            user));
+            user, null));
     exhibit.publish();
     for (int i = 1; i <= 10; i++) {
       exhibitRepository.save(
           Exhibit.create(String.format("test-%d", i), LocalDate.now(), defaultCategory,
-              user)).publish();
+              user, null)).publish();
     }
     exhibitService.updatePostPinType(user.getId(), exhibit.getId(), false, true);
     exhibitService.updatePostPinType(user.getId(), exhibit.getId(), true, true);
@@ -391,13 +391,13 @@ class ExhibitServiceTest {
 
     Exhibit exhibit = exhibitRepository.save(
         Exhibit.create(String.format("test-0"), LocalDate.now(), defaultCategory,
-            user));
+            user, null));
     exhibit.publish();
     artworkService.createBatch(imageUriList, exhibit.getId(), user.getId());
     for (int i = 1; i <= 10; i++) {
       Exhibit exhibitTest = exhibitRepository.save(
           Exhibit.create(String.format("test-%d", i), LocalDate.now(), defaultCategory,
-              user));
+              user, null));
       exhibitTest.publish();
       artworkService.createBatch(imageUriList, exhibitTest.getId(), user.getId());
     }
@@ -425,7 +425,8 @@ class ExhibitServiceTest {
 
     for (int i = 1; i <= 2; i++) {
       exhibitRepository.save(
-              Exhibit.create(String.format("test-%d", i), LocalDate.now(), defaultCategory, user))
+              Exhibit.create(String.format("test-%d", i), LocalDate.now(), defaultCategory, user,
+                  null))
           .publish();
     }
 

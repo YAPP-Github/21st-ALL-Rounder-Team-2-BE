@@ -137,7 +137,7 @@ public class ExhibitService {
     Category category = categoryService.findCategoryWithUser(
         createExhibitRequestDto.getCategoryId(), userId);
     Exhibit exhibit = Exhibit.create(createExhibitRequestDto.getName(),
-        createExhibitRequestDto.getPostDate(), category, findUser(userId));
+        createExhibitRequestDto.getPostDate(), category, findUser(userId), null);
 
     return exhibitRepository.save(exhibit)
         .getId();

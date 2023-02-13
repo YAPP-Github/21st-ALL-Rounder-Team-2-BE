@@ -98,8 +98,9 @@ public class Exhibit extends BaseEntity {
     artwork.display(this);
   }
 
-  public static Exhibit create(String name, LocalDate postDate, Category category, User user) {
-    ExhibitContents contents = new ExhibitContents(name, null, null, postDate);
+  public static Exhibit create(String name, LocalDate postDate, Category category, User user,
+      String attachedLink) {
+    ExhibitContents contents = new ExhibitContents(name, null, attachedLink, postDate);
     Publication publication = new Publication();
     return new Exhibit(user, category, contents, publication);
   }
