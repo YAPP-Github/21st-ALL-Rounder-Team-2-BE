@@ -2,7 +2,6 @@ package com.yapp.artie.domain.notice.controller;
 
 
 import com.yapp.artie.domain.notice.dto.NoticeDetailInfo;
-import com.yapp.artie.domain.notice.dto.NoticeDto;
 import com.yapp.artie.domain.notice.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -30,10 +29,10 @@ public class NoticeController {
       @ApiResponse(
           responseCode = "200",
           description = "공지사항 목록이 성공적으로 조회됨",
-          content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = NoticeDto.class)))),
+          content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = NoticeDetailInfo.class)))),
   })
   @GetMapping()
-  public ResponseEntity<List<NoticeDto>> getNotices() {
+  public ResponseEntity<List<NoticeDetailInfo>> getNotices() {
     return ResponseEntity.ok(noticeService.notices());
   }
 
@@ -42,7 +41,7 @@ public class NoticeController {
       @ApiResponse(
           responseCode = "200",
           description = "공지사항 상세가 성공적으로 조회됨",
-          content = @Content(mediaType = "application/json", schema =  @Schema(implementation = NoticeDetailInfo.class))),
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = NoticeDetailInfo.class))),
   })
   @GetMapping("/{id}")
   public ResponseEntity<NoticeDetailInfo> getNoticeDetail(@PathVariable("id") Long id) {
