@@ -34,7 +34,7 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
   Optional<Exhibit> findDetailExhibitEntityGraphById(Long id);
 
   @Query("select new com.yapp.artie.domain.archive.dto.exhibit."
-      + "PostInfoDto(e.id, e.contents.name, e.contents.date, e.publication.isPublished) "
+      + "PostInfoDto(e.id, e.contents.name, e.contents.date, e.contents.attachedLink, e.publication.isPublished) "
       + "from Exhibit e where e.user = :user and e.publication.isPublished = false")
   List<PostInfoDto> findDraftExhibitDto(@Param("user") User user);
 

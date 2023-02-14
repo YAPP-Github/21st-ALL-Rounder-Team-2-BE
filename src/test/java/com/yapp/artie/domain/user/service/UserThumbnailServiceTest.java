@@ -46,7 +46,7 @@ class UserThumbnailServiceTest {
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
-        LocalDate.now());
+        LocalDate.now(), null);
 
     Long created = exhibitService.create(exhibitRequestDto, user.getId());
     exhibitService.publish(created, user.getId());

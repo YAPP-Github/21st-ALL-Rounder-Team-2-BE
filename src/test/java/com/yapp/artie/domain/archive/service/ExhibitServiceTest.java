@@ -87,9 +87,9 @@ class ExhibitServiceTest {
     for (int i = 0; i < 5; i++) {
       CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
           defaultCategory.getId(),
-          LocalDate.now());
+          LocalDate.now(), null);
       Long created = exhibitService.create(exhibitRequestDto, user.getId());
-      exhibitService.publish(created,user.getId());
+      exhibitService.publish(created, user.getId());
     }
     int exhibitCount = exhibitService.getExhibitCount(user.getId());
     assertThat(exhibitCount).isEqualTo(5);
@@ -101,7 +101,7 @@ class ExhibitServiceTest {
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
-        LocalDate.now());
+        LocalDate.now(), null);
 
     Long created = exhibitService.create(exhibitRequestDto, user.getId());
     Optional<Exhibit> exhibit = Optional.ofNullable(em.find(Exhibit.class, created));
@@ -116,7 +116,7 @@ class ExhibitServiceTest {
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
-        LocalDate.now());
+        LocalDate.now(), null);
 
     assertThatThrownBy(() -> {
       exhibitService.create(exhibitRequestDto, userAnother.getId());
@@ -129,7 +129,7 @@ class ExhibitServiceTest {
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
-        LocalDate.now());
+        LocalDate.now(), null);
 
     Long created = exhibitService.create(exhibitRequestDto, user.getId());
     exhibitService.publish(created, user.getId());
@@ -144,7 +144,7 @@ class ExhibitServiceTest {
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
-        LocalDate.now());
+        LocalDate.now(), null);
 
     Long created = exhibitService.create(exhibitRequestDto, user.getId());
     exhibitService.publish(created, user.getId());
@@ -161,20 +161,23 @@ class ExhibitServiceTest {
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
-        LocalDate.now());
+        LocalDate.now(), null);
     Long created = exhibitService.create(exhibitRequestDto, user.getId());
     exhibitService.publish(created, user.getId());
     Exhibit exhibit = em.find(Exhibit.class, created);
 
     String updatedName = "rename";
+    String updatedLink = "www.artie.com";
     exhibitService.update(
-        new UpdateExhibitRequestDto(updatedName, LocalDate.now(), defaultCategory.getId()),
+        new UpdateExhibitRequestDto(updatedName, LocalDate.now(), defaultCategory.getId(),
+            updatedLink),
         exhibit.getId(),
         user.getId());
 
     PostInfoDto actual = exhibitService.getExhibitInformation(exhibit.getId(),
         user.getId());
     assertThat(actual.getName()).isEqualTo(updatedName);
+    assertThat(actual.getAttachedLink()).isEqualTo(updatedLink);
   }
 
   @Test
@@ -183,7 +186,7 @@ class ExhibitServiceTest {
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
-        LocalDate.now());
+        LocalDate.now(), null);
     Long created = exhibitService.create(exhibitRequestDto, user.getId());
     exhibitService.publish(created, user.getId());
 
@@ -198,7 +201,7 @@ class ExhibitServiceTest {
     Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
 
     for (int i = 1; i <= 5; i++) {
-      Exhibit exhibit = Exhibit.create("test", LocalDate.now(), defaultCategory, user);
+      Exhibit exhibit = Exhibit.create("test", LocalDate.now(), defaultCategory, user, null);
       exhibitRepository.save(exhibit);
       exhibit.publish();
       LocalDateTime mockedCreatedAt = i < 5 ?
@@ -229,7 +232,7 @@ class ExhibitServiceTest {
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
-        LocalDate.now());
+        LocalDate.now(), null);
     Long exhibitId1 = exhibitService.create(exhibitRequestDto, user.getId());
     Long exhibitId2 = exhibitService.create(exhibitRequestDto, user.getId());
 
@@ -250,7 +253,7 @@ class ExhibitServiceTest {
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
-        LocalDate.now());
+        LocalDate.now(), null);
     Long exhibitId1 = exhibitService.create(exhibitRequestDto, user.getId());
     Long exhibitId2 = exhibitService.create(exhibitRequestDto, user.getId());
 
@@ -272,7 +275,7 @@ class ExhibitServiceTest {
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
-        LocalDate.now());
+        LocalDate.now(), null);
     Long exhibitId1 = exhibitService.create(exhibitRequestDto, user.getId());
     Long exhibitId2 = exhibitService.create(exhibitRequestDto, user.getId());
 
@@ -294,7 +297,7 @@ class ExhibitServiceTest {
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
-        LocalDate.now());
+        LocalDate.now(), null);
     Long exhibitId1 = exhibitService.create(exhibitRequestDto, user.getId());
 
     exhibitService.updatePostPinType(user.getId(), exhibitId1, true, true);
@@ -311,7 +314,7 @@ class ExhibitServiceTest {
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
-        LocalDate.now());
+        LocalDate.now(), null);
     Long exhibitId1 = exhibitService.create(exhibitRequestDto, user.getId());
 
     exhibitService.updatePostPinType(user.getId(), exhibitId1, true, true);
@@ -330,12 +333,12 @@ class ExhibitServiceTest {
         categoryService.categoriesOf(user.getId()).get(0).getId(), user.getId());
     Exhibit exhibit = exhibitRepository.save(
         Exhibit.create("test-0", LocalDate.now(), defaultCategory,
-            user));
+            user, null));
     exhibit.publish();
     for (int i = 1; i <= 10; i++) {
       exhibitRepository.save(
           Exhibit.create(String.format("test-%d", i), LocalDate.now(), defaultCategory,
-              user)).publish();
+              user, null)).publish();
     }
     exhibitService.updatePostPinType(user.getId(), exhibit.getId(), false, true);
     exhibitService.updatePostPinType(user.getId(), exhibit.getId(), true, true);
@@ -359,12 +362,12 @@ class ExhibitServiceTest {
         categoryService.categoriesOf(user.getId()).get(0).getId(), user.getId());
     Exhibit exhibit = exhibitRepository.save(
         Exhibit.create("test-0", LocalDate.now(), defaultCategory,
-            user));
+            user, null));
     exhibit.publish();
     for (int i = 1; i <= 10; i++) {
       exhibitRepository.save(
           Exhibit.create(String.format("test-%d", i), LocalDate.now(), defaultCategory,
-              user)).publish();
+              user, null)).publish();
     }
     exhibitService.updatePostPinType(user.getId(), exhibit.getId(), false, true);
     exhibitService.updatePostPinType(user.getId(), exhibit.getId(), true, true);
@@ -391,13 +394,13 @@ class ExhibitServiceTest {
 
     Exhibit exhibit = exhibitRepository.save(
         Exhibit.create(String.format("test-0"), LocalDate.now(), defaultCategory,
-            user));
+            user, null));
     exhibit.publish();
     artworkService.createBatch(imageUriList, exhibit.getId(), user.getId());
     for (int i = 1; i <= 10; i++) {
       Exhibit exhibitTest = exhibitRepository.save(
           Exhibit.create(String.format("test-%d", i), LocalDate.now(), defaultCategory,
-              user));
+              user, null));
       exhibitTest.publish();
       artworkService.createBatch(imageUriList, exhibitTest.getId(), user.getId());
     }
@@ -425,7 +428,8 @@ class ExhibitServiceTest {
 
     for (int i = 1; i <= 2; i++) {
       exhibitRepository.save(
-              Exhibit.create(String.format("test-%d", i), LocalDate.now(), defaultCategory, user))
+              Exhibit.create(String.format("test-%d", i), LocalDate.now(), defaultCategory, user,
+                  null))
           .publish();
     }
 

@@ -61,7 +61,7 @@ class ArtworkServiceTest {
     User user = createUser("user", "tu");
     Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
     Exhibit exhibit = exhibitRepository.save(
-        Exhibit.create("test", LocalDate.now(), defaultCategory, user));
+        Exhibit.create("test", LocalDate.now(), defaultCategory, user, null));
     List<CreateArtworkTagDto> tags = new ArrayList<>();
     tags.add(new CreateArtworkTagDto(null, "sample-tag"));
 
@@ -85,7 +85,7 @@ class ArtworkServiceTest {
     User user = createUser("user", "tu");
     Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
     Exhibit exhibit = exhibitRepository.save(
-        Exhibit.create("test", LocalDate.now(), defaultCategory, user));
+        Exhibit.create("test", LocalDate.now(), defaultCategory, user, null));
     List<CreateArtworkTagDto> tags = new ArrayList<>();
     tags.add(new CreateArtworkTagDto(null, "sample-tag"));
 
@@ -113,7 +113,7 @@ class ArtworkServiceTest {
     User user = createUser("user", "tu");
     Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
     Exhibit exhibit = exhibitRepository.save(
-        Exhibit.create("test", LocalDate.now(), defaultCategory, user));
+        Exhibit.create("test", LocalDate.now(), defaultCategory, user, null));
     List<String> uriList = new ArrayList<>();
     uriList.add("sample-uri-1");
     uriList.add("sample-uri-2");

@@ -20,9 +20,14 @@ public class CreateExhibitRequestDto {
   @Schema(description = "관람 날짜")
   private LocalDate postDate;
 
-  public CreateExhibitRequestDto(String name, Long categoryId, LocalDate postDate) {
+  @Schema(description = "전시 링크", nullable = true)
+  private String attachedLink;
+
+  public CreateExhibitRequestDto(String name, Long categoryId, LocalDate postDate,
+      String attachedLink) {
     this.name = name;
     this.categoryId = categoryId;
     this.postDate = postDate;
+    this.attachedLink = attachedLink;
   }
 }
