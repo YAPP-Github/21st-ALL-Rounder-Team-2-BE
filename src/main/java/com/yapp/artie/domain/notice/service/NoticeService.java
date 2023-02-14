@@ -2,7 +2,6 @@ package com.yapp.artie.domain.notice.service;
 
 import com.yapp.artie.domain.notice.domain.Notice;
 import com.yapp.artie.domain.notice.dto.NoticeDetailInfo;
-import com.yapp.artie.domain.notice.dto.NoticeDto;
 import com.yapp.artie.domain.notice.exception.NoticeNotFoundException;
 import com.yapp.artie.domain.notice.repository.NoticeRepository;
 import java.util.List;
@@ -17,7 +16,7 @@ public class NoticeService {
 
   private final NoticeRepository noticeRepository;
 
-  public List<NoticeDto> notices() {
+  public List<NoticeDetailInfo> notices() {
     return noticeRepository.findNoticeDto();
   }
 

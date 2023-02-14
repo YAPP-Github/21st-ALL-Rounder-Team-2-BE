@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yapp.artie.domain.notice.domain.Notice;
 import com.yapp.artie.domain.notice.dto.NoticeDetailInfo;
-import com.yapp.artie.domain.notice.dto.NoticeDto;
 import com.yapp.artie.domain.notice.exception.NoticeNotFoundException;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -31,7 +30,7 @@ class NoticeServiceTest {
       Notice notice = Notice.create("test " + i, "sample data");
       em.persist(notice);
     }
-    List<NoticeDto> notices = noticeService.notices();
+    List<NoticeDetailInfo> notices = noticeService.notices();
     assertThat(notices.size()).isEqualTo(4);
   }
 
