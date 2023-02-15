@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ArtworkTagId implements Serializable {
+public class TagId implements Serializable {
 
-  private Long tagId;
+  private Long userId;
   private Long artworkId;
 }
