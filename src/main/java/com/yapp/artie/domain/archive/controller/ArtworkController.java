@@ -269,7 +269,8 @@ public class ArtworkController {
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
   })
   @PostMapping("batch/{id}")
-  public ResponseEntity<CreateArtworkBatchResponseDto> createArtwork(Authentication authentication,
+  public ResponseEntity<CreateArtworkBatchResponseDto> createArtworkBatch(
+      Authentication authentication,
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long exhibitId,
       @RequestBody @Valid CreateArtworkBatchRequestDto createArtworkBatchRequestDtoRequestDto) {
 
