@@ -1,9 +1,9 @@
 package com.yapp.artie.domain.archive.dto.artwork;
 
-import com.yapp.artie.domain.archive.dto.tag.CreateArtworkTagDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,10 +22,10 @@ public class UpdateArtworkRequestDto {
 
   @Valid
   @Schema(description = "작품 할당 태그")
-  private List<CreateArtworkTagDto> tags;
+  private List<@NotBlank String> tags;
 
   @Builder
-  public UpdateArtworkRequestDto(String artist, String name, List<CreateArtworkTagDto> tags) {
+  public UpdateArtworkRequestDto(String artist, String name, List<String> tags) {
     this.artist = artist;
     this.name = name;
     this.tags = tags;

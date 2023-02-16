@@ -38,10 +38,6 @@ public enum ErrorCode {
   EXHIBIT_NOT_OWNER(403, "E002", "자신의 전시 정보만 접근할 수 있습니다."),
   EXHIBIT_ALREADY_PUBLISHED(409, "E003", "이미 발행된 전시입니다."),
 
-  // Tag
-  TAG_NOT_FOUND(404, "TAG001", "태그가 존재하지 않습니다."),
-  TAG_ALREADY_EXISTS(409, "TAG002", "이미 존재하는 태그입니다."),
-
   // Artwork
   ARTWORK_NOT_OWNER(403, "AW001", "자신의 작품 정보만 접근할 수 있습니다."),
   ARTWORK_NOT_FOUND(404, "AW002", "작품이 존재하지 않습니다."),

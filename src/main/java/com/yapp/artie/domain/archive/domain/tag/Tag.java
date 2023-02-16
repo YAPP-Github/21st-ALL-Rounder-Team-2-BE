@@ -1,7 +1,7 @@
 package com.yapp.artie.domain.archive.domain.tag;
 
+import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.global.common.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Tag extends BaseEntity {
+public class Tag {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,15 +27,20 @@ public class Tag extends BaseEntity {
   @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "image_id", nullable = false)
+  private Artwork artwork;
+
+  @Column(nullable = false, name = "seq")
+  private int sequence;
+
   @Column(nullable = false)
   private String name;
 
-  public Tag(User user, String name) {
+  public Tag(User user, Artwork artwork, int sequence, String name) {
     this.user = user;
+    this.artwork = artwork;
+    this.sequence = sequence;
     this.name = name;
-  }
-
-  public static Tag create(User user, String name) {
-    return new Tag(user, name);
   }
 }
