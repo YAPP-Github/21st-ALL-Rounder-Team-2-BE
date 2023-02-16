@@ -25,7 +25,6 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -125,8 +124,8 @@ public class ArtworkController {
       @RequestParam(name = "direction", required = false, defaultValue = "DESC") Direction direction) {
 
     Long userId = getUserId(authentication);
-    return ResponseEntity.ok().body(artworkService.getArtworkAsPage(exhibitId, userId,
-        PageRequest.of(page, size, direction, "createdAt")));
+    return ResponseEntity.ok()
+        .body(artworkService.getArtworkAsPage(exhibitId, userId, page, size, direction));
   }
 
   @Operation(summary = "작품 상세 정보 조회", description = "작품 상세 페이지의 작품 상세 정보 조회")

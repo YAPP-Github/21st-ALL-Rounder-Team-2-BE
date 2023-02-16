@@ -19,7 +19,10 @@ import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,9 +38,10 @@ public class ArtworkService {
   private final ArtworkRepository artworkRepository;
   private final S3Utils s3Utils;
 
-  public Page<ArtworkThumbnailDto> getArtworkAsPage(Long exhibitId, Long userId,
-      Pageable pageable) {
+  public Page<ArtworkThumbnailDto> getArtworkAsPage(Long exhibitId, Long userId, int page, int size,
+      Direction direction) {
     Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
+    Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt", "id"));
     return artworkRepository.findAllArtworkAsPage(pageable, exhibit)
         .map(this::buildArtworkThumbnail);
   }
