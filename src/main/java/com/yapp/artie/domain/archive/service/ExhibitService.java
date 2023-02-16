@@ -137,7 +137,8 @@ public class ExhibitService {
     Category category = categoryService.findCategoryWithUser(
         createExhibitRequestDto.getCategoryId(), userId);
     Exhibit exhibit = Exhibit.create(createExhibitRequestDto.getName(),
-        createExhibitRequestDto.getPostDate(), category, findUser(userId));
+        createExhibitRequestDto.getPostDate(), category, findUser(userId),
+        createExhibitRequestDto.getAttachedLink());
 
     return exhibitRepository.save(exhibit)
         .getId();
@@ -161,7 +162,7 @@ public class ExhibitService {
         updateExhibitRequestDto.getCategoryId(), userId);
 
     exhibit.update(updateExhibitRequestDto.getName(), updateExhibitRequestDto.getPostDate(),
-        category);
+        updateExhibitRequestDto.getAttachedLink(), category);
   }
 
   @Transactional
@@ -194,6 +195,7 @@ public class ExhibitService {
     return artworkRepository.findMainArtworkByExhibitId(exhibit)
         .map(artwork -> s3Utils.getFullUri(artwork.getContents().getUri())).orElse(null);
   }
+
   // TODO : public이 아니도록 수정
   public void validateOwnedByUser(User user, Exhibit exhibit) {
     if (!exhibit.ownedBy(user)) {
@@ -211,7 +213,7 @@ public class ExhibitService {
 
   private PostInfoDto buildExhibitionInformation(Exhibit exhibit) {
     return new PostInfoDto(exhibit.getId(), exhibit.contents().getName(),
-        exhibit.contents().getDate(), exhibit.isPublished());
+        exhibit.contents().getDate(), exhibit.contents().getAttachedLink(), exhibit.isPublished());
   }
 
   private PostDetailInfo buildDetailExhibitionInformation(Exhibit exhibit, String imageUri) {
@@ -223,6 +225,7 @@ public class ExhibitService {
         .categoryId(exhibit.getCategory().getId())
         .categoryName(exhibit.getCategory().getName())
         .mainImage(imageUri)
+        .attachedLink(exhibit.contents().getAttachedLink())
         .build();
   }
 

@@ -7,7 +7,6 @@ import com.yapp.artie.domain.archive.dto.artwork.ArtworkInfoDto;
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkThumbnailDto;
 import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkRequestDto;
 import com.yapp.artie.domain.archive.dto.artwork.UpdateArtworkRequestDto;
-import com.yapp.artie.domain.archive.dto.tag.TagDto;
 import com.yapp.artie.domain.archive.exception.ArtworkNotFoundException;
 import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.s3.service.S3Service;
@@ -20,7 +19,10 @@ import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,24 +34,48 @@ public class ArtworkService {
   private final UserService userService;
   private final TagService tagService;
   private final ExhibitService exhibitService;
-  private final ArtworkTagService artworkTagService;
   private final S3Service s3Service;
   private final ArtworkRepository artworkRepository;
   private final S3Utils s3Utils;
+
+  public Page<ArtworkThumbnailDto> getArtworkAsPage(Long exhibitId, Long userId, int page, int size,
+      Direction direction) {
+    Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
+    Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt", "id"));
+    return artworkRepository.findAllArtworkAsPage(pageable, exhibit)
+        .map(this::buildArtworkThumbnail);
+  }
+
+  public ArtworkInfoDto getArtworkInfo(Long artworkId, Long userId) {
+    Artwork artwork = findById(artworkId, userId);
+    List<String> tags = tagService.getTagNames(artwork);
+    return buildArtworkInfo(artwork, tags);
+  }
+
+  public List<ArtworkBrowseThumbnailDto> getArtworkBrowseThumbnail(Long exhibitId, Long userId) {
+    Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
+    return artworkRepository.findArtworksByExhibitOrderByCreatedAtDesc(exhibit).stream()
+        .map(this::buildArtworkBrowseThumbnail).collect(Collectors.toList());
+  }
 
   @Transactional
   public Long create(CreateArtworkRequestDto createArtworkRequestDto, Long userId) {
     Exhibit exhibit = exhibitService.getExhibitByUser(createArtworkRequestDto.getPostId(), userId);
 
     Long artworkNum = artworkRepository.countArtworkByExhibitId(exhibit.getId());
-    boolean isMain = artworkNum <= 0;
 
     Artwork artwork = artworkRepository.save(
-        Artwork.create(exhibit, isMain, createArtworkRequestDto.getName(),
+        Artwork.create(exhibit, artworkNum <= 0, createArtworkRequestDto.getName(),
             createArtworkRequestDto.getArtist(), createArtworkRequestDto.getImageUri()));
 
     User user = userService.findById(userId);
-    tagService.addTagsToArtwork(createArtworkRequestDto.getTags(), artwork, user);
+    if (createArtworkRequestDto.getTags() != null) {
+      tagService.addTagsToArtwork(createArtworkRequestDto.getTags(), artwork, user);
+    }
+
+    if (artworkNum == 0) {
+      exhibit.publish();
+    }
 
     return artwork.getId();
   }
@@ -63,33 +89,17 @@ public class ArtworkService {
         .mapToObj(i -> Artwork.create(exhibit, i == 0 && emptyArtwork, imageUriList.get(i)))
         .collect(
             Collectors.toList());
+    if (emptyArtwork) {
+      exhibit.publish();
+    }
     return artworkRepository.saveAll(artworks).stream().map(Artwork::getId)
         .collect(Collectors.toList());
-  }
-
-  public Page<ArtworkThumbnailDto> getArtworkAsPage(Long exhibitId, Long userId,
-      Pageable pageable) {
-    Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
-    return artworkRepository.findAllArtworkAsPage(pageable, exhibit)
-        .map(this::buildArtworkThumbnail);
-  }
-
-  public ArtworkInfoDto getArtworkInfo(Long artworkId, Long userId) {
-    Artwork artwork = findById(artworkId, userId);
-    List<TagDto> tags = artworkTagService.getTagDtosFromArtwork(artwork);
-    return buildArtworkInfo(artwork, tags);
-  }
-
-  public List<ArtworkBrowseThumbnailDto> getArtworkBrowseThumbnail(Long exhibitId, Long userId) {
-    Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
-    return artworkRepository.findArtworksByExhibitOrderByCreatedAtDesc(exhibit).stream()
-        .map(this::buildArtworkBrowseThumbnail).collect(Collectors.toList());
   }
 
   @Transactional
   public void delete(Long id, Long userId) {
     Artwork artwork = findById(id, userId);
-    artworkTagService.deleteAllByArtwork(artwork);
+    tagService.deleteAllByArtwork(artwork);
     String imageUri = artwork.getContents().getUri();
     artworkRepository.delete(artwork);
     s3Service.deleteObject(imageUri);
@@ -105,7 +115,7 @@ public class ArtworkService {
       artwork.getContents().updateName(updateArtworkRequestDto.getName());
     }
     if (updateArtworkRequestDto.getTags() != null) {
-      artworkTagService.deleteAllByArtwork(artwork);
+      tagService.deleteAllByArtwork(artwork);
       tagService.addTagsToArtwork(updateArtworkRequestDto.getTags(), artwork,
           userService.findById(userId));
     }
@@ -127,7 +137,7 @@ public class ArtworkService {
         .build();
   }
 
-  private ArtworkInfoDto buildArtworkInfo(Artwork artwork, List<TagDto> tags) {
+  private ArtworkInfoDto buildArtworkInfo(Artwork artwork, List<String> tags) {
     return ArtworkInfoDto.builder()
         .id(artwork.getId())
         .imageURL(s3Utils.getFullUri(artwork.getContents().getUri()))

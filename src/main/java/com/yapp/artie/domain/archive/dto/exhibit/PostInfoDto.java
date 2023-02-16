@@ -20,6 +20,9 @@ public class PostInfoDto {
   @Schema(description = "관람 날짜")
   private final LocalDate postDate;
 
+  @Schema(description = "전시 링크")
+  private final String attachedLink;
+
   @Schema(description = "임시 저장 여부")
   private final boolean isPublished;
 }

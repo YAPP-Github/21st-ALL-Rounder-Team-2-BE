@@ -1,6 +1,5 @@
 package com.yapp.artie.domain.archive.dto.artwork;
 
-import com.yapp.artie.domain.archive.dto.tag.TagDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,11 +34,11 @@ public class ArtworkInfoDto {
   @Valid
   @NonNull
   @Schema(description = "감정 태그 목록", required = true)
-  private List<TagDto> tags;
+  private List<String> tags;
 
   @Builder
   public ArtworkInfoDto(@NonNull Long id, @NonNull String imageURL, String name,
-      String artist, List<TagDto> tags) {
+      String artist, List<String> tags) {
     this.id = id;
     this.imageURL = imageURL;
     this.name = name == null ? "작품명 미입력" : name;

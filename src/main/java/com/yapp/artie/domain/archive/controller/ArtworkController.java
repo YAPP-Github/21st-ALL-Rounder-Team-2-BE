@@ -25,7 +25,6 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +46,7 @@ public class ArtworkController {
 
   private final ArtworkService artworkService;
 
-  @Operation(summary = "전시 작품 추가", description = "작품(이미지)를 전시에 추가")
+  @Operation(summary = "전시 작품 등록", description = "작품(이미지)를 전시에 추가(등록)")
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "201",
@@ -125,8 +124,8 @@ public class ArtworkController {
       @RequestParam(name = "direction", required = false, defaultValue = "DESC") Direction direction) {
 
     Long userId = getUserId(authentication);
-    return ResponseEntity.ok().body(artworkService.getArtworkAsPage(exhibitId, userId,
-        PageRequest.of(page, size, direction, "createdAt")));
+    return ResponseEntity.ok()
+        .body(artworkService.getArtworkAsPage(exhibitId, userId, page, size, direction));
   }
 
   @Operation(summary = "작품 상세 정보 조회", description = "작품 상세 페이지의 작품 상세 정보 조회")
@@ -269,7 +268,8 @@ public class ArtworkController {
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
   })
   @PostMapping("batch/{id}")
-  public ResponseEntity<CreateArtworkBatchResponseDto> createArtwork(Authentication authentication,
+  public ResponseEntity<CreateArtworkBatchResponseDto> createArtworkBatch(
+      Authentication authentication,
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long exhibitId,
       @RequestBody @Valid CreateArtworkBatchRequestDto createArtworkBatchRequestDtoRequestDto) {
 

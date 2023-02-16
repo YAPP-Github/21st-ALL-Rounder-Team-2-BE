@@ -39,10 +39,13 @@ public class PostDetailInfo {
   @Schema(description = "대표 이미지")
   private String mainImage;
 
+  @Schema(description = "전시 링크")
+  private String attachedLink;
+
   @Builder
   public PostDetailInfo(@NonNull Long id, @NonNull String name, @NonNull LocalDate postDate,
       boolean isPublished, @NonNull Long categoryId, @NonNull String categoryName,
-      String mainImage) {
+      String mainImage, String attachedLink) {
     this.id = id;
     this.name = name;
     this.postDate = postDate;
@@ -50,5 +53,6 @@ public class PostDetailInfo {
     this.categoryId = categoryId;
     this.categoryName = categoryName;
     this.mainImage = mainImage;
+    this.attachedLink = attachedLink;
   }
 }
