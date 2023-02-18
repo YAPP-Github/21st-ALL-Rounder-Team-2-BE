@@ -24,7 +24,7 @@ class UserServiceTest {
   UserService userService;
 
   @Test
-  public void updateUserName() throws Exception {
+  public void updateUserName() {
     User user = userRepository.save(User.create("sample-uid", "sample-name", "sample-picture"));
 
     userService.updateUserName(user.getId(), "sample-name-2");
