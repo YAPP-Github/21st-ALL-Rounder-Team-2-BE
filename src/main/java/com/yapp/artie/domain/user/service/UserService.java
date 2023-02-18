@@ -40,6 +40,12 @@ public class UserService implements UserDetailsService {
     return new CreateUserResponseDto(user.getId());
   }
 
+  @Transactional
+  public void delete(Long id) {
+    User user = findById(id);
+    userRepository.deleteById(id);
+  }
+
   @Override
   public UserDetails loadUserByUsername(String username) {
     User user = userRepository.findByUid(username)
