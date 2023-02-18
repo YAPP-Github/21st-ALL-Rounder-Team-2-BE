@@ -13,6 +13,7 @@ import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.EntityManager;
@@ -179,6 +180,31 @@ class ArtworkServiceTest {
     assertThat(artwork1.get().isMain()).isTrue();
     assertThat(artwork1.get().getContents().getUri()).isEqualTo("sample-uri-1");
     assertThat(exhibit.isPublished()).isTrue();
+  }
+
+  @Test
+  @DisplayName("대표 작품을 삭제하였을 경우, 자동으로 다른 대표 작품을 설정해야합니다")
+  public void delete_대표_작품_삭제() {
+    User user = createUser("user", "tu");
+    Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
+    Exhibit exhibit = exhibitRepository.save(
+        Exhibit.create("test", LocalDate.now(), defaultCategory, user, null));
+    List<Artwork> artworks = artworkRepository.saveAll(
+        Arrays.asList(
+            Artwork.create(exhibit, true, "sample-uri"),
+            Artwork.create(exhibit, false, "sample-uri"),
+            Artwork.create(exhibit, false, "sample-uri")));
+    em.clear();
+
+    artworkService.delete(artworks.get(0).getId(), user.getId());
+
+    List<Artwork> newArtworks = artworkRepository.findArtworksByExhibitOrderByCreatedAtDescIdDesc(
+        exhibit);
+    assertThat(newArtworks.size()).isEqualTo(2);
+    assertThat(newArtworks.get(1).getId()).isEqualTo(artworks.get(1).getId());
+    assertThat(newArtworks.get(1).isMain()).isTrue();
+    assertThat(newArtworks.get(0).getId()).isEqualTo(artworks.get(2).getId());
+    assertThat(newArtworks.get(0).isMain()).isFalse();
   }
 }
 
