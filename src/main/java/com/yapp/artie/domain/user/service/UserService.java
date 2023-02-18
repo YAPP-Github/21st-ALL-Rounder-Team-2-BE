@@ -28,6 +28,11 @@ public class UserService implements UserDetailsService {
     return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
   }
 
+  public void updateUserName(Long userId, String name) {
+    User user = findById(userId);
+    user.setName(name);
+  }
+
   @Transactional
   public CreateUserResponseDto register(String uid, String username, String picture) {
     User user = findByUid(uid)

@@ -8,17 +8,25 @@ import com.yapp.artie.domain.user.service.UserService;
 import com.yapp.artie.domain.user.service.UserThumbnailService;
 import com.yapp.artie.global.authentication.JwtService;
 import com.yapp.artie.global.exception.common.InvalidValueException;
+import com.yapp.artie.global.exception.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -83,9 +91,46 @@ public class UserController {
     return ResponseEntity.ok().body(userThumbnailService.getUserThumbnail(userId));
   }
 
+  @Operation(summary = "유저 닉네임 수정", description = "유저의 서비스 닉네임 수정")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "204",
+          description = "닉네임이 성공적으로 수정됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = Void.class))),
+      @ApiResponse(
+          responseCode = "400",
+          description = "잘못된 입력",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "401",
+          description = "인증 오류",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(
+          responseCode = "404",
+          description = "찾을 수 없는 회원",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
+  })
+  @PatchMapping("/{id}")
+  public ResponseEntity<? extends HttpEntity> updateUserName(Authentication authentication,
+      @Parameter(name = "id", description = "유저 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long artworkId,
+      @Parameter(name = "name", description = "변경할 닉네임", in = ParameterIn.QUERY) @Valid @PathVariable("name") String name) {
+
+    Long userId = getUserId(authentication);
+    userService.updateUserName(userId, name);
+    return ResponseEntity.noContent().build();
+  }
+
   private void validateUidWithToken(String uid, FirebaseToken decodedToken) {
     if (!decodedToken.getUid().equals(uid)) {
       throw new InvalidValueException();
     }
+  }
+
+  // TODO : 앱 배포했을 때에는 0L 대신에 exception을 던지도록 변경해야 합니다.
+  private Long getUserId(Authentication authentication) {
+    if (Optional.ofNullable(authentication).isPresent()) {
+      return Long.parseLong(authentication.getName());
+    }
+    return 1L;
   }
 }
