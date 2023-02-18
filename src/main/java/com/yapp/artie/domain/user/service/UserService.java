@@ -6,6 +6,7 @@ import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.repository.UserRepository;
+import com.yapp.artie.global.authentication.JwtService;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,8 +42,9 @@ public class UserService implements UserDetailsService {
   }
 
   @Transactional
-  public void delete(Long id) {
+  public void delete(Long id, JwtService jwtService) {
     User user = findById(id);
+    jwtService.withdraw(user.getUid());
     userRepository.deleteById(id);
   }
 
