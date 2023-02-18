@@ -8,8 +8,12 @@ import com.yapp.artie.domain.user.repository.UserRepository;
 
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
+import com.yapp.artie.global.authentication.JwtService;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.BDDMockito;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +31,8 @@ class UserServiceTest {
   @Autowired
   UserService userService;
 
+  JwtService mockJwtService = Mockito.mock(JwtService.class);
+
   @Test
   public void updateUserName() {
     User user = userRepository.save(User.create("sample-uid", "sample-name", "sample-picture"));
@@ -39,10 +45,24 @@ class UserServiceTest {
   @Test
   public void delete_사용자_삭제시_테이블에서_제거된다() throws Exception {
     CreateUserResponseDto dto = userService.register("123", "le2sky", null);
-    userService.delete(dto.id);
+    userService.delete(dto.id, mockJwtService);
 
     assertThatThrownBy(() -> {
-      userService.delete(dto.id);
+      userService.delete(dto.id, mockJwtService);
     }).isInstanceOf(UserNotFoundException.class);
+  }
+
+  @Test
+  public void delete_사용자_삭제시_파이어베이스에_사용자_삭제_요청() throws Exception {
+    String expectedUid = "123";
+    CreateUserResponseDto dto = userService.register(expectedUid, "le2sky", null);
+    userService.delete(dto.id, mockJwtService);
+
+    ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+    BDDMockito.then(mockJwtService)
+        .should()
+        .withdraw(captor.capture());
+
+    assertThat(captor.getValue()).isEqualTo(expectedUid);
   }
 }
