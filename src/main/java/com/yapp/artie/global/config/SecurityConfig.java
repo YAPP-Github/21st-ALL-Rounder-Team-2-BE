@@ -3,7 +3,7 @@ package com.yapp.artie.global.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yapp.artie.global.authentication.JwtExceptionHandler;
 import com.yapp.artie.global.authentication.JwtFilter;
-import com.yapp.artie.global.authentication.JwtService;
+import com.yapp.artie.global.authentication.JwtServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,7 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final UserDetailsService userDetailsService;
-  private final JwtService jwtService;
+  private final JwtServiceImpl jwtService;
 
   @Override
   public void configure(HttpSecurity http) throws Exception {
