@@ -113,7 +113,7 @@ public class UserController {
   @PatchMapping("/{id}")
   public ResponseEntity<? extends HttpEntity> updateUserName(Authentication authentication,
       @Parameter(name = "id", description = "유저 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long artworkId,
-      @Parameter(name = "name", description = "변경할 닉네임", in = ParameterIn.QUERY) @Valid @PathVariable("name") String name) {
+      @Parameter(name = "name", description = "변경할 닉네임", in = ParameterIn.QUERY) @Valid @RequestParam("name") String name) {
 
     Long userId = getUserId(authentication);
     userService.updateUserName(userId, name);
