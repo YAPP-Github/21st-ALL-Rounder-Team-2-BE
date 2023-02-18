@@ -99,9 +99,14 @@ public class ArtworkService {
   @Transactional
   public void delete(Long id, Long userId) {
     Artwork artwork = findById(id, userId);
-    tagService.deleteAllByArtwork(artwork);
     String imageUri = artwork.getContents().getUri();
-    artworkRepository.delete(artwork);
+
+    Long artworkNum = artworkRepository.countArtworkByExhibitId(artwork.getExhibit().getId());
+    if (artworkNum <= 1) {
+      exhibitService.delete(artwork.getExhibit().getId(), userId);
+    } else {
+      artworkRepository.delete(artwork);
+    }
     s3Service.deleteObject(imageUri);
   }
 
