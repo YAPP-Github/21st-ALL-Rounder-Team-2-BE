@@ -84,4 +84,9 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
   List<ExhibitByDateResponseDto> findExhibitsByDate(@Param("user") User user,
       @Param("start") LocalDateTime start,
       @Param("end") LocalDateTime end);
+
+  @Query("select count(e.id) from Exhibit e "
+      + "where e.category = :category "
+      + "and e.publication.isPublished = true")
+  int countExhibitByCategory(@Param("category") Category category);
 }
