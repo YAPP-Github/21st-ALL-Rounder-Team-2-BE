@@ -12,5 +12,7 @@ public interface TagRepository extends JpaRepository<Tag, Long> {
   List<Tag> findAllByArtworkOrderBySequenceAsc(Artwork artwork);
 
   List<Tag> findAllByArtwork(Artwork artwork);
+
+  List<Tag> findAllByName(String name);
 }
 

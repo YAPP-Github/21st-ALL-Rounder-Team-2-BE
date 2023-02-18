@@ -19,9 +19,20 @@ public class CategoryDto {
   @Schema(description = "카테고리 순서")
   private int sequence;
 
+  @Schema(description = "카테고리 별 전시수")
+  private int postNum;
+
   public CategoryDto(Long id, String name, int sequence) {
     this.id = id;
     this.name = name;
     this.sequence = sequence;
+    this.postNum = 0;
+  }
+
+  public CategoryDto(Long id, String name, int sequence, int postNum) {
+    this.id = id;
+    this.name = name;
+    this.sequence = sequence;
+    this.postNum = postNum;
   }
 }

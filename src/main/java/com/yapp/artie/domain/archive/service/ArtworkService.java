@@ -54,7 +54,7 @@ public class ArtworkService {
 
   public List<ArtworkBrowseThumbnailDto> getArtworkBrowseThumbnail(Long exhibitId, Long userId) {
     Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
-    return artworkRepository.findArtworksByExhibitOrderByCreatedAtDesc(exhibit).stream()
+    return artworkRepository.findArtworksByExhibitOrderByCreatedAtDescIdDesc(exhibit).stream()
         .map(this::buildArtworkBrowseThumbnail).collect(Collectors.toList());
   }
 
@@ -99,9 +99,18 @@ public class ArtworkService {
   @Transactional
   public void delete(Long id, Long userId) {
     Artwork artwork = findById(id, userId);
-    tagService.deleteAllByArtwork(artwork);
     String imageUri = artwork.getContents().getUri();
-    artworkRepository.delete(artwork);
+
+    Long artworkNum = artworkRepository.countArtworkByExhibitId(artwork.getExhibit().getId());
+    if (artworkNum <= 1) {
+      exhibitService.delete(artwork.getExhibit().getId(), userId);
+    } else {
+      artworkRepository.delete(artwork);
+      if (artwork.isMain()) {
+        artworkRepository.findFirstByExhibitWithoutDeleted(
+            artwork.getExhibit(), artwork.getId()).get(0).setMainArtwork();
+      }
+    }
     s3Service.deleteObject(imageUri);
   }
 

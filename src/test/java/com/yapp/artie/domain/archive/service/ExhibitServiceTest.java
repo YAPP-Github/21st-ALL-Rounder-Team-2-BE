@@ -7,6 +7,7 @@ import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.archive.domain.exhibit.PinType;
+import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkRequestDto;
 import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CalendarExhibitRequestDto;
@@ -22,6 +23,7 @@ import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
+import com.yapp.artie.domain.archive.repository.TagRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import java.time.LocalDate;
@@ -69,6 +71,9 @@ class ExhibitServiceTest {
 
   @Autowired
   ArtworkService artworkService;
+
+  @Autowired
+  TagRepository tagRepository;
 
   User createUser(String name, String uid) {
     User user = new User();
@@ -188,11 +193,18 @@ class ExhibitServiceTest {
         defaultCategory.getId(),
         LocalDate.now(), null);
     Long created = exhibitService.create(exhibitRequestDto, user.getId());
-    exhibitService.publish(created, user.getId());
+    List<String> tags = new ArrayList<>();
+    tags.add("test-tag");
+    Long artworkId = artworkService.create(
+        new CreateArtworkRequestDto(created, "test-uri", "test-artist", null, tags), user.getId());
+    em.clear();
 
     exhibitService.delete(created, user.getId());
+    em.flush();
 
-    assertThat(em.find(Exhibit.class, created)).isNull();
+    assertThat(exhibitRepository.findById(created).isEmpty()).isTrue();
+    assertThat(artworkRepository.findById(artworkId).isEmpty()).isTrue();
+    assertThat(tagRepository.findAllByName(tags.get(0)).size()).isEqualTo(0);
   }
 
   @Test

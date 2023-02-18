@@ -10,10 +10,12 @@ import com.yapp.artie.domain.archive.exception.ChangeCategoryWrongLengthExceptio
 import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
+import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.service.UserService;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoryService {
 
   private final CategoryRepository categoryRepository;
+  private final ExhibitRepository exhibitRepository;
   private final UserService userService;
   private final int CATEGORY_LIMIT_COUNT = 5;
 
@@ -38,7 +41,9 @@ public class CategoryService {
 
   public List<CategoryDto> categoriesOf(Long userId) {
     User user = findUser(userId);
-    List<CategoryDto> categories = categoryRepository.findCategoryDto(user);
+    List<CategoryDto> categories = categoryRepository.findCategoriesByUserOrderBySequence(user)
+        .stream().map(this::buildCategoryDto).collect(
+            Collectors.toList());
     validateExistAtLeastOneCategory(categories);
 
     return categories;
@@ -88,7 +93,7 @@ public class CategoryService {
   }
 
   private Category createCategory(String name, User user) {
-    int sequence = getSequence(user) ;
+    int sequence = getSequence(user);
     validateExceedLimitCategoryCount(sequence);
 
     Category category = Category.create(user, name, sequence);
@@ -150,5 +155,10 @@ public class CategoryService {
     if (categories.size() != changeCategorySequenceDtos.size()) {
       throw new ChangeCategoryWrongLengthException();
     }
+  }
+
+  private CategoryDto buildCategoryDto(Category category) {
+    return new CategoryDto(category.getId(), category.getName(), category.getSequence(),
+        exhibitRepository.countExhibitByCategory(category));
   }
 }

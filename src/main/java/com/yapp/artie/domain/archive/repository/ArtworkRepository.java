@@ -29,9 +29,13 @@ public interface ArtworkRepository extends JpaRepository<Artwork, Long> {
   )
   Page<Artwork> findAllArtworkAsPage(Pageable pageable, @Param("exhibit") Exhibit exhibit);
 
-  List<Artwork> findArtworksByExhibitOrderByCreatedAtDesc(Exhibit exhibit);
+  List<Artwork> findArtworksByExhibitOrderByCreatedAtDescIdDesc(Exhibit exhibit);
 
   @Modifying
   @Query("update Artwork a set a.isMain = false where a.exhibit = :exhibit")
   void updateArtworkNotMainByExhibit(@Param("exhibit") Exhibit exhibit);
+
+  @Query("select a from Artwork a where a.exhibit = :exhibit and a.id <> :deletedId order by a.createdAt, a.id")
+  List<Artwork> findFirstByExhibitWithoutDeleted(@Param("exhibit") Exhibit exhibit,
+      @Param("deletedId") Long deletedId);
 }

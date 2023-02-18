@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
+import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.cateogry.UpdateCategoryRequestDto;
@@ -12,8 +13,11 @@ import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
 import com.yapp.artie.domain.archive.exception.ChangeCategoryWrongLengthException;
 import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
+import com.yapp.artie.domain.archive.repository.CategoryRepository;
+import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,6 +45,12 @@ class CategoryServiceTest {
 
   @Autowired
   UserRepository userRepository;
+
+  @Autowired
+  CategoryRepository categoryRepository;
+
+  @Autowired
+  ExhibitRepository exhibitRepository;
 
   @Autowired
   CategoryService categoryService;
@@ -91,6 +101,31 @@ class CategoryServiceTest {
     Category categoryWithUser = categoryService.findCategoryWithUser(created, user.getId());
 
     assertThat(emf.getPersistenceUnitUtil().isLoaded(categoryWithUser.getUser())).isTrue();
+  }
+
+  @Test
+  public void categoriesOf_카테고리_목록_정상_조회() {
+    User user = findUser("1");
+    Category category1 = categoryRepository.save(Category.create(user, "test-category-1", 1));
+    Category category2 = categoryRepository.save(Category.create(user, "test-category-2", 2));
+    exhibitRepository.save(
+            Exhibit.create("test", LocalDate.now(), category1, user, null))
+        .publish();
+    exhibitRepository.saveAll(
+        Arrays.asList(Exhibit.create("test", LocalDate.now(), category1, user, null),
+            Exhibit.create("test", LocalDate.now(), category2, user, null)));
+
+    List<CategoryDto> result = categoryService.categoriesOf(user.getId());
+
+    assertThat(result.size()).isEqualTo(2);
+    assertThat(result.get(0).getId()).isEqualTo(category1.getId());
+    assertThat(result.get(0).getPostNum()).isEqualTo(1);
+    assertThat(result.get(0).getName()).isEqualTo("test-category-1");
+    assertThat(result.get(0).getSequence()).isEqualTo(1);
+    assertThat(result.get(1).getId()).isEqualTo(category2.getId());
+    assertThat(result.get(1).getPostNum()).isEqualTo(0);
+    assertThat(result.get(1).getName()).isEqualTo("test-category-2");
+    assertThat(result.get(1).getSequence()).isEqualTo(2);
   }
 
   @Test
