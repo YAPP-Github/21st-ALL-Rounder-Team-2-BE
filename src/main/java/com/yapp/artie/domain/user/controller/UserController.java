@@ -24,6 +24,7 @@ import org.apache.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -75,6 +76,21 @@ public class UserController {
     User user = userService.findById(userId);
 
     return ResponseEntity.ok().body(user);
+  }
+
+  @Operation(summary = "유저 삭제", description = "회원 탈퇴")
+  @ApiResponses(value = {
+      @ApiResponse(
+          responseCode = "204",
+          description = "유저가 성공적으로 삭제됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class))),
+  })
+  @DeleteMapping("/")
+  public ResponseEntity<? extends HttpEntity> deleteUser(Authentication authentication) {
+    // Long userId = Long.parseLong(authentication.getName());
+    Long userId = 1L;
+    userService.delete(userId);
+    return ResponseEntity.noContent().build();
   }
 
   @Operation(summary = "마이페이지 썸네일 조회", description = "사용자 닉네임, 전시 개수 조회")
