@@ -3,12 +3,21 @@ package com.yapp.artie.domain.user.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.yapp.artie.domain.archive.domain.artwork.Artwork;
+import com.yapp.artie.domain.archive.domain.category.Category;
+import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
 
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.global.authentication.JwtService;
+import io.opencensus.tags.Tag;
+import io.opencensus.tags.TagKey;
+import io.opencensus.tags.TagMetadata;
+import io.opencensus.tags.TagValue;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -64,5 +73,27 @@ class UserServiceTest {
         .withdraw(captor.capture());
 
     assertThat(captor.getValue()).isEqualTo(expectedUid);
+  }
+
+
+  @Test
+  public void delete_사용자_삭제시_모든_데이터가_삭제된다() throws Exception {
+    CreateUserResponseDto dto = userService.register("uid", "le2sky", null);
+    User user = userService.findById(dto.id);
+    Category category = Category.create(user, "temp", 1);
+    Exhibit exhibit = Exhibit.create("temp", LocalDate.now(), category, user, null);
+    Artwork artwork = Artwork.create(exhibit, true, "name", "artist", "uri");
+
+    em.persist(category);
+    em.persist(exhibit);
+    em.persist(artwork);
+
+    userService.delete(dto.id, mockJwtService);
+
+    em.flush();
+    em.clear();
+    assertThat(em.find(Category.class, category.getId())).isNull();
+    assertThat(em.find(Exhibit.class, exhibit.getId())).isNull();
+    assertThat(em.find(Artwork.class, artwork.getId())).isNull();
   }
 }
