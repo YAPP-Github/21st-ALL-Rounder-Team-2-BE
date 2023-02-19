@@ -1,11 +1,16 @@
 package com.yapp.artie.domain.user.domain;
 
+import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.global.common.BaseEntity;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,6 +32,9 @@ public class User extends BaseEntity {
   private String name;
 
   private String profileImage;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+  List<Exhibit> categories = new ArrayList<>();
 
   public static User create(String uid, String name, String picture) {
     User user = new User();
