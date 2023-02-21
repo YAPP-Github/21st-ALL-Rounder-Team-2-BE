@@ -89,7 +89,7 @@ public class UserController {
   public ResponseEntity<? extends HttpEntity> deleteUser(Authentication authentication) {
     // Long userId = Long.parseLong(authentication.getName());
     Long userId = 1L;
-    userService.delete(userId, jwtService);
+    userService.delete(userId);
     return ResponseEntity.noContent().build();
   }
 
