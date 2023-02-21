@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService implements UserDetailsService {
 
   private final UserRepository userRepository;
+  private final JwtService jwtService;
 
   public Optional<User> findByUid(String uid) {
     return userRepository.findByUid(uid);
@@ -42,7 +43,7 @@ public class UserService implements UserDetailsService {
   }
 
   @Transactional
-  public void delete(Long id, JwtService jwtService) {
+  public void delete(Long id) {
     User user = findById(id);
     jwtService.withdraw(user.getUid());
     userRepository.deleteById(id);
