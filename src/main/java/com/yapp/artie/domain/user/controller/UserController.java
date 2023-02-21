@@ -85,7 +85,7 @@ public class UserController {
           description = "유저가 성공적으로 삭제됨",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class))),
   })
-  @DeleteMapping("/")
+  @DeleteMapping()
   public ResponseEntity<? extends HttpEntity> deleteUser(Authentication authentication) {
     // Long userId = Long.parseLong(authentication.getName());
     Long userId = 1L;
