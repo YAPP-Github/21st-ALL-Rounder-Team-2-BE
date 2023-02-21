@@ -27,5 +27,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
   int countCategoriesByUser(@Param("user") User user);
 
   List<Category> findCategoriesByUserOrderBySequence(User user);
+
+  @Modifying(clearAutomatically = true)
+  void deleteAllByUser(User user);
 }
 
