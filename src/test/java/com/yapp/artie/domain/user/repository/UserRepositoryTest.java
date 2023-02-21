@@ -16,4 +16,22 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 public class UserRepositoryTest {
 
+  @Autowired
+  EntityManager em;
+
+  @Autowired
+  UserRepository userRepository;
+
+  @Test
+  @DisplayName("유저 삭제")
+  void delete() {
+    User user = userRepository.save(UserTest.TEST_SAVED_USER);
+    em.clear();
+
+    userRepository.delete(user);
+    em.flush();
+
+    assertThat(userRepository.findById(user.getId()).isPresent()).isFalse();
+  }
+
 }
