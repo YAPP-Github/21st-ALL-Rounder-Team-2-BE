@@ -3,8 +3,10 @@ package com.yapp.artie.domain.archive.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
+import com.yapp.artie.domain.archive.domain.tag.Tag;
 import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
 import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.cateogry.UpdateCategoryRequestDto;
@@ -13,8 +15,10 @@ import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
 import com.yapp.artie.domain.archive.exception.ChangeCategoryWrongLengthException;
 import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
+import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
+import com.yapp.artie.domain.archive.repository.TagRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import java.time.LocalDate;
@@ -51,6 +55,12 @@ class CategoryServiceTest {
 
   @Autowired
   ExhibitRepository exhibitRepository;
+
+  @Autowired
+  ArtworkRepository artworkRepository;
+
+  @Autowired
+  TagRepository tagRepository;
 
   @Autowired
   CategoryService categoryService;
@@ -163,6 +173,25 @@ class CategoryServiceTest {
     Long created = createCategory(user, "test");
     categoryService.delete(created, user.getId());
     assertThat(Optional.ofNullable(findCategory(created))).isNotPresent();
+  }
+
+  @Test
+  public void delete_카테고리를_삭제하면_전시데이터도_삭제된다() throws Exception {
+    User user = findUser("1");
+    Long created = createCategory(user, "test");
+    Exhibit exhibit = exhibitRepository.save(
+        Exhibit.create("test", LocalDate.now(), findCategory(created), user, "link"));
+    Artwork artwork = artworkRepository.save(Artwork.create(exhibit, true, "url"));
+    Tag tag = tagRepository.save(new Tag(user, artwork, 1, "tagName"));
+    em.clear();
+
+    categoryService.delete(created, user.getId());
+    em.flush();
+
+    assertThat(Optional.ofNullable(findCategory(created))).isNotPresent();
+    assertThat(exhibitRepository.findById(exhibit.getId()).isEmpty()).isTrue();
+    assertThat(artworkRepository.findById(artwork.getId()).isEmpty()).isTrue();
+    assertThat(tagRepository.findById(tag.getId()).isEmpty()).isTrue();
   }
 
   @Test

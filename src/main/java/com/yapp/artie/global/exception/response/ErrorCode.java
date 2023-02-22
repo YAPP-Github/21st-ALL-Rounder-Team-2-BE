@@ -22,7 +22,7 @@ public enum ErrorCode {
   FIREBASE_INVALID_TOKEN(401, "F004", "JWT 토큰 파싱에 실패했습니다."),
   FIREBASE_REVOKED_TOKEN(401, "F005", "취소된 토큰입니다."),
   FIREBASE_NOT_FOUND_USER(404, "F006", "존재하지 않는 파이어베이스 사용자입니다."),
-  FIREBASE_INVALID_UID(401, "F007", "유요하지 않은 파이어베이스 식별자입니다."),
+  FIREBASE_INVALID_UID(401, "F007", "유효하지 않은 파이어베이스 식별자입니다."),
 
   // User
   USER_NOT_FOUND(404, "U001", "회원을 찾을 수 없습니다."),

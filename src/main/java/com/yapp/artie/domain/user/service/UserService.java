@@ -2,6 +2,7 @@ package com.yapp.artie.domain.user.service;
 
 import static org.springframework.security.core.userdetails.User.builder;
 
+import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
@@ -20,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService implements UserDetailsService {
 
   private final UserRepository userRepository;
+  private final CategoryRepository categoryRepository;
+  private final JwtService jwtService;
 
   public Optional<User> findByUid(String uid) {
     return userRepository.findByUid(uid);
@@ -42,10 +45,12 @@ public class UserService implements UserDetailsService {
   }
 
   @Transactional
-  public void delete(Long id, JwtService jwtService) {
+  public void delete(Long id) {
     User user = findById(id);
     jwtService.withdraw(user.getUid());
-    userRepository.deleteById(id);
+
+    categoryRepository.deleteAllByUser(user);
+    userRepository.delete(user);
   }
 
   @Override
