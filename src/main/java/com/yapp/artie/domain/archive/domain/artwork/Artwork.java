@@ -43,7 +43,7 @@ public class Artwork extends BaseEntity {
   @Embedded
   private ArtworkContents contents;
 
-  @OneToMany(mappedBy = "artwork", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "artwork", cascade = CascadeType.REMOVE)
   List<Tag> tags = new ArrayList<>();
 
   public Artwork(Exhibit exhibit, boolean isMain, ArtworkContents contents) {
