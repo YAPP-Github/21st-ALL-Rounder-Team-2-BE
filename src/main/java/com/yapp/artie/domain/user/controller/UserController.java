@@ -71,8 +71,8 @@ public class UserController {
   })
   @GetMapping("/me")
   public ResponseEntity<User> me(Authentication authentication) {
-    // Long userId = Long.parseLong(authentication.getName());
-    Long userId = 1L;
+
+    Long userId = Long.parseLong(authentication.getName());
     User user = userService.findById(userId);
 
     return ResponseEntity.ok().body(user);
