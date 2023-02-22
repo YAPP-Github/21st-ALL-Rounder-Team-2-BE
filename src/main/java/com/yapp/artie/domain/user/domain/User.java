@@ -35,4 +35,13 @@ public class User extends BaseEntity {
     user.setProfileImage(picture);
     return user;
   }
+
+  public static User create(Long id, String uid, String name, String profileImage) {
+    User user = new User();
+    user.id = id;
+    user.uid = uid;
+    user.name = name;
+    user.profileImage = profileImage;
+    return user;
+  }
 }

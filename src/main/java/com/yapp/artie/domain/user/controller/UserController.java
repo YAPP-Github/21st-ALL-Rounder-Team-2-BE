@@ -71,8 +71,8 @@ public class UserController {
   })
   @GetMapping("/me")
   public ResponseEntity<User> me(Authentication authentication) {
-    // Long userId = Long.parseLong(authentication.getName());
-    Long userId = 1L;
+
+    Long userId = Long.parseLong(authentication.getName());
     User user = userService.findById(userId);
 
     return ResponseEntity.ok().body(user);
@@ -85,11 +85,11 @@ public class UserController {
           description = "유저가 성공적으로 삭제됨",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class))),
   })
-  @DeleteMapping("/")
+  @DeleteMapping()
   public ResponseEntity<? extends HttpEntity> deleteUser(Authentication authentication) {
-    // Long userId = Long.parseLong(authentication.getName());
-    Long userId = 1L;
-    userService.delete(userId, jwtService);
+
+    Long userId = getUserId(authentication);
+    userService.delete(userId);
     return ResponseEntity.noContent().build();
   }
 
@@ -102,8 +102,8 @@ public class UserController {
   })
   @GetMapping("/my-page")
   public ResponseEntity<UserThumbnailResponseDto> my(Authentication authentication) {
-    // Long userId = Long.parseLong(authentication.getName());
-    Long userId = 1L;
+
+    Long userId = getUserId(authentication);
     return ResponseEntity.ok().body(userThumbnailService.getUserThumbnail(userId));
   }
 

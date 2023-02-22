@@ -44,7 +44,7 @@ public class Exhibit extends BaseEntity {
   @JoinColumn(name = "category_id", nullable = false)
   private Category category;
 
-  @OneToMany(mappedBy = "exhibit", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OneToMany(mappedBy = "exhibit", cascade = CascadeType.REMOVE)
   List<Artwork> artworks = new ArrayList<>();
 
   @Embedded
