@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -77,9 +78,11 @@ public class ExhibitService {
     }
 
     Pageable pageable = PageRequest.of(page, size, getSortCondition(PinType.ALL, direction));
+    AtomicBoolean isFirstElement = new AtomicBoolean(page == 0);
     return exhibitRepository
         .findExhibitAsPage(pageable, findUser(userId))
-        .map(exhibit -> buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit)));
+        .map(exhibit -> buildPostDetailInfoForHome(exhibit, getMainImageUri(exhibit),
+            isFirstElement.get() && isFirstElement.getAndSet(false), PinType.ALL));
   }
 
   private Page<PostDetailInfo> getExhibitByCategoryAsPage(Long categoryId, Long userId,
@@ -87,9 +90,11 @@ public class ExhibitService {
 
     Category category = categoryService.findCategoryWithUser(categoryId, userId);
     Pageable pageable = PageRequest.of(page, size, getSortCondition(PinType.CATEGORY, direction));
+    AtomicBoolean isFirstElement = new AtomicBoolean(page == 0);
     return exhibitRepository
         .findExhibitByCategoryAsPage(pageable, findUser(userId), category)
-        .map(exhibit -> buildDetailExhibitionInformation(exhibit, getMainImageUri(exhibit)));
+        .map(exhibit -> buildPostDetailInfoForHome(exhibit, getMainImageUri(exhibit),
+            isFirstElement.get() && isFirstElement.getAndSet(false), PinType.CATEGORY));
   }
 
   public List<CalendarExhibitResponseDto> getExhibitByMonthly(
@@ -226,6 +231,22 @@ public class ExhibitService {
         .categoryName(exhibit.getCategory().getName())
         .mainImage(imageUri)
         .attachedLink(exhibit.contents().getAttachedLink())
+        .isPinned(false)
+        .build();
+  }
+
+  private PostDetailInfo buildPostDetailInfoForHome(Exhibit exhibit, String imageUri,
+      boolean isFirstElement, PinType pagePinType) {
+    return PostDetailInfo.builder()
+        .id(exhibit.getId())
+        .name(exhibit.contents().getName())
+        .postDate(exhibit.contents().getDate())
+        .isPublished(exhibit.isPublished())
+        .categoryId(exhibit.getCategory().getId())
+        .categoryName(exhibit.getCategory().getName())
+        .mainImage(imageUri)
+        .attachedLink(exhibit.contents().getAttachedLink())
+        .isPinned(isFirstElement && getIsPinned(exhibit.getPinType(), pagePinType))
         .build();
   }
 
@@ -269,5 +290,15 @@ public class ExhibitService {
     return JpaSort.unsafe(Direction.ASC,
             String.format("case when e.pinType in ('BOTH','%s') then 1 else 2 end", pinType))
         .andUnsafe(direction, "createdAt");
+  }
+
+  private boolean getIsPinned(PinType exhibitPinType, PinType pagePinType) {
+    if (pagePinType == PinType.ALL && (exhibitPinType == PinType.BOTH
+        || exhibitPinType == PinType.ALL)) {
+      return true;
+    } else {
+      return pagePinType == PinType.CATEGORY && (exhibitPinType == PinType.BOTH
+          || exhibitPinType == PinType.CATEGORY);
+    }
   }
 }

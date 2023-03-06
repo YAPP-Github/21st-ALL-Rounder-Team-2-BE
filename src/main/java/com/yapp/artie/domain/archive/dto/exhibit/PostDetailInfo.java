@@ -42,10 +42,13 @@ public class PostDetailInfo {
   @Schema(description = "전시 링크")
   private String attachedLink;
 
+  @Schema(description = "고정 여부")
+  private boolean isPinned;
+
   @Builder
   public PostDetailInfo(@NonNull Long id, @NonNull String name, @NonNull LocalDate postDate,
       boolean isPublished, @NonNull Long categoryId, @NonNull String categoryName,
-      String mainImage, String attachedLink) {
+      String mainImage, String attachedLink, boolean isPinned) {
     this.id = id;
     this.name = name;
     this.postDate = postDate;
@@ -54,5 +57,6 @@ public class PostDetailInfo {
     this.categoryName = categoryName;
     this.mainImage = mainImage;
     this.attachedLink = attachedLink;
+    this.isPinned = isPinned;
   }
 }
