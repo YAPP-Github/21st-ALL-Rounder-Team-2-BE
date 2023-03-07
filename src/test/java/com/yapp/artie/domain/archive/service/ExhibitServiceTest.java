@@ -365,6 +365,8 @@ class ExhibitServiceTest {
     assertThat(results.getNumber()).isEqualTo(0);
     assertThat(results.getContent().get(0).getId()).isEqualTo(exhibit.getId());
     assertThat(results.getContent().get(0).getName()).isEqualTo(exhibit.contents().getName());
+    assertThat(results.getContent().get(0).isPinned()).isEqualTo(true);
+    assertThat(results.getContent().get(1).isPinned()).isEqualTo(false);
   }
 
   @Test
@@ -394,6 +396,8 @@ class ExhibitServiceTest {
     assertThat(results.getNumber()).isEqualTo(0);
     assertThat(results.getContent().get(0).getId()).isEqualTo(exhibit.getId());
     assertThat(results.getContent().get(0).getName()).isEqualTo(exhibit.contents().getName());
+    assertThat(results.getContent().get(0).isPinned()).isEqualTo(true);
+    assertThat(results.getContent().get(1).isPinned()).isEqualTo(false);
   }
 
   @Test
