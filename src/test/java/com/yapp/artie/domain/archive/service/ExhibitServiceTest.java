@@ -230,12 +230,13 @@ class ExhibitServiceTest {
 
     assertThat(results.size()).isEqualTo(4);
     assertThat(results.get(0).getImageURL().endsWith("test-5")).isTrue();
-    assertThat(results.get(0).getYear()).isEqualTo(2023);
-    assertThat(results.get(0).getMonth()).isEqualTo(1);
-    assertThat(results.get(0).getDay()).isEqualTo(1);
+    assertThat(results.get(0).getPostDate().getYear()).isEqualTo(2023);
+    assertThat(results.get(0).getPostDate().getMonthValue()).isEqualTo(1);
+    assertThat(results.get(0).getPostDate().getDayOfMonth()).isEqualTo(1);
     assertThat(results.get(0).getPostNum()).isEqualTo(2);
     assertThat(results.get(0).getPostId()).isEqualTo(5L);
-    assertThat(results.get(1).getDay()).isEqualTo(2);
+    assertThat(results.get(0).getPostDate().toString()).isEqualTo("2023-01-01");
+    assertThat(results.get(1).getPostDate().getDayOfMonth()).isEqualTo(2);
   }
 
   @Test
