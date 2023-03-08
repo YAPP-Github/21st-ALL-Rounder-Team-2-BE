@@ -1,6 +1,7 @@
 package com.yapp.artie.domain.archive.dto.exhibit;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -10,17 +11,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CalendarExhibitResponseDto {
 
-  @NonNull
-  @Schema(description = "연도(year)", required = true)
-  private final int year;
-
-  @NonNull
-  @Schema(description = "월(month)", required = true)
-  private final int month;
-
-  @NonNull
-  @Schema(description = "일(day)", required = true)
-  private final int day;
+  @Schema(description = "관람 날짜", required = true)
+  private final LocalDate postDate;
 
   @NonNull
   @Schema(description = "전시 ID", required = true)
