@@ -211,8 +211,7 @@ public class ExhibitService {
   private CalendarExhibitResponseDto buildCalendarExhibitInformation(
       CalenderQueryResultDto queryResult) {
     LocalDate date = LocalDate.parse(queryResult.getCalenderDate(), DateTimeFormatter.ISO_DATE);
-    return new CalendarExhibitResponseDto(date.getYear(),
-        date.getMonthValue(), date.getDayOfMonth(), queryResult.getPostId(),
+    return new CalendarExhibitResponseDto(date, queryResult.getPostId(),
         s3Utils.getFullUri(queryResult.getUri()), queryResult.getPostNum());
   }
 
