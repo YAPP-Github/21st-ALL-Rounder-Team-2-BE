@@ -24,7 +24,12 @@ public class FirebaseInitializer {
         .setCredentials(GoogleCredentials.fromStream(serviceAccount))
         .build();
 
-    FirebaseApp app = FirebaseApp.initializeApp(options);
+    FirebaseApp app = FirebaseApp.getApps()
+        .stream()
+        .filter(app1 -> app1.getName().equals(FirebaseApp.DEFAULT_APP_NAME))
+        .findFirst()
+        .orElseGet(() -> FirebaseApp.initializeApp(options));
+
     log.info("FirebaseApp initialized" + app.getName());
     return app;
   }
