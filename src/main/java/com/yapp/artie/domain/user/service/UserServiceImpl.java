@@ -3,6 +3,8 @@ package com.yapp.artie.domain.user.service;
 import static org.springframework.security.core.userdetails.User.builder;
 
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
+import com.yapp.artie.domain.user.application.service.RegisterUserService;
+import com.yapp.artie.domain.user.application.service.RenameUserService;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
@@ -24,6 +26,7 @@ public class UserServiceImpl implements UserDetailsService, UserUseCase {
   private final CategoryRepository categoryRepository;
   private final JwtService jwtService;
   private final RegisterUserService registerUserService;
+  private final RenameUserService renameUserService;
 
   @Override
   public Optional<User> findByUid(String uid) {
@@ -65,7 +68,6 @@ public class UserServiceImpl implements UserDetailsService, UserUseCase {
   @Override
   @Transactional
   public void updateUserName(Long userId, String name) {
-    User user = findById(userId);
-    user.setName(name);
+    renameUserService.rename(userId, name);
   }
 }
