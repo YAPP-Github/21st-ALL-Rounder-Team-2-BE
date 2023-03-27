@@ -16,7 +16,6 @@ public class RenameUserService implements RenameUserUseCase {
   private final UserRepository userRepository;
 
   @Override
-  @Transactional
   public void rename(Long userId, String name) {
     User user = userRepository.findById(userId)
         .orElseThrow(UserNotFoundException::new);

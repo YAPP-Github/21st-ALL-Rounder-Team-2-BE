@@ -66,7 +66,6 @@ public class UserServiceImpl implements UserDetailsService, UserUseCase {
   }
 
   @Override
-  @Transactional
   public void updateUserName(Long userId, String name) {
     renameUserService.rename(userId, name);
   }
