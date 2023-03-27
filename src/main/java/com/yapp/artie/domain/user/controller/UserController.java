@@ -4,7 +4,7 @@ import com.google.firebase.auth.FirebaseToken;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
-import com.yapp.artie.domain.user.service.UserService;
+import com.yapp.artie.domain.user.service.UserUseCase;
 import com.yapp.artie.domain.user.service.UserThumbnailService;
 import com.yapp.artie.global.authentication.JwtService;
 import com.yapp.artie.global.exception.common.InvalidValueException;
@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
 
-  private final UserService userService;
+  private final UserUseCase userService;
   private final UserThumbnailService userThumbnailService;
   private final JwtService jwtService;
 

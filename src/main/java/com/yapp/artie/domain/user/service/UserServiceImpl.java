@@ -18,20 +18,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserServiceImpl implements UserDetailsService, UserUseCase {
 
   private final UserRepository userRepository;
   private final CategoryRepository categoryRepository;
   private final JwtService jwtService;
 
+  @Override
   public Optional<User> findByUid(String uid) {
     return userRepository.findByUid(uid);
   }
 
+  @Override
   public User findById(Long id) {
     return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
   }
 
+  @Override
   @Transactional
   public CreateUserResponseDto register(String uid, String username, String picture) {
     User user = findByUid(uid)
@@ -44,6 +47,7 @@ public class UserService implements UserDetailsService {
     return new CreateUserResponseDto(user.getId());
   }
 
+  @Override
   @Transactional
   public void delete(Long id) {
     User user = findById(id);
@@ -65,6 +69,7 @@ public class UserService implements UserDetailsService {
         .build();
   }
   
+  @Override
   @Transactional
   public void updateUserName(Long userId, String name) {
     User user = findById(userId);

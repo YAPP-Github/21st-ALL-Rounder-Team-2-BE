@@ -17,7 +17,7 @@ import com.yapp.artie.domain.archive.exception.NotOwnerOfExhibitException;
 import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.domain.user.service.UserService;
+import com.yapp.artie.domain.user.service.UserUseCase;
 import com.yapp.artie.global.util.DateUtils;
 import com.yapp.artie.global.util.S3Utils;
 import java.time.LocalDate;
@@ -43,7 +43,7 @@ public class ExhibitService {
 
   private final ExhibitRepository exhibitRepository;
   private final ArtworkRepository artworkRepository;
-  private final UserService userService;
+  private final UserUseCase userService;
   private final CategoryService categoryService;
   private final S3Utils s3Utils;
 

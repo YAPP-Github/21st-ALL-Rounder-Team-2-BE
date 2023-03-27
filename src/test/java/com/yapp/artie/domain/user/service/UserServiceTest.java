@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 class UserServiceTest {
 
   @InjectMocks
-  private UserService userService;
+  private UserServiceImpl userService;
 
   @Mock
   private UserRepository userRepository;

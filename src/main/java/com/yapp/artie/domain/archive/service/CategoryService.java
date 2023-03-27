@@ -12,7 +12,7 @@ import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.domain.user.service.UserService;
+import com.yapp.artie.domain.user.service.UserUseCase;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,7 +27,7 @@ public class CategoryService {
 
   private final CategoryRepository categoryRepository;
   private final ExhibitRepository exhibitRepository;
-  private final UserService userService;
+  private final UserUseCase userService;
   private final int CATEGORY_LIMIT_COUNT = 5;
 
   public Category findCategoryWithUser(Long id, Long userId) {

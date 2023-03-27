@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserThumbnailService {
 
-  private final UserService userService;
+  private final UserUseCase userService;
   private final ExhibitService exhibitService;
 
   public UserThumbnailResponseDto getUserThumbnail(Long id) {
