@@ -4,25 +4,25 @@ import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import com.yapp.artie.global.annotation.UseCase;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
 @UseCase
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
-public class RegisterUserService {
+public class RegisterUserService implements RegisterUserUseCase {
 
   private final UserRepository userRepository;
 
-  @Transactional
-  public CreateUserResponseDto register(String uid, String username, String picture) {
-    User user = userRepository.findByUid(uid)
-        .orElse(User.create(uid, username, picture));
+  @Override
+  public CreateUserResponseDto register(final String uid, final String username,
+      final String picture) {
 
-    if (user.getId() == null) {
-      userRepository.save(user);
-    }
-
-    return new CreateUserResponseDto(user.getId());
+    final Optional<User> user = userRepository.findByUid(uid);
+    return user.map(entity -> new CreateUserResponseDto(entity.getId()))
+        .orElseGet(() -> new CreateUserResponseDto(userRepository
+            .save(User.create(uid, username, picture))
+            .getId()));
   }
 }
