@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserDetailsService, UserUseCase {
   private final UserRepository userRepository;
   private final CategoryRepository categoryRepository;
   private final JwtService jwtService;
+  private final RegisterUserService registerUserService;
 
   @Override
   public Optional<User> findByUid(String uid) {
@@ -35,16 +36,8 @@ public class UserServiceImpl implements UserDetailsService, UserUseCase {
   }
 
   @Override
-  @Transactional
   public CreateUserResponseDto register(String uid, String username, String picture) {
-    User user = findByUid(uid)
-        .orElse(User.create(uid, username, picture));
-
-    if (user.getId() == null) {
-      userRepository.save(user);
-    }
-
-    return new CreateUserResponseDto(user.getId());
+    return registerUserService.register(uid, username, picture);
   }
 
   @Override
@@ -68,7 +61,7 @@ public class UserServiceImpl implements UserDetailsService, UserUseCase {
         .authorities("user")
         .build();
   }
-  
+
   @Override
   @Transactional
   public void updateUserName(Long userId, String name) {
