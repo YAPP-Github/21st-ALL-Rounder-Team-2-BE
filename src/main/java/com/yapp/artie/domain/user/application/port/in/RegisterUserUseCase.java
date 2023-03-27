@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.user.service;
+package com.yapp.artie.domain.user.application.port.in;
 
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 

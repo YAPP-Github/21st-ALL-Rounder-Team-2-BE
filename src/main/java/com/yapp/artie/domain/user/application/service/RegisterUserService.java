@@ -1,5 +1,6 @@
-package com.yapp.artie.domain.user.service;
+package com.yapp.artie.domain.user.application.service;
 
+import com.yapp.artie.domain.user.application.port.in.RegisterUserUseCase;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.repository.UserRepository;
