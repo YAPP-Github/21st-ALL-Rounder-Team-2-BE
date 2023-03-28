@@ -21,9 +21,10 @@ public class UserWithdrawalService implements UserWithdrawalUseCase {
 
   @Override
   public void delete(Long id) {
-    User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
-    jwtService.withdraw(user.getUid());
+    User user = userRepository.findById(id)
+        .orElseThrow(UserNotFoundException::new);
 
+    jwtService.withdraw(user.getUid());
     categoryRepository.deleteAllByUser(user);
     userRepository.delete(user);
   }
