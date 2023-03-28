@@ -2,14 +2,13 @@ package com.yapp.artie.domain.user.service;
 
 import static org.springframework.security.core.userdetails.User.builder;
 
-import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.user.application.service.RegisterUserService;
 import com.yapp.artie.domain.user.application.service.RenameUserService;
+import com.yapp.artie.domain.user.application.service.UserWithdrawalService;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.repository.UserRepository;
-import com.yapp.artie.global.authentication.JwtService;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,10 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserDetailsService, UserUseCase {
 
   private final UserRepository userRepository;
-  private final CategoryRepository categoryRepository;
-  private final JwtService jwtService;
   private final RegisterUserService registerUserService;
   private final RenameUserService renameUserService;
+  private final UserWithdrawalService userWithdrawalService;
 
   @Override
   public Optional<User> findByUid(String uid) {
@@ -44,13 +42,8 @@ public class UserServiceImpl implements UserDetailsService, UserUseCase {
   }
 
   @Override
-  @Transactional
   public void delete(Long id) {
-    User user = findById(id);
-    jwtService.withdraw(user.getUid());
-
-    categoryRepository.deleteAllByUser(user);
-    userRepository.delete(user);
+    userWithdrawalService.delete(id);
   }
 
   @Override
