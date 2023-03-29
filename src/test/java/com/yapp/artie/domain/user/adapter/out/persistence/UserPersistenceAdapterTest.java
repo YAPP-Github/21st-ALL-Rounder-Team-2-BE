@@ -1,5 +1,6 @@
 package com.yapp.artie.domain.user.adapter.out.persistence;
 
+import static com.yapp.artie.common.UserTestData.defaultUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -72,7 +73,7 @@ class UserPersistenceAdapterTest {
 
   @Test
   void save_사용자를_데이터베이스에_저장한다() {
-    adapterUnderTest.save(User.withoutId("sample", "test", "tomcat"));
+    adapterUnderTest.save(defaultUser().withId(null).build());
     assertThat(userRepository.count()).isEqualTo(1);
   }
 
@@ -93,7 +94,7 @@ class UserPersistenceAdapterTest {
   @Test
   void updateName_사용자를_찾을_수_없으면_예외를_발생한다() {
     assertThatThrownBy(() -> {
-      adapterUnderTest.updateName(User.withId(1L, "sample", "test", "not tomcat"));
+      adapterUnderTest.updateName(defaultUser().build());
     }).isInstanceOf(UserNotFoundException.class);
   }
 }
