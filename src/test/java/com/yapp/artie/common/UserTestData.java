@@ -1,6 +1,6 @@
 package com.yapp.artie.common;
 
-import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
+import com.yapp.artie.domain.user.domain.User;
 
 public class UserTestData {
 
@@ -20,12 +20,10 @@ public class UserTestData {
     private String name;
     private String profileImage;
 
-
     public UserBuilder withId(Long id) {
       this.id = id;
       return this;
     }
-
 
     public UserBuilder withUid(String uid) {
       this.uid = uid;
@@ -43,12 +41,12 @@ public class UserTestData {
       return this;
     }
 
-    public UserJpaEntity build() {
-      return UserJpaEntity.create(
+    public User build() {
+      return User.withId(
           this.id,
           this.uid,
-          this.name,
-          this.profileImage
+          this.profileImage,
+          this.name
       );
     }
   }
