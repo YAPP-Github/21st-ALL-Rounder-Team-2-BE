@@ -8,21 +8,23 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
-import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
+import com.yapp.artie.domain.user.application.port.out.DeleteUserPort;
+import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
+import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
-import com.yapp.artie.domain.user.adapter.out.persistence.UserRepository;
 import com.yapp.artie.global.authentication.JwtService;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class UserWithdrawalServiceTest {
 
-  private final UserRepository userRepository = Mockito.mock(UserRepository.class);
   private final CategoryRepository categoryRepository = Mockito.mock(CategoryRepository.class);
   private final JwtService jwtService = Mockito.mock(JwtService.class);
+  private final LoadUserPort loadUserPort = Mockito.mock(LoadUserPort.class);
+  private final DeleteUserPort deleteUserPort = Mockito.mock(DeleteUserPort.class);
+
   private final UserWithdrawalService userWithdrawalService = new UserWithdrawalService(
-      jwtService, categoryRepository, userRepository);
+      jwtService, categoryRepository, loadUserPort, deleteUserPort);
 
   @Test
   void delete_사용자를_찾을_수_없으면_예외를_발생한다() {
@@ -51,26 +53,26 @@ class UserWithdrawalServiceTest {
 
   @Test
   void delete_데이터베이스에서_사용자를_삭제하도록_요청한다() {
-    UserJpaEntity user = defaultUser().build();
+    User user = defaultUser().build();
     givenUserByReference(user);
     userWithdrawalService.delete(1L);
-    then(userRepository)
+    then(deleteUserPort)
         .should()
         .delete(eq(user));
   }
 
-  private void givenUserByReference(UserJpaEntity user) {
-    given(userRepository.findById(any()))
-        .willReturn(Optional.ofNullable(user));
+  private void givenUserByReference(User user) {
+    given(loadUserPort.loadById(any()))
+        .willReturn(user);
   }
 
   private void givenUser() {
-    given(userRepository.findById(any()))
-        .willReturn(Optional.ofNullable(defaultUser().build()));
+    given(loadUserPort.loadById(any()))
+        .willReturn(defaultUser().build());
   }
 
   private void givenUserFindWillFail() {
-    given(userRepository.findById(any()))
+    given(loadUserPort.loadById(any()))
         .willThrow(UserNotFoundException.class);
   }
 }
