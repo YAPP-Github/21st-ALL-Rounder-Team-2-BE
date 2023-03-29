@@ -16,7 +16,7 @@ import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.archive.repository.TagRepository;
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserJpaEntity;
 import com.yapp.artie.domain.user.domain.UserTest;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import com.yapp.artie.global.authentication.JwtServiceImpl;
@@ -54,7 +54,7 @@ class UserControllerTest extends BaseIntegrationTest {
   @Test
   @DisplayName("유저 삭제(탈퇴) API - 유저 데이터가 삭제되면 해당 유저의 카테고리, 전시, 작품, 태그 데이터가 함께 삭제되어야합니다.")
   public void deleteUser() throws Exception {
-    User user = userRepository.save(UserTest.TEST_SAVED_USER);
+    UserJpaEntity user = userRepository.save(UserTest.TEST_SAVED_USER);
     Category category = categoryRepository.save(Category.create(user, "category-name", 1));
     Exhibit exhibit = exhibitRepository.save(
         Exhibit.create("exhibit-name", LocalDate.now(), category, user, "exhibit-link"));

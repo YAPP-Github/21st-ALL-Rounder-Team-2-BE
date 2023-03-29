@@ -7,7 +7,7 @@ import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.service.CategoryService;
 import com.yapp.artie.domain.archive.service.ExhibitService;
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserJpaEntity;
 import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
 import java.time.LocalDate;
 import javax.persistence.EntityManager;
@@ -32,8 +32,8 @@ class UserThumbnailServiceTest {
   @Autowired
   UserThumbnailService userThumbnailService;
 
-  User createUser(String name, String uid) {
-    User user = new User();
+  UserJpaEntity createUser(String name, String uid) {
+    UserJpaEntity user = new UserJpaEntity();
     user.setName(name);
     user.setUid(uid);
     em.persist(user);
@@ -42,7 +42,7 @@ class UserThumbnailServiceTest {
     return user;
   }
 
-  void createExhibit(User user) {
+  void createExhibit(UserJpaEntity user) {
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
@@ -56,7 +56,7 @@ class UserThumbnailServiceTest {
   public void getUserThumbnail_사용자의_닉네임과_전시개수를_반환한다() throws Exception {
     String expectedName = "le2sky";
     int expectedCount = 10;
-    User user = createUser(expectedName, "test-123");
+    UserJpaEntity user = createUser(expectedName, "test-123");
     for (int i = 0; i < expectedCount; i++) {
       createExhibit(user);
     }

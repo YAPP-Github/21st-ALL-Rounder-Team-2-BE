@@ -1,6 +1,6 @@
 package com.yapp.artie.domain.question.domain;
 
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserJpaEntity;
 import com.yapp.artie.global.common.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +25,7 @@ public class Question extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
-  private User user;
+  private UserJpaEntity user;
 
   @Column(nullable = false)
   private String title;

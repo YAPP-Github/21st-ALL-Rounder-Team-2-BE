@@ -1,7 +1,7 @@
 package com.yapp.artie.domain.user.application.service;
 
 import com.yapp.artie.domain.user.application.port.in.RenameUserUseCase;
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserJpaEntity;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import com.yapp.artie.global.annotation.UseCase;
@@ -17,7 +17,7 @@ public class RenameUserService implements RenameUserUseCase {
 
   @Override
   public void rename(Long userId, String name) {
-    User user = userRepository.findById(userId)
+    UserJpaEntity user = userRepository.findById(userId)
         .orElseThrow(UserNotFoundException::new);
 
     user.setName(name);

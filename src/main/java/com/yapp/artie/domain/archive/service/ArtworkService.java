@@ -10,7 +10,7 @@ import com.yapp.artie.domain.archive.dto.artwork.UpdateArtworkRequestDto;
 import com.yapp.artie.domain.archive.exception.ArtworkNotFoundException;
 import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.s3.service.S3Service;
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserJpaEntity;
 import com.yapp.artie.domain.user.service.UserUseCase;
 import com.yapp.artie.global.util.S3Utils;
 import java.util.List;
@@ -68,7 +68,7 @@ public class ArtworkService {
         Artwork.create(exhibit, artworkNum <= 0, createArtworkRequestDto.getName(),
             createArtworkRequestDto.getArtist(), createArtworkRequestDto.getImageUri()));
 
-    User user = userService.findById(userId);
+    UserJpaEntity user = userService.findById(userId);
     if (createArtworkRequestDto.getTags() != null) {
       tagService.addTagsToArtwork(createArtworkRequestDto.getTags(), artwork, user);
     }

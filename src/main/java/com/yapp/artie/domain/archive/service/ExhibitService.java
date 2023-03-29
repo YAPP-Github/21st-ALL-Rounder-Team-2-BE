@@ -16,7 +16,7 @@ import com.yapp.artie.domain.archive.exception.ExhibitNotFoundException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfExhibitException;
 import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserJpaEntity;
 import com.yapp.artie.domain.user.service.UserUseCase;
 import com.yapp.artie.global.util.DateUtils;
 import com.yapp.artie.global.util.S3Utils;
@@ -192,7 +192,7 @@ public class ExhibitService {
     }
   }
 
-  private User findUser(Long userId) {
+  private UserJpaEntity findUser(Long userId) {
     return userService.findById(userId);
   }
 
@@ -202,7 +202,7 @@ public class ExhibitService {
   }
 
   // TODO : public이 아니도록 수정
-  public void validateOwnedByUser(User user, Exhibit exhibit) {
+  public void validateOwnedByUser(UserJpaEntity user, Exhibit exhibit) {
     if (!exhibit.ownedBy(user)) {
       throw new NotOwnerOfExhibitException();
     }

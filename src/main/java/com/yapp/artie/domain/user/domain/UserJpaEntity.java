@@ -15,7 +15,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class User extends BaseEntity {
+public class UserJpaEntity extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,16 +28,16 @@ public class User extends BaseEntity {
 
   private String profileImage;
 
-  public static User create(String uid, String name, String picture) {
-    User user = new User();
+  public static UserJpaEntity create(String uid, String name, String picture) {
+    UserJpaEntity user = new UserJpaEntity();
     user.setUid(uid);
     user.setName(name);
     user.setProfileImage(picture);
     return user;
   }
 
-  public static User create(Long id, String uid, String name, String profileImage) {
-    User user = new User();
+  public static UserJpaEntity create(Long id, String uid, String name, String profileImage) {
+    UserJpaEntity user = new UserJpaEntity();
     user.id = id;
     user.uid = uid;
     user.name = name;

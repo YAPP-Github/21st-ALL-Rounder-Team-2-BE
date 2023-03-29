@@ -5,7 +5,7 @@ import static org.springframework.security.core.userdetails.User.builder;
 import com.yapp.artie.domain.user.application.service.RegisterUserService;
 import com.yapp.artie.domain.user.application.service.RenameUserService;
 import com.yapp.artie.domain.user.application.service.UserWithdrawalService;
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserJpaEntity;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.repository.UserRepository;
@@ -27,12 +27,12 @@ public class UserServiceImpl implements UserDetailsService, UserUseCase {
   private final UserWithdrawalService userWithdrawalService;
 
   @Override
-  public Optional<User> findByUid(String uid) {
+  public Optional<UserJpaEntity> findByUid(String uid) {
     return userRepository.findByUid(uid);
   }
 
   @Override
-  public User findById(Long id) {
+  public UserJpaEntity findById(Long id) {
     return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
   }
 
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserDetailsService, UserUseCase {
 
   @Override
   public UserDetails loadUserByUsername(String username) {
-    User user = userRepository.findByUid(username)
+    UserJpaEntity user = userRepository.findByUid(username)
         .orElseThrow(UserNotFoundException::new);
 
     return builder()

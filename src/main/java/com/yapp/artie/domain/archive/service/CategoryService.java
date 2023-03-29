@@ -11,7 +11,7 @@ import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserJpaEntity;
 import com.yapp.artie.domain.user.service.UserUseCase;
 import java.util.List;
 import java.util.Optional;
@@ -33,14 +33,14 @@ public class CategoryService {
   public Category findCategoryWithUser(Long id, Long userId) {
     Category category = Optional.ofNullable(categoryRepository.findCategoryEntityGraphById(id))
         .orElseThrow(CategoryNotFoundException::new);
-    User user = findUser(userId);
+    UserJpaEntity user = findUser(userId);
     validateOwnedByUser(category, user);
 
     return category;
   }
 
   public List<CategoryDto> categoriesOf(Long userId) {
-    User user = findUser(userId);
+    UserJpaEntity user = findUser(userId);
     List<CategoryDto> categories = categoryRepository.findCategoriesByUserOrderBySequence(user)
         .stream().map(this::buildCategoryDto).collect(
             Collectors.toList());
@@ -51,7 +51,7 @@ public class CategoryService {
 
   @Transactional
   public Long create(CreateCategoryRequestDto createCategoryRequestDto, Long userId) {
-    User user = findUser(userId);
+    UserJpaEntity user = findUser(userId);
     String name = createCategoryRequestDto.getName();
     validateDuplicateCategory(name, user);
 
@@ -60,7 +60,7 @@ public class CategoryService {
 
   @Transactional
   public void delete(Long id, Long userId) {
-    User user = findUser(userId);
+    UserJpaEntity user = findUser(userId);
     Category category = categoryRepository.findCategoryEntityGraphById(id);
     validateValidPair(user, category);
 
@@ -70,7 +70,7 @@ public class CategoryService {
 
   @Transactional
   public void update(UpdateCategoryRequestDto updateCategoryRequestDto, Long id, Long userId) {
-    User user = findUser(userId);
+    UserJpaEntity user = findUser(userId);
     Category category = categoryRepository.findCategoryEntityGraphById(id);
     validateValidPair(user, category);
 
@@ -79,7 +79,7 @@ public class CategoryService {
 
   @Transactional
   public void shuffle(List<CategoryDto> changeCategorySequenceDtos, Long userId) {
-    User user = findUser(userId);
+    UserJpaEntity user = findUser(userId);
     List<Category> categories = categoryRepository.findCategoriesByUserOrderBySequence(user);
     validateChangeCategoriesLengthWithOriginal(changeCategorySequenceDtos, categories);
 
@@ -92,7 +92,7 @@ public class CategoryService {
     }
   }
 
-  private Category createCategory(String name, User user) {
+  private Category createCategory(String name, UserJpaEntity user) {
     int sequence = getSequence(user);
     validateExceedLimitCategoryCount(sequence);
 
@@ -101,11 +101,11 @@ public class CategoryService {
     return category;
   }
 
-  private User findUser(Long userId) {
+  private UserJpaEntity findUser(Long userId) {
     return userService.findById(userId);
   }
 
-  private int getSequence(User user) {
+  private int getSequence(UserJpaEntity user) {
     return categoryRepository.countCategoriesByUser(user);
   }
 
@@ -115,7 +115,7 @@ public class CategoryService {
     }
   }
 
-  private void validateDuplicateCategory(String name, User user) {
+  private void validateDuplicateCategory(String name, UserJpaEntity user) {
     List<CategoryDto> categories = categoryRepository.findCategoryDto(user);
     long count = categories.stream()
         .filter(categoryDto -> categoryDto.getName().equals(name))
@@ -126,7 +126,7 @@ public class CategoryService {
     }
   }
 
-  private void validateValidPair(User user, Category category) {
+  private void validateValidPair(UserJpaEntity user, Category category) {
     validateCategoryFound(category);
     validateOwnedByUser(category, user);
   }
@@ -137,7 +137,7 @@ public class CategoryService {
     }
   }
 
-  private void validateOwnedByUser(Category category, User user) {
+  private void validateOwnedByUser(Category category, UserJpaEntity user) {
     if (!category.ownedBy(user)) {
       throw new NotOwnerOfCategoryException();
     }

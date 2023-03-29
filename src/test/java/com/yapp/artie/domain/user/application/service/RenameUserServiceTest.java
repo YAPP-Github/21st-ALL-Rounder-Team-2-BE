@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserJpaEntity;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import java.util.Optional;
@@ -27,7 +27,7 @@ class RenameUserServiceTest {
 
   @Test
   void rename_주어진_이름으로_사용자의_이름이_변경된다() {
-    User user = defaultUser().build();
+    UserJpaEntity user = defaultUser().build();
     givenUserByReference(user);
 
     String beforeName = userRepository
@@ -43,7 +43,7 @@ class RenameUserServiceTest {
   }
 
 
-  private void givenUserByReference(User user) {
+  private void givenUserByReference(UserJpaEntity user) {
     given(userRepository.findById(any()))
         .willReturn(Optional.ofNullable(user));
   }

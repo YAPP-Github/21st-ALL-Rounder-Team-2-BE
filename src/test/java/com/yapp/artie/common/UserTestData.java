@@ -1,6 +1,6 @@
 package com.yapp.artie.common;
 
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserJpaEntity;
 
 public class UserTestData {
 
@@ -43,8 +43,8 @@ public class UserTestData {
       return this;
     }
 
-    public User build() {
-      return User.create(
+    public UserJpaEntity build() {
+      return UserJpaEntity.create(
           this.id,
           this.uid,
           this.name,

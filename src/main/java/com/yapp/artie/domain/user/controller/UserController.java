@@ -1,7 +1,7 @@
 package com.yapp.artie.domain.user.controller;
 
 import com.google.firebase.auth.FirebaseToken;
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserJpaEntity;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
 import com.yapp.artie.domain.user.service.UserUseCase;
@@ -67,13 +67,13 @@ public class UserController {
       @ApiResponse(
           responseCode = "200",
           description = "유저가 성공적으로 조회됨",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserJpaEntity.class))),
   })
   @GetMapping("/me")
-  public ResponseEntity<User> me(Authentication authentication) {
+  public ResponseEntity<UserJpaEntity> me(Authentication authentication) {
 
     Long userId = getUserId(authentication);
-    User user = userService.findById(userId);
+    UserJpaEntity user = userService.findById(userId);
 
     return ResponseEntity.ok().body(user);
   }
@@ -98,7 +98,7 @@ public class UserController {
       @ApiResponse(
           responseCode = "200",
           description = "썸네일이 성공적으로 조회됨",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserJpaEntity.class))),
   })
   @GetMapping("/my-page")
   public ResponseEntity<UserThumbnailResponseDto> my(Authentication authentication) {

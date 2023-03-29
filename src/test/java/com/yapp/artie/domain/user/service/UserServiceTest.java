@@ -2,12 +2,9 @@ package com.yapp.artie.domain.user.service;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
-import com.yapp.artie.domain.user.application.service.RenameUserService;
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserJpaEntity;
 import com.yapp.artie.domain.user.domain.UserTest;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.repository.UserRepository;
@@ -38,7 +35,7 @@ class UserServiceTest {
   @Disabled
   @DisplayName("유저 닉네임(이름) 변경 테스트 - 존재하지 않는 userId로 조회시 예외처리")
   public void updateUserNameFailTest() throws Exception {
-    User user = UserTest.TEST_USER;
+    UserJpaEntity user = UserTest.TEST_USER;
     given(userRepository.findById(any())).willThrow(new UserNotFoundException());
 
     assertThatThrownBy(() -> userService.updateUserName(user.getId(), "new-name")).isInstanceOf(

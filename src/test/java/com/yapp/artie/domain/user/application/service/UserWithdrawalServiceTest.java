@@ -8,7 +8,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserJpaEntity;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import com.yapp.artie.global.authentication.JwtService;
@@ -51,7 +51,7 @@ class UserWithdrawalServiceTest {
 
   @Test
   void delete_데이터베이스에서_사용자를_삭제하도록_요청한다() {
-    User user = defaultUser().build();
+    UserJpaEntity user = defaultUser().build();
     givenUserByReference(user);
     userWithdrawalService.delete(1L);
     then(userRepository)
@@ -59,7 +59,7 @@ class UserWithdrawalServiceTest {
         .delete(eq(user));
   }
 
-  private void givenUserByReference(User user) {
+  private void givenUserByReference(UserJpaEntity user) {
     given(userRepository.findById(any()))
         .willReturn(Optional.ofNullable(user));
   }

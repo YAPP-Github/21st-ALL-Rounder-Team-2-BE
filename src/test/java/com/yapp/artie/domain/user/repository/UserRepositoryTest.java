@@ -2,7 +2,7 @@ package com.yapp.artie.domain.user.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserJpaEntity;
 import com.yapp.artie.domain.user.domain.UserTest;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +25,7 @@ public class UserRepositoryTest {
   @Test
   @DisplayName("유저 삭제")
   void delete() {
-    User user = userRepository.save(UserTest.TEST_SAVED_USER);
+    UserJpaEntity user = userRepository.save(UserTest.TEST_SAVED_USER);
     em.clear();
 
     userRepository.delete(user);

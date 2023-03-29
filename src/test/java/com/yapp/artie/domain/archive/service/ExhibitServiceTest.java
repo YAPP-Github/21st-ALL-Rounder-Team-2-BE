@@ -24,7 +24,7 @@ import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.archive.repository.TagRepository;
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserJpaEntity;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -75,8 +75,8 @@ class ExhibitServiceTest {
   @Autowired
   TagRepository tagRepository;
 
-  User createUser(String name, String uid) {
-    User user = new User();
+  UserJpaEntity createUser(String name, String uid) {
+    UserJpaEntity user = new UserJpaEntity();
     user.setName(name);
     user.setUid(uid);
     em.persist(user);
@@ -87,7 +87,7 @@ class ExhibitServiceTest {
 
   @Test
   public void getExhibitCount_전시의_개수를_반환한다() throws Exception {
-    User user = createUser("user", "tu1");
+    UserJpaEntity user = createUser("user", "tu1");
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     for (int i = 0; i < 5; i++) {
       CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
@@ -102,7 +102,7 @@ class ExhibitServiceTest {
 
   @Test
   public void create_전시를_생성한다() throws Exception {
-    User user = createUser("user", "tu1");
+    UserJpaEntity user = createUser("user", "tu1");
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
@@ -116,8 +116,8 @@ class ExhibitServiceTest {
 
   @Test
   public void create_다른_사용자의_카테고리에_전시를_생성하려고_하는_경우_예외를_발생한다() throws Exception {
-    User user = createUser("user", "tu");
-    User userAnother = createUser("userAnother", "tu2");
+    UserJpaEntity user = createUser("user", "tu");
+    UserJpaEntity userAnother = createUser("userAnother", "tu2");
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
@@ -130,7 +130,7 @@ class ExhibitServiceTest {
 
   @Test
   public void publish_임시저장된_전시를_영구저장한다() throws Exception {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
@@ -145,7 +145,7 @@ class ExhibitServiceTest {
 
   @Test
   public void publish_이미_발행된_전시를_영구_저장_요청하면_예외를_발생한다() throws Exception {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
@@ -162,7 +162,7 @@ class ExhibitServiceTest {
 
   @Test
   public void update_전시를_수정한다() throws Exception {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
@@ -187,7 +187,7 @@ class ExhibitServiceTest {
 
   @Test
   public void delete_전시를_삭제한다() throws Exception {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
@@ -209,7 +209,7 @@ class ExhibitServiceTest {
 
   @Test
   public void getExhibitByMonthly_월_별로_전시를_조회한다() throws Exception {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
 
     for (int i = 1; i <= 5; i++) {
@@ -241,7 +241,7 @@ class ExhibitServiceTest {
 
   @Test
   public void updatePostPinType_카테고리_상단_설정_CATEGORY_TO_NONE() {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
@@ -262,7 +262,7 @@ class ExhibitServiceTest {
 
   @Test
   public void updatePostPinType_전체기록_상단_설정_BOTH_TO_ALL() {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
@@ -284,7 +284,7 @@ class ExhibitServiceTest {
 
   @Test
   public void updatePostPinType_전체기록_상단_설정_CATEGORY_TO_BOTH() {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
@@ -306,7 +306,7 @@ class ExhibitServiceTest {
 
   @Test
   public void updatePostPinType_카테고리_상단_설정_해제() {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
@@ -323,7 +323,7 @@ class ExhibitServiceTest {
 
   @Test
   public void updatePostPinType_전체기록_상단_설정_해제() {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     CategoryDto defaultCategory = categoryService.categoriesOf(user.getId()).get(0);
     CreateExhibitRequestDto exhibitRequestDto = new CreateExhibitRequestDto("test",
         defaultCategory.getId(),
@@ -341,7 +341,7 @@ class ExhibitServiceTest {
 
   @Test
   public void getExhibitByPage_상단고정포함_카테고리_전시목록() {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     Category defaultCategory = categoryService.findCategoryWithUser(
         categoryService.categoriesOf(user.getId()).get(0).getId(), user.getId());
     Exhibit exhibit = exhibitRepository.save(
@@ -372,7 +372,7 @@ class ExhibitServiceTest {
 
   @Test
   public void getExhibitByPage_상단고정포함_전체_전시목록() {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     Category defaultCategory = categoryService.findCategoryWithUser(
         categoryService.categoriesOf(user.getId()).get(0).getId(), user.getId());
     Exhibit exhibit = exhibitRepository.save(
@@ -403,7 +403,7 @@ class ExhibitServiceTest {
 
   @Test
   public void getExhibitThumbnailByCategory_카테고리별_전시목록은_상단고정이_반영되지_않아야힙니다() {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     Category defaultCategory = categoryService.findCategoryWithUser(
         categoryService.categoriesOf(user.getId()).get(0).getId(), user.getId());
     List<String> imageUriList = new ArrayList<>();
@@ -440,7 +440,7 @@ class ExhibitServiceTest {
 
   @Test
   public void getExhibitsByDate_특정_일자의_전시_목록_조회() throws Exception {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
 
     for (int i = 1; i <= 2; i++) {

@@ -1,7 +1,7 @@
 package com.yapp.artie.domain.archive.domain.category;
 
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserJpaEntity;
 import com.yapp.artie.global.common.BaseEntity;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ public class Category extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+  private UserJpaEntity user;
 
   @Column(nullable = false)
   private String name;
@@ -41,13 +41,13 @@ public class Category extends BaseEntity {
   @Column(nullable = false, name = "seq")
   private int sequence;
 
-  private Category(User user, String name, int sequence) {
+  private Category(UserJpaEntity user, String name, int sequence) {
     this.user = user;
     this.name = name;
     this.sequence = sequence;
   }
 
-  public static Category create(User user, String name, int sequence) {
+  public static Category create(UserJpaEntity user, String name, int sequence) {
     return new Category(user, name, sequence);
   }
 
@@ -56,7 +56,7 @@ public class Category extends BaseEntity {
     exhibit.categorize(this);
   }
 
-  public boolean ownedBy(User user) {
+  public boolean ownedBy(UserJpaEntity user) {
     return this.user.equals(user);
   }
 
