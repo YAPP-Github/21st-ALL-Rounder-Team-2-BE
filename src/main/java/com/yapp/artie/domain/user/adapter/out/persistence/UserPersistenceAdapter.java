@@ -19,12 +19,12 @@ class UserPersistenceAdapter implements DeleteUserPort, SaveUserPort, LoadUserPo
 
   @Override
   public User loadById(Long userId) {
-    return userMapper.mapToDomainEntity(findByIdOrThrow(userId));
+    return userMapper.mapToDomainEntity(findByIdOrElseThrow(userId));
   }
 
   @Override
   public User loadByUid(String uid) {
-    return userMapper.mapToDomainEntity(findByUidOrThrow(uid));
+    return userMapper.mapToDomainEntity(findByUidOrElseThrow(uid));
   }
 
   @Override
@@ -35,21 +35,21 @@ class UserPersistenceAdapter implements DeleteUserPort, SaveUserPort, LoadUserPo
 
   @Override
   public void delete(User user) {
-    userRepository.delete(findByIdOrThrow(user.getId()));
+    userRepository.delete(findByIdOrElseThrow(user.getId()));
   }
 
   @Override
   public void updateName(User user) {
-    UserJpaEntity userJpaEntity = findByIdOrThrow(user.getId());
+    UserJpaEntity userJpaEntity = findByIdOrElseThrow(user.getId());
     userJpaEntity.setName(user.getName());
   }
 
-  private UserJpaEntity findByUidOrThrow(String uid) {
+  private UserJpaEntity findByUidOrElseThrow(String uid) {
     return userRepository.findByUid(uid)
         .orElseThrow(UserNotFoundException::new);
   }
 
-  private UserJpaEntity findByIdOrThrow(Long id) {
+  private UserJpaEntity findByIdOrElseThrow(Long id) {
     return userRepository.findById(id)
         .orElseThrow(UserNotFoundException::new);
   }
