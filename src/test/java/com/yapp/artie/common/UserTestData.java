@@ -1,6 +1,6 @@
 package com.yapp.artie.common;
 
-import com.yapp.artie.domain.user.domain.UserJpaEntity;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 
 public class UserTestData {
 

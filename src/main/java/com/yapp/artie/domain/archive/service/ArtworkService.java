@@ -10,7 +10,7 @@ import com.yapp.artie.domain.archive.dto.artwork.UpdateArtworkRequestDto;
 import com.yapp.artie.domain.archive.exception.ArtworkNotFoundException;
 import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.s3.service.S3Service;
-import com.yapp.artie.domain.user.domain.UserJpaEntity;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.domain.user.service.UserUseCase;
 import com.yapp.artie.global.util.S3Utils;
 import java.util.List;

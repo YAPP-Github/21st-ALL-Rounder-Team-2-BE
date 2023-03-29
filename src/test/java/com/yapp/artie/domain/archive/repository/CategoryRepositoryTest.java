@@ -6,7 +6,7 @@ import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.archive.domain.tag.Tag;
-import com.yapp.artie.domain.user.domain.UserJpaEntity;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.domain.user.domain.UserTest;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import java.time.LocalDate;

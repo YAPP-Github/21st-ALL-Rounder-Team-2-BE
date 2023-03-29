@@ -3,7 +3,7 @@ package com.yapp.artie.domain.archive.domain.exhibit;
 
 import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.archive.domain.category.Category;
-import com.yapp.artie.domain.user.domain.UserJpaEntity;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.global.common.BaseEntity;
 import java.time.LocalDate;
 import java.util.ArrayList;

@@ -1,8 +1,8 @@
 package com.yapp.artie.domain.user.application.service;
 
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.domain.user.application.port.in.UserWithdrawalUseCase;
-import com.yapp.artie.domain.user.domain.UserJpaEntity;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.repository.UserRepository;
 import com.yapp.artie.global.annotation.UseCase;

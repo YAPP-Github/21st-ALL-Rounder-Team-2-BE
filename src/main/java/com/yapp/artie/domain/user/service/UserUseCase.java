@@ -1,6 +1,6 @@
 package com.yapp.artie.domain.user.service;
 
-import com.yapp.artie.domain.user.domain.UserJpaEntity;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import java.util.Optional;
 import org.springframework.security.core.userdetails.UserDetails;

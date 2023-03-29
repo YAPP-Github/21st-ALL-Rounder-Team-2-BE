@@ -2,7 +2,7 @@ package com.yapp.artie.domain.user.service;
 
 
 import com.yapp.artie.domain.archive.service.ExhibitService;
-import com.yapp.artie.domain.user.domain.UserJpaEntity;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,5 +1,6 @@
 package com.yapp.artie.domain.user.domain;
 
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import org.junit.jupiter.api.DisplayName;
 
 @DisplayName("User 테스트")

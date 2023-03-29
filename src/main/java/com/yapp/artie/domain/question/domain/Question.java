@@ -1,6 +1,6 @@
 package com.yapp.artie.domain.question.domain;
 
-import com.yapp.artie.domain.user.domain.UserJpaEntity;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.global.common.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;

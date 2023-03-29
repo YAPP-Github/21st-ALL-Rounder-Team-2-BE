@@ -2,10 +2,10 @@ package com.yapp.artie.domain.user.service;
 
 import static org.springframework.security.core.userdetails.User.builder;
 
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.domain.user.application.service.RegisterUserService;
 import com.yapp.artie.domain.user.application.service.RenameUserService;
 import com.yapp.artie.domain.user.application.service.UserWithdrawalService;
-import com.yapp.artie.domain.user.domain.UserJpaEntity;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.repository.UserRepository;

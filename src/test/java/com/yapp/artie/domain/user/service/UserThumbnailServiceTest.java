@@ -7,7 +7,7 @@ import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.service.CategoryService;
 import com.yapp.artie.domain.archive.service.ExhibitService;
-import com.yapp.artie.domain.user.domain.UserJpaEntity;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
 import java.time.LocalDate;
 import javax.persistence.EntityManager;

@@ -1,7 +1,7 @@
 package com.yapp.artie.domain.archive.domain.tag;
 
 import com.yapp.artie.domain.archive.domain.artwork.Artwork;
-import com.yapp.artie.domain.user.domain.UserJpaEntity;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;

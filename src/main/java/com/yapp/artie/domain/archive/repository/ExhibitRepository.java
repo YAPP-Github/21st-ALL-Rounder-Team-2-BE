@@ -6,7 +6,7 @@ import com.yapp.artie.domain.archive.domain.exhibit.PinType;
 import com.yapp.artie.domain.archive.dto.exhibit.CalenderQueryResultDto;
 import com.yapp.artie.domain.archive.dto.exhibit.ExhibitByDateResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
-import com.yapp.artie.domain.user.domain.UserJpaEntity;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
