@@ -20,6 +20,6 @@ public class UserMapper {
         user.getUid(),
         user.getProfileImage(),
         user.getName()
-    );
+        );
   }
 }
