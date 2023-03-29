@@ -7,16 +7,19 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
+import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
+import com.yapp.artie.domain.user.application.port.out.SaveUserPort;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
-import com.yapp.artie.domain.user.adapter.out.persistence.UserRepository;
-import java.util.Optional;
+import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 class RegisterUserServiceTest {
 
-  private final UserRepository userRepository = Mockito.mock(UserRepository.class);
-  private final RegisterUserService registerUserService = new RegisterUserService(userRepository);
+  private final LoadUserPort loadUserPort = Mockito.mock(LoadUserPort.class);
+  private final SaveUserPort saveUserPort = Mockito.mock(SaveUserPort.class);
+  private final RegisterUserService registerUserService = new RegisterUserService(loadUserPort,
+      saveUserPort);
 
   @Test
   void register_이미_등록된_사용자라면_ID를_그대로_반환한다() {
@@ -29,7 +32,7 @@ class RegisterUserServiceTest {
   void register_이미_등록된_사용자라면_저장소에_저장하지_않는다() {
     givenUser();
     registerUserService.register("1", "test", null);
-    then(userRepository)
+    then(saveUserPort)
         .should(never())
         .save(any());
   }
@@ -37,23 +40,27 @@ class RegisterUserServiceTest {
   @Test
   void register_신규_사용자라면_새로운_id를_부여받는다() {
     Long expectedId = 2L;
-    givenSaveWillReturnUserWithId(expectedId);
+    givenUserFindWithUidWillFail();
+    givenSaveWillReturnId(expectedId);
     CreateUserResponseDto actual = registerUserService.register("1", "test", null);
     assertThat(actual.getId()).isEqualTo(expectedId);
-    then(userRepository)
+    then(saveUserPort)
         .should()
         .save(any());
   }
 
   private void givenUser() {
-    given(userRepository.findByUid(any()))
-        .willReturn(Optional.ofNullable(defaultUser().build()));
+    given(loadUserPort.loadByUid(any()))
+        .willReturn(defaultUser().build());
   }
 
-  private void givenSaveWillReturnUserWithId(Long id) {
-    given(userRepository.save(any()))
-        .willReturn(defaultUser()
-            .withId(id)
-            .build());
+  private void givenSaveWillReturnId(Long id) {
+    given(saveUserPort.save(any()))
+        .willReturn(id);
+  }
+
+  private void givenUserFindWithUidWillFail() {
+    given(loadUserPort.loadByUid(any()))
+        .willThrow(UserNotFoundException.class);
   }
 }
