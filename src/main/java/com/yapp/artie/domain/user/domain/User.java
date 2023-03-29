@@ -13,12 +13,12 @@ public class User {
   private final String profileImage;
   private String name;
 
-  public static User withoutId(String uid, String name, String profileImage) {
-    return new User(null, uid, name, profileImage);
+  public static User withoutId(String uid, String profileImage, String name) {
+    return new User(null, uid, profileImage, name);
   }
 
-  public static User withId(Long id, String uid, String name, String profileImage) {
-    return new User(id, uid, name, profileImage);
+  public static User withId(Long id, String uid, String profileImage, String name) {
+    return new User(id, uid, profileImage, name);
   }
 
   public void rename(String name) {
