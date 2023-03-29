@@ -1,7 +1,9 @@
 package com.yapp.artie.domain.user.domain;
 
+import static com.yapp.artie.common.UserTestData.defaultUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.yapp.artie.common.UserTestData;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,8 +19,7 @@ public class UserTest {
 
   @Test
   void rename_사용자_이름을_변경한다() {
-    // TODO : 데이터 생성 편의 클래스에서 도메인 엔티티를 반환하도록 변경
-    User user = User.withId(1L, "test", "lee", null);
+    User user = defaultUser().build();
     user.rename("tomcat");
     assertThat(user.getName()).isEqualTo("tomcat");
   }
