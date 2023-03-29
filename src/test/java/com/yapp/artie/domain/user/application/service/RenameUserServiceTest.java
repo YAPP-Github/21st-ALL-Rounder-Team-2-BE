@@ -52,6 +52,4 @@ class RenameUserServiceTest {
     given(userRepository.findById(any()))
         .willThrow(UserNotFoundException.class);
   }
-
-
 }
