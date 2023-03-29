@@ -24,15 +24,13 @@ class UserPersistenceAdapter implements DeleteUserPort, SaveUserPort, LoadUserPo
 
   @Override
   public User loadByUid(String uid) {
-    UserJpaEntity userJpaEntity = userRepository.findByUid(uid)
-        .orElseThrow(UserNotFoundException::new);
-
-    return userMapper.mapToDomainEntity(userJpaEntity);
+    return userMapper.mapToDomainEntity(findByUidOrThrow(uid));
   }
 
   @Override
-  public void save(User user) {
-    userRepository.save(userMapper.mapToJpaEntity(user));
+  public Long save(User user) {
+    UserJpaEntity entity = userRepository.save(userMapper.mapToJpaEntity(user));
+    return entity.getId();
   }
 
   @Override
@@ -44,6 +42,11 @@ class UserPersistenceAdapter implements DeleteUserPort, SaveUserPort, LoadUserPo
   public void updateName(User user) {
     UserJpaEntity userJpaEntity = findByIdOrThrow(user.getId());
     userJpaEntity.setName(user.getName());
+  }
+
+  private UserJpaEntity findByUidOrThrow(String uid) {
+    return userRepository.findByUid(uid)
+        .orElseThrow(UserNotFoundException::new);
   }
 
   private UserJpaEntity findByIdOrThrow(Long id) {
