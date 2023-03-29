@@ -9,16 +9,17 @@ public class UserMapper {
   User mapToDomainEntity(UserJpaEntity user) {
     return User.withId(user.getId(),
         user.getUid(),
-        user.getName(),
-        user.getProfileImage());
+        user.getProfileImage(),
+        user.getName()
+    );
   }
 
   UserJpaEntity mapToJpaEntity(User user) {
     return new UserJpaEntity(
         user.getId(),
         user.getUid(),
-        user.getName(),
-        user.getProfileImage()
+        user.getProfileImage(),
+        user.getName()
     );
   }
 }
