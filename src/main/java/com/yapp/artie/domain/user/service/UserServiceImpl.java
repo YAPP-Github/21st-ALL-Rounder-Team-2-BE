@@ -8,7 +8,7 @@ import com.yapp.artie.domain.user.application.service.RenameUserService;
 import com.yapp.artie.domain.user.application.service.UserWithdrawalService;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
-import com.yapp.artie.domain.user.repository.UserRepository;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -3,6 +3,7 @@ package com.yapp.artie.domain.user.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserRepository;
 import com.yapp.artie.domain.user.domain.UserTest;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;

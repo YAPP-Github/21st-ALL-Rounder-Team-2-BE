@@ -18,7 +18,7 @@ import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.archive.repository.TagRepository;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.domain.user.domain.UserTest;
-import com.yapp.artie.domain.user.repository.UserRepository;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserRepository;
 import com.yapp.artie.global.authentication.JwtServiceImpl;
 import java.time.LocalDate;
 import javax.persistence.EntityManager;

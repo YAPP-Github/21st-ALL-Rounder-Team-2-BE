@@ -20,7 +20,7 @@ import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.archive.repository.TagRepository;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
-import com.yapp.artie.domain.user.repository.UserRepository;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -8,7 +8,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
-import com.yapp.artie.domain.user.repository.UserRepository;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

@@ -3,7 +3,7 @@ package com.yapp.artie.domain.user.application.service;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.domain.user.application.port.in.RegisterUserUseCase;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
-import com.yapp.artie.domain.user.repository.UserRepository;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserRepository;
 import com.yapp.artie.global.annotation.UseCase;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

@@ -4,7 +4,7 @@ import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.domain.user.application.port.in.UserWithdrawalUseCase;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
-import com.yapp.artie.domain.user.repository.UserRepository;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserRepository;
 import com.yapp.artie.global.annotation.UseCase;
 import com.yapp.artie.global.authentication.JwtService;
 import lombok.RequiredArgsConstructor;
