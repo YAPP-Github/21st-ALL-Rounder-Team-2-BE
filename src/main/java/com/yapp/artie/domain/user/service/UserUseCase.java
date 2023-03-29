@@ -1,7 +1,6 @@
 package com.yapp.artie.domain.user.service;
 
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
-import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 
 public interface UserUseCase {

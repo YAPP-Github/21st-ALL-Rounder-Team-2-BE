@@ -8,10 +8,8 @@ import com.yapp.artie.domain.user.application.service.RenameUserService;
 import com.yapp.artie.domain.user.application.service.UserWithdrawalService;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
-import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
