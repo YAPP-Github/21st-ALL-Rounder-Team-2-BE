@@ -29,7 +29,7 @@ class GetUserThumbnailServiceTest {
   }
 
   @Test
-  public void getUserThumbnail_사용자의_닉네임과_전시개수를_반환한다() throws Exception {
+  public void loadUserThumbnailWithId_사용자의_닉네임과_전시개수를_반환한다() throws Exception {
     User user = defaultUser()
         .withName("tomcat")
         .build();
