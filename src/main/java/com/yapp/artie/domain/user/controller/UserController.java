@@ -2,9 +2,9 @@ package com.yapp.artie.domain.user.controller;
 
 import com.google.firebase.auth.FirebaseToken;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
+import com.yapp.artie.domain.user.application.service.GetUserThumbnailService;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
-import com.yapp.artie.domain.user.application.service.GetUserThumbnailService;
 import com.yapp.artie.domain.user.service.UserUseCase;
 import com.yapp.artie.global.authentication.JwtService;
 import com.yapp.artie.global.exception.common.InvalidValueException;
