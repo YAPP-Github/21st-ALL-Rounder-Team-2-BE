@@ -8,6 +8,7 @@ import com.yapp.artie.domain.archive.dto.exhibit.CreateExhibitRequestDto;
 import com.yapp.artie.domain.archive.service.CategoryService;
 import com.yapp.artie.domain.archive.service.ExhibitService;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
+import com.yapp.artie.domain.user.application.service.GetUserThumbnailService;
 import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
 import java.time.LocalDate;
 import javax.persistence.EntityManager;
@@ -18,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @SpringBootTest
-class UserThumbnailServiceTest {
+class GetUserThumbnailServiceTest {
 
   @Autowired
   EntityManager em;
@@ -30,7 +31,7 @@ class UserThumbnailServiceTest {
   CategoryService categoryService;
 
   @Autowired
-  UserThumbnailService userThumbnailService;
+  GetUserThumbnailService getUserThumbnailService;
 
   UserJpaEntity createUser(String name, String uid) {
     UserJpaEntity user = new UserJpaEntity();
@@ -61,7 +62,7 @@ class UserThumbnailServiceTest {
       createExhibit(user);
     }
 
-    UserThumbnailResponseDto userThumbnail = userThumbnailService.getUserThumbnail(user.getId());
+    UserThumbnailResponseDto userThumbnail = getUserThumbnailService.getUserThumbnail(user.getId());
     assertThat(userThumbnail.getExhibitCount()).isEqualTo(10);
     assertThat(userThumbnail.getName()).isEqualTo(expectedName);
   }

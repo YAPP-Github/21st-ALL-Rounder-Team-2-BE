@@ -1,9 +1,10 @@
-package com.yapp.artie.domain.user.service;
+package com.yapp.artie.domain.user.application.service;
 
 
 import com.yapp.artie.domain.archive.service.ExhibitService;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
+import com.yapp.artie.domain.user.service.UserUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
