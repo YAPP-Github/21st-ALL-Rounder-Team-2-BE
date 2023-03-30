@@ -4,7 +4,7 @@ import com.google.firebase.auth.FirebaseToken;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
-import com.yapp.artie.domain.user.service.UserThumbnailService;
+import com.yapp.artie.domain.user.application.service.GetUserThumbnailService;
 import com.yapp.artie.domain.user.service.UserUseCase;
 import com.yapp.artie.global.authentication.JwtService;
 import com.yapp.artie.global.exception.common.InvalidValueException;
@@ -39,7 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserUseCase userService;
-  private final UserThumbnailService userThumbnailService;
+  private final GetUserThumbnailService getUserThumbnailService;
   private final JwtService jwtService;
 
   @Operation(summary = "유저 생성", description = "Firebase를 통해 생성한 UID 기반 유저 생성")
@@ -104,7 +104,7 @@ public class UserController {
   public ResponseEntity<UserThumbnailResponseDto> my(Authentication authentication) {
 
     Long userId = getUserId(authentication);
-    return ResponseEntity.ok().body(userThumbnailService.getUserThumbnail(userId));
+    return ResponseEntity.ok().body(getUserThumbnailService.loadUserThumbnailById(userId));
   }
 
   @Operation(summary = "유저 닉네임 수정", description = "유저의 서비스 닉네임 수정")
