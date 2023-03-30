@@ -2,23 +2,25 @@ package com.yapp.artie.domain.user.application.service;
 
 
 import com.yapp.artie.domain.archive.service.ExhibitService;
-import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
+import com.yapp.artie.domain.user.application.port.in.GetUserThumbnailQuery;
+import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
+import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
-import com.yapp.artie.domain.user.service.UserUseCase;
+import com.yapp.artie.global.annotation.UseCase;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@UseCase
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class UserThumbnailService {
+public class GetUserThumbnailService implements GetUserThumbnailQuery {
 
-  private final UserUseCase userService;
+  private final LoadUserPort loadUserPort;
   private final ExhibitService exhibitService;
 
-  public UserThumbnailResponseDto getUserThumbnail(Long id) {
-    UserJpaEntity user = userService.findById(id);
+  @Override
+  public UserThumbnailResponseDto loadUserThumbnailById(Long id) {
+    User user = loadUserPort.loadById(id);
     int exhibitCount = exhibitService.getExhibitCount(user.getId());
     return new UserThumbnailResponseDto(user.getName(), exhibitCount);
   }
