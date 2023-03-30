@@ -3,7 +3,6 @@ package com.yapp.artie.domain.user.application.service;
 import static com.yapp.artie.common.UserTestData.defaultUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -12,6 +11,7 @@ import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.security.core.userdetails.UserDetails;
 
 class GetUserServiceTest {
 
@@ -33,14 +33,30 @@ class GetUserServiceTest {
     assertThat(actual.getId()).isEqualTo(user.getId());
   }
 
+  @Test
+  void loadUserByUsername_사용자를_조회했을_때_반환되는_객체의_ID는_엔티티의_식별자와_같다() {
+    User user = defaultUser().build();
+    givenUserByReferenceWithUid(user);
+    UserDetails actual = getUserService.loadUserByUsername(user.getUid());
+    assertThat(actual.getUsername()).isEqualTo(user.getId().toString());
+  }
+
+  @Test
+  void loadUserByUsername_사용자를_조회했을_때_반환되는_객체의_PW는_엔티티의_UID와_같다() {
+    User user = defaultUser().build();
+    givenUserByReferenceWithUid(user);
+    UserDetails actual = getUserService.loadUserByUsername(user.getUid());
+    assertThat(actual.getPassword()).isEqualTo(user.getUid());
+  }
+
   private void givenUserByReference(User user) {
     given(loadUserPort.loadById(any()))
         .willReturn(user);
   }
 
-  private void givenUser() {
-    given(loadUserPort.loadById(any()))
-        .willReturn(defaultUser().build());
+  private void givenUserByReferenceWithUid(User user) {
+    given(loadUserPort.loadByUid(any()))
+        .willReturn(user);
   }
 
   private void givenUserFindWillFail() {
