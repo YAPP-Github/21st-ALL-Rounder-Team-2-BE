@@ -1,6 +1,5 @@
 package com.yapp.artie.global.authentication;
 
-import com.google.firebase.auth.FirebaseToken;
 import com.yapp.artie.global.exception.authentication.NotExistValidTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +14,10 @@ public class JwtServiceImpl implements JwtService {
   private final JwtDecoder decoder;
 
   @Override
-  public FirebaseToken verify(String header) {
+  public ArtieToken verify(String header) {
     validateHeader(header);
-    return decoder.decode(refineHeaderAsToken(header));
+    return new ArtieToken(decoder
+        .decode(refineHeaderAsToken(header)));
   }
 
   @Override
