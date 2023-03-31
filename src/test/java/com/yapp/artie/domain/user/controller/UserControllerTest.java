@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.yapp.artie.BaseIntegrationTest;
+import com.yapp.artie.common.BaseControllerIntegrationTest;
 import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
@@ -17,9 +17,9 @@ import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.archive.repository.TagRepository;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
-import com.yapp.artie.domain.user.domain.UserTest;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserRepository;
-import com.yapp.artie.global.authentication.JwtServiceImpl;
+import com.yapp.artie.domain.user.domain.UserTest;
+import com.yapp.artie.global.authentication.JwtService;
 import java.time.LocalDate;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-class UserControllerTest extends BaseIntegrationTest {
+class UserControllerTest extends BaseControllerIntegrationTest {
 
   @Autowired
   EntityManager em;
@@ -48,7 +48,7 @@ class UserControllerTest extends BaseIntegrationTest {
   TagRepository tagRepository;
 
   @MockBean
-  JwtServiceImpl jwtService;
+  JwtService jwtService;
 
   // TODO : 헤더 토큰 ( Authentication ) 모킹 필요. 현재는 getUserId 메소드에 의존하고 있음
   @Test
