@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.user.controller;
+package com.yapp.artie.domain.user.adapter.in.web;
 
 import com.google.firebase.auth.FirebaseToken;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
