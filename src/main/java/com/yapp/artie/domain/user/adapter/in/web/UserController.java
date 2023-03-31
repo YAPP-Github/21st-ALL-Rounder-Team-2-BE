@@ -2,10 +2,17 @@ package com.yapp.artie.domain.user.adapter.in.web;
 
 import com.google.firebase.auth.FirebaseToken;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
+import com.yapp.artie.domain.user.application.port.in.GetUserQuery;
+import com.yapp.artie.domain.user.application.port.in.GetUserThumbnailQuery;
+import com.yapp.artie.domain.user.application.port.in.RegisterUserUseCase;
+import com.yapp.artie.domain.user.application.port.in.RenameUserUseCase;
+import com.yapp.artie.domain.user.application.port.in.UserWithdrawalUseCase;
 import com.yapp.artie.domain.user.application.service.GetUserThumbnailService;
+import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
 import com.yapp.artie.domain.user.service.UserUseCase;
+import com.yapp.artie.global.annotation.InboundAdapter;
 import com.yapp.artie.global.authentication.JwtService;
 import com.yapp.artie.global.exception.common.InvalidValueException;
 import com.yapp.artie.global.exception.response.ErrorResponse;
@@ -34,13 +41,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/user")
-@RestController
+@InboundAdapter
 @RequiredArgsConstructor
 public class UserController {
 
-  private final UserUseCase userService;
-  private final GetUserThumbnailService getUserThumbnailService;
   private final JwtService jwtService;
+  private final RegisterUserUseCase registerUserUseCase;
+  private final UserWithdrawalUseCase userWithdrawalUseCase;
+  private final RenameUserUseCase renameUserUseCase;
+  private final GetUserThumbnailQuery getUserThumbnailQuery;
+  private final GetUserQuery getUserQuery;
+
 
   @Operation(summary = "유저 생성", description = "Firebase를 통해 생성한 UID 기반 유저 생성")
   @ApiResponses(value = {
@@ -57,23 +68,22 @@ public class UserController {
     validateUidWithToken(uid, decodedToken);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(
-        userService.register(decodedToken.getUid(), decodedToken.getName(),
+        registerUserUseCase.register(decodedToken.getUid(), decodedToken.getName(),
             decodedToken.getPicture()));
   }
 
-  //TODO : 인가테스트 용, 삭제 필요
   @Operation(summary = "유저 조회", description = "토큰 기반 유저 조회")
   @ApiResponses(value = {
       @ApiResponse(
           responseCode = "200",
           description = "유저가 성공적으로 조회됨",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserJpaEntity.class))),
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
   })
   @GetMapping("/me")
-  public ResponseEntity<UserJpaEntity> me(Authentication authentication) {
+  public ResponseEntity<User> me(Authentication authentication) {
 
     Long userId = getUserId(authentication);
-    UserJpaEntity user = userService.findById(userId);
+    User user = getUserQuery.loadUserById(userId);
 
     return ResponseEntity.ok().body(user);
   }
@@ -89,7 +99,7 @@ public class UserController {
   public ResponseEntity<? extends HttpEntity> deleteUser(Authentication authentication) {
 
     Long userId = getUserId(authentication);
-    userService.delete(userId);
+    userWithdrawalUseCase.delete(userId);
     return ResponseEntity.noContent().build();
   }
 
@@ -104,7 +114,7 @@ public class UserController {
   public ResponseEntity<UserThumbnailResponseDto> my(Authentication authentication) {
 
     Long userId = getUserId(authentication);
-    return ResponseEntity.ok().body(getUserThumbnailService.loadUserThumbnailById(userId));
+    return ResponseEntity.ok().body(getUserThumbnailQuery.loadUserThumbnailById(userId));
   }
 
   @Operation(summary = "유저 닉네임 수정", description = "유저의 서비스 닉네임 수정")
@@ -132,7 +142,7 @@ public class UserController {
       @Parameter(name = "name", description = "변경할 닉네임", in = ParameterIn.QUERY) @Valid @RequestParam("name") String name) {
 
     Long userId = getUserId(authentication);
-    userService.updateUserName(userId, name);
+    renameUserUseCase.rename(userId, name);
     return ResponseEntity.noContent().build();
   }
 
@@ -142,7 +152,7 @@ public class UserController {
     }
   }
 
-  // TODO : 앱 배포했을 때에는 0L 대신에 exception을 던지도록 변경해야 합니다.
+  // TODO : 앱 배포했을 때에는 1L 대신에 exception을 던지도록 변경해야 합니다.
   private Long getUserId(Authentication authentication) {
     if (Optional.ofNullable(authentication).isPresent()) {
       return Long.parseLong(authentication.getName());
