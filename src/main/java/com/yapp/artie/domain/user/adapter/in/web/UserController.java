@@ -1,20 +1,13 @@
 package com.yapp.artie.domain.user.adapter.in.web;
 
-import com.google.firebase.auth.FirebaseToken;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.domain.user.application.port.in.GetUserQuery;
 import com.yapp.artie.domain.user.application.port.in.GetUserThumbnailQuery;
-import com.yapp.artie.domain.user.application.port.in.RegisterUserUseCase;
 import com.yapp.artie.domain.user.application.port.in.RenameUserUseCase;
 import com.yapp.artie.domain.user.application.port.in.UserWithdrawalUseCase;
-import com.yapp.artie.domain.user.application.service.GetUserThumbnailService;
 import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
-import com.yapp.artie.domain.user.service.UserUseCase;
 import com.yapp.artie.global.annotation.InboundAdapter;
-import com.yapp.artie.global.authentication.JwtService;
-import com.yapp.artie.global.exception.common.InvalidValueException;
 import com.yapp.artie.global.exception.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,53 +17,28 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/user")
 @InboundAdapter
 @RequiredArgsConstructor
 public class UserController {
 
-  private final JwtService jwtService;
-  private final RegisterUserUseCase registerUserUseCase;
   private final UserWithdrawalUseCase userWithdrawalUseCase;
   private final RenameUserUseCase renameUserUseCase;
   private final GetUserThumbnailQuery getUserThumbnailQuery;
   private final GetUserQuery getUserQuery;
 
-
-  @Operation(summary = "유저 생성", description = "Firebase를 통해 생성한 UID 기반 유저 생성")
-  @ApiResponses(value = {
-      @ApiResponse(
-          responseCode = "201",
-          description = "유저가 성공적으로 생성됨",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateUserResponseDto.class))),
-  })
-  @PostMapping()
-  public ResponseEntity<CreateUserResponseDto> register(
-      HttpServletRequest request, @RequestParam("uid") String uid) {
-    String authorization = request.getHeader("Authorization");
-    FirebaseToken decodedToken = jwtService.verify(authorization);
-    validateUidWithToken(uid, decodedToken);
-
-    return ResponseEntity.status(HttpStatus.CREATED).body(
-        registerUserUseCase.register(decodedToken.getUid(), decodedToken.getName(),
-            decodedToken.getPicture()));
-  }
 
   @Operation(summary = "유저 조회", description = "토큰 기반 유저 조회")
   @ApiResponses(value = {
@@ -144,12 +112,6 @@ public class UserController {
     Long userId = getUserId(authentication);
     renameUserUseCase.rename(userId, name);
     return ResponseEntity.noContent().build();
-  }
-
-  private void validateUidWithToken(String uid, FirebaseToken decodedToken) {
-    if (!decodedToken.getUid().equals(uid)) {
-      throw new InvalidValueException();
-    }
   }
 
   // TODO : 앱 배포했을 때에는 1L 대신에 exception을 던지도록 변경해야 합니다.
