@@ -39,6 +39,7 @@ public class GetUserThumbnailController {
     return ResponseEntity.ok().body(getUserThumbnailQuery.loadUserThumbnailById(userId));
   }
 
+  // TODO : 앱 배포했을 때에는 1L 대신에 exception을 던지도록 변경해야 합니다.
   private Long getUserId(Authentication authentication) {
     if (Optional.ofNullable(authentication).isPresent()) {
       return Long.parseLong(authentication.getName());
