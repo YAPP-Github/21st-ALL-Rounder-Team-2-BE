@@ -36,9 +36,7 @@ public class UserController {
 
   private final UserWithdrawalUseCase userWithdrawalUseCase;
   private final RenameUserUseCase renameUserUseCase;
-  private final GetUserThumbnailQuery getUserThumbnailQuery;
   private final GetUserQuery getUserQuery;
-
 
   @Operation(summary = "유저 조회", description = "토큰 기반 유저 조회")
   @ApiResponses(value = {
@@ -71,19 +69,6 @@ public class UserController {
     return ResponseEntity.noContent().build();
   }
 
-  @Operation(summary = "마이페이지 썸네일 조회", description = "사용자 닉네임, 전시 개수 조회")
-  @ApiResponses(value = {
-      @ApiResponse(
-          responseCode = "200",
-          description = "썸네일이 성공적으로 조회됨",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserJpaEntity.class))),
-  })
-  @GetMapping("/my-page")
-  public ResponseEntity<UserThumbnailResponseDto> my(Authentication authentication) {
-
-    Long userId = getUserId(authentication);
-    return ResponseEntity.ok().body(getUserThumbnailQuery.loadUserThumbnailById(userId));
-  }
 
   @Operation(summary = "유저 닉네임 수정", description = "유저의 서비스 닉네임 수정")
   @ApiResponses(value = {
