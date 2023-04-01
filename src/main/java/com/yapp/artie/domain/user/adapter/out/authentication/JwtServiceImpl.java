@@ -1,5 +1,6 @@
-package com.yapp.artie.global.authentication;
+package com.yapp.artie.domain.user.adapter.out.authentication;
 
+import com.yapp.artie.domain.user.application.port.out.JwtService;
 import com.yapp.artie.global.exception.authentication.NotExistValidTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

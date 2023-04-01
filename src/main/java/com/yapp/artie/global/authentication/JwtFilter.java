@@ -1,5 +1,7 @@
 package com.yapp.artie.global.authentication;
 
+import com.yapp.artie.domain.user.adapter.out.authentication.ArtieToken;
+import com.yapp.artie.domain.user.application.port.out.JwtService;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import javax.servlet.FilterChain;

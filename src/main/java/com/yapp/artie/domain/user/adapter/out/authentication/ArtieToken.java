@@ -1,4 +1,4 @@
-package com.yapp.artie.global.authentication;
+package com.yapp.artie.domain.user.adapter.out.authentication;
 
 import com.google.firebase.auth.FirebaseToken;
 

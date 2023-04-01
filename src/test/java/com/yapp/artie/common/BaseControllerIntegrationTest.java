@@ -4,8 +4,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.core.userdetails.User.builder;
 
+import com.yapp.artie.domain.user.application.port.out.JwtService;
 import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.global.authentication.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;

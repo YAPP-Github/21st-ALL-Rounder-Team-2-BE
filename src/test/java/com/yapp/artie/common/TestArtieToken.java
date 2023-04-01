@@ -1,6 +1,6 @@
 package com.yapp.artie.common;
 
-import com.yapp.artie.global.authentication.ArtieToken;
+import com.yapp.artie.domain.user.adapter.out.authentication.ArtieToken;
 
 public class TestArtieToken extends ArtieToken {
 

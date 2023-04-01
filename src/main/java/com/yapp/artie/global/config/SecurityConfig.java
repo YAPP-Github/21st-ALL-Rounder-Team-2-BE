@@ -1,9 +1,9 @@
 package com.yapp.artie.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yapp.artie.domain.user.application.port.out.JwtService;
 import com.yapp.artie.global.authentication.JwtExceptionHandler;
 import com.yapp.artie.global.authentication.JwtFilter;
-import com.yapp.artie.global.authentication.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
