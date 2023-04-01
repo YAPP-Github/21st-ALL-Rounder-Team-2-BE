@@ -3,7 +3,7 @@ package com.yapp.artie.domain.user.adapter.in.web;
 
 import com.yapp.artie.domain.user.application.port.in.RegisterUserUseCase;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
-import com.yapp.artie.global.annotation.InboundAdapter;
+import com.yapp.artie.global.annotation.WebAdapter;
 import com.yapp.artie.global.authentication.ArtieToken;
 import com.yapp.artie.global.authentication.JwtService;
 import com.yapp.artie.global.exception.common.InvalidValueException;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@InboundAdapter
+@WebAdapter
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor

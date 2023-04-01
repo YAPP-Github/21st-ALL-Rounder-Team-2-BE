@@ -1,7 +1,7 @@
 package com.yapp.artie.domain.user.adapter.in.web;
 
 import com.yapp.artie.domain.user.application.port.in.RenameUserUseCase;
-import com.yapp.artie.global.annotation.InboundAdapter;
+import com.yapp.artie.global.annotation.WebAdapter;
 import com.yapp.artie.global.exception.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,15 +16,13 @@ import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@InboundAdapter
+@WebAdapter
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor

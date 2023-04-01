@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Component
-public @interface InboundAdapter {
+public @interface WebAdapter {
 
   @AliasFor(annotation = Component.class)
   String value() default "";

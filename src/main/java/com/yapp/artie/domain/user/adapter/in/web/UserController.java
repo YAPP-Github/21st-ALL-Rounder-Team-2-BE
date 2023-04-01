@@ -7,7 +7,7 @@ import com.yapp.artie.domain.user.application.port.in.RenameUserUseCase;
 import com.yapp.artie.domain.user.application.port.in.UserWithdrawalUseCase;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
-import com.yapp.artie.global.annotation.InboundAdapter;
+import com.yapp.artie.global.annotation.WebAdapter;
 import com.yapp.artie.global.exception.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RequestMapping("/user")
-@InboundAdapter
+@WebAdapter
 @RequiredArgsConstructor
 public class UserController {
 
