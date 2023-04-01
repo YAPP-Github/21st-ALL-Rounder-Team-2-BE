@@ -1,12 +1,9 @@
 package com.yapp.artie.domain.user.adapter.in.web;
 
-import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.domain.user.application.port.in.GetUserQuery;
-import com.yapp.artie.domain.user.application.port.in.GetUserThumbnailQuery;
 import com.yapp.artie.domain.user.application.port.in.RenameUserUseCase;
 import com.yapp.artie.domain.user.application.port.in.UserWithdrawalUseCase;
 import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
 import com.yapp.artie.global.annotation.WebAdapter;
 import com.yapp.artie.global.exception.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
