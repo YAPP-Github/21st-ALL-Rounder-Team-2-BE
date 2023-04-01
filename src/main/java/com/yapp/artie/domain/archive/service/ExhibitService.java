@@ -17,7 +17,7 @@ import com.yapp.artie.domain.archive.exception.NotOwnerOfExhibitException;
 import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
-import com.yapp.artie.domain.user.service.UserUseCase;
+import com.yapp.artie.domain.user.deprecated.LoadUserJpaEntityApi;
 import com.yapp.artie.global.util.DateUtils;
 import com.yapp.artie.global.util.S3Utils;
 import java.time.LocalDate;
@@ -43,7 +43,7 @@ public class ExhibitService {
 
   private final ExhibitRepository exhibitRepository;
   private final ArtworkRepository artworkRepository;
-  private final UserUseCase userService;
+  private final LoadUserJpaEntityApi loadUserJpaEntityApi;
   private final CategoryService categoryService;
   private final S3Utils s3Utils;
 
@@ -193,7 +193,7 @@ public class ExhibitService {
   }
 
   private UserJpaEntity findUser(Long userId) {
-    return userService.findById(userId);
+    return loadUserJpaEntityApi.findById(userId);
   }
 
   private String getMainImageUri(Exhibit exhibit) {

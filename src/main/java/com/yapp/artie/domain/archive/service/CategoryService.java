@@ -12,7 +12,7 @@ import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
-import com.yapp.artie.domain.user.service.UserUseCase;
+import com.yapp.artie.domain.user.deprecated.LoadUserJpaEntityApi;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,7 +27,7 @@ public class CategoryService {
 
   private final CategoryRepository categoryRepository;
   private final ExhibitRepository exhibitRepository;
-  private final UserUseCase userService;
+  private final LoadUserJpaEntityApi loadUserJpaEntityApi;
   private final int CATEGORY_LIMIT_COUNT = 5;
 
   public Category findCategoryWithUser(Long id, Long userId) {
@@ -102,7 +102,7 @@ public class CategoryService {
   }
 
   private UserJpaEntity findUser(Long userId) {
-    return userService.findById(userId);
+    return loadUserJpaEntityApi.findById(userId);
   }
 
   private int getSequence(UserJpaEntity user) {

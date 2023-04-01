@@ -4,7 +4,7 @@ import com.yapp.artie.domain.s3.dto.request.GetPresignedUrlRequestDto;
 import com.yapp.artie.domain.s3.dto.response.GetPresignedUrlResponseDto;
 import com.yapp.artie.domain.s3.dto.response.presignedUrlDataDto;
 import com.yapp.artie.domain.s3.service.S3Service;
-import com.yapp.artie.domain.user.service.UserUseCase;
+import com.yapp.artie.domain.user.deprecated.LoadUserJpaEntityApi;
 import com.yapp.artie.global.exception.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class S3Controller {
 
-  private final UserUseCase userService;
+  private final LoadUserJpaEntityApi userService;
   private final S3Service s3Service;
 
   @Operation(summary = "이미지 업로드 URL 요청", description = "S3로 이미지를 업로드할 Presigned URL 발급 요청으로, 정상적으로 발급된 이미지에 대해서만 반환함. 각 Presigned URL은 약 3분간 유효함.")

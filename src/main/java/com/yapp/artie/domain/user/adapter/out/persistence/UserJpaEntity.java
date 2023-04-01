@@ -1,7 +1,6 @@
 package com.yapp.artie.domain.user.adapter.out.persistence;
 
 import com.yapp.artie.global.common.BaseEntity;
-import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -46,37 +45,5 @@ public class UserJpaEntity extends BaseEntity {
     user.name = name;
     user.profileImage = profileImage;
     return user;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
-
-    UserJpaEntity that = (UserJpaEntity) o;
-
-    if (!Objects.equals(id, that.id)) {
-      return false;
-    }
-    if (!Objects.equals(uid, that.uid)) {
-      return false;
-    }
-    if (!Objects.equals(profileImage, that.profileImage)) {
-      return false;
-    }
-    return Objects.equals(name, that.name);
-  }
-
-  @Override
-  public int hashCode() {
-    int result = id != null ? id.hashCode() : 0;
-    result = 31 * result + (uid != null ? uid.hashCode() : 0);
-    result = 31 * result + (profileImage != null ? profileImage.hashCode() : 0);
-    result = 31 * result + (name != null ? name.hashCode() : 0);
-    return result;
   }
 }
