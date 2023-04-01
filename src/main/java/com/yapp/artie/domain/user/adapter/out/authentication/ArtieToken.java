@@ -2,6 +2,7 @@ package com.yapp.artie.domain.user.adapter.out.authentication;
 
 import com.google.firebase.auth.FirebaseToken;
 
+// TODO : User 도메인 레이어로 이동
 public class ArtieToken {
 
   private final FirebaseToken firebaseToken;

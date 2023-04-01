@@ -11,6 +11,7 @@ import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+// TODO : deprecated api로 묶어서 JPA 엔티티를 반환하는 API만 레거시로 남겨둠
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserUseCase {

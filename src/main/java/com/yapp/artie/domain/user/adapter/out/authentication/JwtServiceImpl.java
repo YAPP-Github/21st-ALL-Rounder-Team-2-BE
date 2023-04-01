@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+// TODO : 이름 변경, 애노테이션 생성
 @Slf4j
 @Component
 @RequiredArgsConstructor
