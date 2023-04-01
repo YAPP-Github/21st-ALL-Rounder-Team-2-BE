@@ -1,7 +1,6 @@
 package com.yapp.artie.domain.user.adapter.in.web;
 
-import com.yapp.artie.domain.user.application.port.in.GetUserQuery;
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.application.port.in.UserWithdrawalUseCase;
 import com.yapp.artie.global.annotation.WebAdapter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -10,30 +9,33 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/user")
 @WebAdapter
+@RestController
+@RequestMapping("/user")
 @RequiredArgsConstructor
-public class UserController {
-  private final GetUserQuery getUserQuery;
+public class UserWithdrawalController {
 
-  @Operation(summary = "유저 조회", description = "토큰 기반 유저 조회")
+  private final UserWithdrawalUseCase userWithdrawalUseCase;
+
+  @Operation(summary = "유저 삭제", description = "회원 탈퇴")
   @ApiResponses(value = {
       @ApiResponse(
-          responseCode = "200",
-          description = "유저가 성공적으로 조회됨",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+          responseCode = "204",
+          description = "유저가 성공적으로 삭제됨",
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class))),
   })
-  @GetMapping("/me")
-  public ResponseEntity<User> me(Authentication authentication) {
+  @DeleteMapping()
+  public ResponseEntity<? extends HttpEntity> deleteUser(Authentication authentication) {
     Long userId = getUserId(authentication);
-    User user = getUserQuery.loadUserById(userId);
-
-    return ResponseEntity.ok().body(user);
+    userWithdrawalUseCase.delete(userId);
+    return ResponseEntity.noContent().build();
   }
 
   // TODO : 앱 배포했을 때에는 1L 대신에 exception을 던지도록 변경해야 합니다.
