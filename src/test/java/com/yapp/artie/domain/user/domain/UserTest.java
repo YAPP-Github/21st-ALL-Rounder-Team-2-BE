@@ -3,7 +3,6 @@ package com.yapp.artie.domain.user.domain;
 import static com.yapp.artie.common.UserTestData.defaultUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.yapp.artie.common.UserTestData;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
