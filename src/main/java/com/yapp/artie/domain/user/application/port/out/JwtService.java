@@ -1,6 +1,6 @@
 package com.yapp.artie.domain.user.application.port.out;
 
-import com.yapp.artie.domain.user.adapter.out.authentication.ArtieToken;
+import com.yapp.artie.domain.user.domain.ArtieToken;
 
 public interface JwtService {
 

@@ -1,9 +1,9 @@
 package com.yapp.artie.domain.user.adapter.in.web;
 
 
-import com.yapp.artie.domain.user.adapter.out.authentication.ArtieToken;
 import com.yapp.artie.domain.user.application.port.in.RegisterUserUseCase;
 import com.yapp.artie.domain.user.application.port.out.JwtService;
+import com.yapp.artie.domain.user.domain.ArtieToken;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.global.annotation.WebAdapter;
 import com.yapp.artie.global.exception.common.InvalidValueException;

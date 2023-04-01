@@ -4,8 +4,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.core.userdetails.User.builder;
 
-import com.yapp.artie.domain.user.application.port.in.GetUserQuery;
 import com.yapp.artie.domain.user.application.port.out.JwtService;
+import com.yapp.artie.domain.user.domain.ArtieToken;
 import com.yapp.artie.domain.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -43,6 +43,6 @@ public abstract class BaseControllerIntegrationTest {
 
   private void givenTestToken(String uid, String name, String picture) {
     given(jwtService.verify(any()))
-        .willReturn(new TestArtieToken(uid, name, picture));
+        .willReturn(new ArtieToken(uid, name, picture));
   }
 }

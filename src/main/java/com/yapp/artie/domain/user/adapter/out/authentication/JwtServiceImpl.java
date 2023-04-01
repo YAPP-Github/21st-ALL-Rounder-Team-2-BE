@@ -1,6 +1,7 @@
 package com.yapp.artie.domain.user.adapter.out.authentication;
 
 import com.yapp.artie.domain.user.application.port.out.JwtService;
+import com.yapp.artie.domain.user.domain.ArtieToken;
 import com.yapp.artie.global.exception.authentication.NotExistValidTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +15,12 @@ public class JwtServiceImpl implements JwtService {
 
   private final WithdrawalHandler withdrawalHandler;
   private final JwtDecoder decoder;
+  private final TokenGenerator tokenGenerator;
 
   @Override
   public ArtieToken verify(String header) {
     validateHeader(header);
-    return new ArtieToken(decoder
+    return tokenGenerator.generateDomainToken(decoder
         .decode(refineHeaderAsToken(header)));
   }
 
