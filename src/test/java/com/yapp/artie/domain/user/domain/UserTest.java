@@ -3,14 +3,9 @@ package com.yapp.artie.domain.user.domain;
 import static com.yapp.artie.common.UserTestData.defaultUser;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import org.junit.jupiter.api.Test;
 
-public class UserTest {
-
-  public static final UserJpaEntity TEST_SAVED_USER = UserJpaEntity.create(1L, "test-uid",
-      "test-name",
-      "test-profile");
+class UserTest {
 
   @Test
   void rename_사용자_이름을_변경한다() {
