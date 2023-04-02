@@ -4,7 +4,7 @@ import com.yapp.artie.domain.s3.dto.request.GetPresignedUrlRequestDto;
 import com.yapp.artie.domain.s3.dto.response.GetPresignedUrlResponseDto;
 import com.yapp.artie.domain.s3.dto.response.presignedUrlDataDto;
 import com.yapp.artie.domain.s3.service.S3Service;
-import com.yapp.artie.domain.user.deprecated.LoadUserJpaEntityApi;
+import com.yapp.artie.global.deprecated.LoadUserJpaEntityApi;
 import com.yapp.artie.global.exception.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

@@ -1,8 +1,9 @@
-package com.yapp.artie.domain.user.deprecated;
+package com.yapp.artie.global.deprecated;
 
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
-import com.yapp.artie.domain.user.adapter.out.persistence.UserRepository;
 import com.yapp.artie.domain.user.application.port.exception.UserNotFoundException;
+import java.util.Optional;
+import javax.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,11 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 class UserJpaEntityLoader implements LoadUserJpaEntityApi {
 
-  private final UserRepository userRepository;
+  private final EntityManager em;
 
   @Override
   public UserJpaEntity findById(Long id) {
-    return userRepository.findById(id)
+    return Optional.ofNullable(em.find(UserJpaEntity.class, id))
         .orElseThrow(UserNotFoundException::new);
   }
 }

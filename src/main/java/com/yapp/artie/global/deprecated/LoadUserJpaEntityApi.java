@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.user.deprecated;
+package com.yapp.artie.global.deprecated;
 
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 
