@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
-public class RegisterUserController {
+class RegisterUserController {
 
   private final TokenParsingPort tokenParsingPort;
   private final RegisterUserUseCase registerUserUseCase;

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
-public class UserWithdrawalController {
+class UserWithdrawalController {
 
   private final UserWithdrawalUseCase userWithdrawalUseCase;
 

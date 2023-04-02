@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
-public class GetUserThumbnailController {
+class GetUserThumbnailController {
 
   private final GetUserThumbnailQuery getUserThumbnailQuery;
 
