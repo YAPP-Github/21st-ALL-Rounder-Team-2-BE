@@ -4,7 +4,7 @@ import com.yapp.artie.domain.user.domain.User;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserMapper {
+class UserMapper {
 
   User mapToDomainEntity(UserJpaEntity user) {
     return User.withId(user.getId(),
