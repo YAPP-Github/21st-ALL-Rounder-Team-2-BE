@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @UseCase
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GetUserDetailsService implements GetUserDetailsQuery {
+class GetUserDetailsService implements GetUserDetailsQuery {
 
   private final LoadUserPort loadUserPort;
 

@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 @UseCase
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GetUserService implements GetUserQuery {
+class GetUserService implements GetUserQuery {
 
   private final LoadUserPort loadUserPort;
 

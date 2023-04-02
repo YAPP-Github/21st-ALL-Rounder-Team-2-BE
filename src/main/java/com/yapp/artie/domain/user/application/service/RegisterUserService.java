@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 @UseCase
 @Transactional
 @RequiredArgsConstructor
-public class RegisterUserService implements RegisterUserUseCase {
+class RegisterUserService implements RegisterUserUseCase {
 
   private final LoadUserPort loadUserPort;
   private final SaveUserPort saveUserPort;

@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @UseCase
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class GetUserThumbnailService implements GetUserThumbnailQuery {
+class GetUserThumbnailService implements GetUserThumbnailQuery {
 
   private final LoadUserPort loadUserPort;
   private final ExhibitService exhibitService;

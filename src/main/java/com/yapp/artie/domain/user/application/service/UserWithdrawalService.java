@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @UseCase
 @Transactional
 @RequiredArgsConstructor
-public class UserWithdrawalService implements UserWithdrawalUseCase {
+class UserWithdrawalService implements UserWithdrawalUseCase {
 
   private final DeleteExternalUserPort deleteExternalUserPort;
   private final CategoryRepository categoryRepository;

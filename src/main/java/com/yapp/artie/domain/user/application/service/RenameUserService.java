@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @UseCase
 @Transactional
 @RequiredArgsConstructor
-public class RenameUserService implements RenameUserUseCase {
+class RenameUserService implements RenameUserUseCase {
 
   private final LoadUserPort loadUserPort;
   private final UpdateUserStatePort updateUserStatePort;
