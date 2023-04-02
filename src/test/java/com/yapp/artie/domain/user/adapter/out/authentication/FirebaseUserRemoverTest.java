@@ -11,8 +11,6 @@ import com.google.firebase.ErrorCode;
 import com.google.firebase.auth.AbstractFirebaseAuth;
 import com.google.firebase.auth.AuthErrorCode;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.yapp.artie.domain.user.adapter.out.authentication.exception.FirebaseUserNotFoundException;
-import com.yapp.artie.domain.user.adapter.out.authentication.exception.InvalidFirebaseUidException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

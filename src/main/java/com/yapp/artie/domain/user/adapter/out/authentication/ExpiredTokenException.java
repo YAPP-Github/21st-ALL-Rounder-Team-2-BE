@@ -1,9 +1,9 @@
-package com.yapp.artie.domain.user.adapter.out.authentication.exception;
+package com.yapp.artie.domain.user.adapter.out.authentication;
 
 import com.yapp.artie.global.common.exception.BusinessException;
 import com.yapp.artie.global.common.exception.ErrorCode;
 
-public class ExpiredTokenException extends BusinessException {
+class ExpiredTokenException extends BusinessException {
 
   public ExpiredTokenException() {
     super(ErrorCode.FIREBASE_ACCESS_TOKEN_EXPIRED);

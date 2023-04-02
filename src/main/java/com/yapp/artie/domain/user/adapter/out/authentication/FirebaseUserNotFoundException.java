@@ -1,9 +1,9 @@
-package com.yapp.artie.domain.user.adapter.out.authentication.exception;
+package com.yapp.artie.domain.user.adapter.out.authentication;
 
 import com.yapp.artie.global.common.exception.BusinessException;
 import com.yapp.artie.global.common.exception.ErrorCode;
 
-public class FirebaseUserNotFoundException extends BusinessException {
+class FirebaseUserNotFoundException extends BusinessException {
 
   public FirebaseUserNotFoundException() {
     super(ErrorCode.FIREBASE_NOT_FOUND_USER);

@@ -1,9 +1,9 @@
-package com.yapp.artie.domain.user.adapter.out.authentication.exception;
+package com.yapp.artie.domain.user.adapter.out.authentication;
 
 import com.yapp.artie.global.common.exception.BusinessException;
 import com.yapp.artie.global.common.exception.ErrorCode;
 
-public class RevokedTokenException extends BusinessException {
+class RevokedTokenException extends BusinessException {
 
   public RevokedTokenException() {
     super(ErrorCode.FIREBASE_REVOKED_TOKEN);

@@ -3,8 +3,6 @@ package com.yapp.artie.domain.user.adapter.out.authentication;
 import com.google.firebase.auth.AbstractFirebaseAuth;
 import com.google.firebase.auth.AuthErrorCode;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.yapp.artie.domain.user.adapter.out.authentication.exception.FirebaseUserNotFoundException;
-import com.yapp.artie.domain.user.adapter.out.authentication.exception.InvalidFirebaseUidException;
 import com.yapp.artie.global.common.exception.BusinessException;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class FirebaseUserRemover {
+class FirebaseUserRemover {
 
   private final AbstractFirebaseAuth firebaseAuth;
 

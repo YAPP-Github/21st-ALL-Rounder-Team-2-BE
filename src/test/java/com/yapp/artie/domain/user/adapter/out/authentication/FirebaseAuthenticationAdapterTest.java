@@ -8,7 +8,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
-import com.yapp.artie.domain.user.adapter.out.authentication.exception.NotExistValidTokenException;
 import com.yapp.artie.domain.user.domain.ArtieToken;
 import com.yapp.artie.domain.user.domain.User;
 import org.junit.jupiter.api.Test;
