@@ -1,4 +1,4 @@
-package com.yapp.artie.global.exception.response;
+package com.yapp.artie.global.common.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;

@@ -1,8 +1,8 @@
 package com.yapp.artie.domain.user.application.service;
 
 
-import com.yapp.artie.global.exception.common.BusinessException;
-import com.yapp.artie.global.exception.response.ErrorCode;
+import com.yapp.artie.global.common.exception.BusinessException;
+import com.yapp.artie.global.common.exception.ErrorCode;
 
 public class UserNotFoundException extends BusinessException {
 

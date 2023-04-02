@@ -1,8 +1,8 @@
 package com.yapp.artie.domain.user.adapter.in.web;
 
 import com.yapp.artie.domain.user.application.port.in.RenameUserUseCase;
-import com.yapp.artie.global.annotation.WebAdapter;
-import com.yapp.artie.global.exception.response.ErrorResponse;
+import com.yapp.artie.global.common.annotation.WebAdapter;
+import com.yapp.artie.global.common.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

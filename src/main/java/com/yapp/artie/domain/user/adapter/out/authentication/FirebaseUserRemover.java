@@ -5,7 +5,7 @@ import com.google.firebase.auth.AuthErrorCode;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.yapp.artie.domain.user.adapter.out.authentication.exception.FirebaseUserNotFoundException;
 import com.yapp.artie.domain.user.adapter.out.authentication.exception.InvalidFirebaseUidException;
-import com.yapp.artie.global.exception.common.BusinessException;
+import com.yapp.artie.global.common.exception.BusinessException;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

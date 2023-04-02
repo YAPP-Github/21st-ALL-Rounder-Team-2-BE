@@ -1,6 +1,6 @@
 package com.yapp.artie.domain.user.adapter.out.persistence;
 
-import com.yapp.artie.global.common.BaseEntity;
+import com.yapp.artie.global.common.persistence.BaseEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

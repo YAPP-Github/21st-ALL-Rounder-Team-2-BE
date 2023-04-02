@@ -7,7 +7,7 @@ import com.yapp.artie.domain.user.adapter.out.authentication.exception.ExpiredTo
 import com.yapp.artie.domain.user.adapter.out.authentication.exception.InvalidTokenException;
 import com.yapp.artie.domain.user.adapter.out.authentication.exception.NotExistValidTokenException;
 import com.yapp.artie.domain.user.adapter.out.authentication.exception.RevokedTokenException;
-import com.yapp.artie.global.exception.common.BusinessException;
+import com.yapp.artie.global.common.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

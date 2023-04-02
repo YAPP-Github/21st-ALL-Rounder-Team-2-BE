@@ -1,4 +1,4 @@
-package com.yapp.artie.global.exception.response;
+package com.yapp.artie.global.common.exception;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import java.util.ArrayList;

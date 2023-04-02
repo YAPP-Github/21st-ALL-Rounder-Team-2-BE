@@ -2,7 +2,7 @@ package com.yapp.artie.domain.archive.domain.category;
 
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
-import com.yapp.artie.global.common.BaseEntity;
+import com.yapp.artie.global.common.persistence.BaseEntity;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;

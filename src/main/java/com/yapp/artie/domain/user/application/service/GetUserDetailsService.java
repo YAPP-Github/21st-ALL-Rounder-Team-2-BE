@@ -5,7 +5,7 @@ import static org.springframework.security.core.userdetails.User.builder;
 import com.yapp.artie.domain.user.application.port.in.GetUserDetailsQuery;
 import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
 import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.global.annotation.UseCase;
+import com.yapp.artie.global.common.annotation.UseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;

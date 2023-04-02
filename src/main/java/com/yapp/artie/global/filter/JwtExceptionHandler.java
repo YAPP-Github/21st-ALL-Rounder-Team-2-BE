@@ -1,8 +1,8 @@
 package com.yapp.artie.global.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yapp.artie.global.exception.common.BusinessException;
-import com.yapp.artie.global.exception.response.ErrorResponse;
+import com.yapp.artie.global.common.exception.BusinessException;
+import com.yapp.artie.global.common.exception.ErrorResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.FilterChain;
