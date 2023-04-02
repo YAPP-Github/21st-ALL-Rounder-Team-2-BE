@@ -1,10 +1,10 @@
 package com.yapp.artie.domain.user.adapter.out.authentication;
 
+import com.yapp.artie.domain.user.adapter.out.authentication.exception.NotExistValidTokenException;
 import com.yapp.artie.domain.user.application.port.out.DeleteExternalUserPort;
 import com.yapp.artie.domain.user.application.port.out.TokenParsingPort;
 import com.yapp.artie.domain.user.domain.ArtieToken;
 import com.yapp.artie.global.annotation.AuthenticationAdapter;
-import com.yapp.artie.global.exception.authentication.NotExistValidTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

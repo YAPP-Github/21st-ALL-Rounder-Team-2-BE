@@ -11,9 +11,9 @@ import com.google.firebase.ErrorCode;
 import com.google.firebase.auth.AbstractFirebaseAuth;
 import com.google.firebase.auth.AuthErrorCode;
 import com.google.firebase.auth.FirebaseAuthException;
-import com.yapp.artie.global.exception.authentication.ExpiredTokenException;
-import com.yapp.artie.global.exception.authentication.NotExistValidTokenException;
-import com.yapp.artie.global.exception.authentication.RevokedTokenException;
+import com.yapp.artie.domain.user.adapter.out.authentication.exception.ExpiredTokenException;
+import com.yapp.artie.domain.user.adapter.out.authentication.exception.NotExistValidTokenException;
+import com.yapp.artie.domain.user.adapter.out.authentication.exception.RevokedTokenException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
