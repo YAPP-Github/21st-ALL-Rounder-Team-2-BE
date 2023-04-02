@@ -10,7 +10,7 @@ import com.yapp.artie.domain.archive.service.ExhibitService;
 import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
-import com.yapp.artie.domain.user.exception.UserNotFoundException;
+import com.yapp.artie.domain.user.application.port.exception.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

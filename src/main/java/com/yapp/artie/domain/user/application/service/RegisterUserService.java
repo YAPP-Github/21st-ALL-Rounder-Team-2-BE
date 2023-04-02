@@ -5,7 +5,7 @@ import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
 import com.yapp.artie.domain.user.application.port.out.SaveUserPort;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
-import com.yapp.artie.domain.user.exception.UserNotFoundException;
+import com.yapp.artie.domain.user.application.port.exception.UserNotFoundException;
 import com.yapp.artie.global.annotation.UseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
