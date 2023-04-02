@@ -1,4 +1,4 @@
-package com.yapp.artie.global.config.swagger;
+package com.yapp.artie.global.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;

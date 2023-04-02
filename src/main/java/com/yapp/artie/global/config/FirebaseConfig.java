@@ -1,4 +1,4 @@
-package com.yapp.artie.global.config.firebase;
+package com.yapp.artie.global.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @Slf4j
-public class FirebaseInitializer {
+public class FirebaseConfig {
 
   @Bean
   public FirebaseApp firebaseApp() throws IOException {
