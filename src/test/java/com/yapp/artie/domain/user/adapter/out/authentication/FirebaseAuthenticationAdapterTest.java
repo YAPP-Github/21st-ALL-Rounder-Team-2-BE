@@ -62,6 +62,15 @@ class FirebaseAuthenticationAdapterTest {
   }
 
   @Test
+  public void parseToken_토큰이_들어오면_토큰의_타입을_제거해서_decoder에게_전달한다() throws Exception {
+    String header = "Bearer tomcat";
+    adapterUnderTest.parseToken(header);
+    then(jwtDecoder)
+        .should()
+        .decode(eq("tomcat"));
+  }
+
+  @Test
   public void delete_Remover에게_삭제_요청을_한다() {
     adapterUnderTest.delete("uid");
     then(firebaseUserRemover)
