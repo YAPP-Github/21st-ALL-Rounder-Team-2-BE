@@ -2,9 +2,7 @@ package com.yapp.artie.domain.user.application.port.out;
 
 import com.yapp.artie.domain.user.domain.ArtieToken;
 
-public interface JwtService {
+public interface TokenParsingPort {
 
-  ArtieToken verify(String header);
-
-  void withdraw(String uid);
+  ArtieToken parseToken(String header);
 }

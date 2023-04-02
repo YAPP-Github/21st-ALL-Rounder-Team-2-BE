@@ -1,32 +1,32 @@
 package com.yapp.artie.domain.user.adapter.out.authentication;
 
-import com.yapp.artie.domain.user.application.port.out.JwtService;
+import com.yapp.artie.domain.user.application.port.out.DeleteExternalUserPort;
+import com.yapp.artie.domain.user.application.port.out.TokenParsingPort;
 import com.yapp.artie.domain.user.domain.ArtieToken;
+import com.yapp.artie.global.annotation.AuthenticationAdapter;
 import com.yapp.artie.global.exception.authentication.NotExistValidTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
-// TODO : 이름 변경, 애노테이션 생성
 @Slf4j
-@Component
+@AuthenticationAdapter
 @RequiredArgsConstructor
-public class JwtServiceImpl implements JwtService {
+public class FirebaseAuthenticationAdapter implements DeleteExternalUserPort, TokenParsingPort {
 
-  private final WithdrawalHandler withdrawalHandler;
+  private final FirebaseUserRemover firebaseUserRemover;
   private final JwtDecoder decoder;
   private final TokenGenerator tokenGenerator;
 
   @Override
-  public ArtieToken verify(String header) {
+  public ArtieToken parseToken(String header) {
     validateHeader(header);
     return tokenGenerator.generateDomainToken(decoder
         .decode(refineHeaderAsToken(header)));
   }
 
   @Override
-  public void withdraw(String uid) {
-    withdrawalHandler.withdraw(uid);
+  public void delete(String uid) {
+    firebaseUserRemover.remove(uid);
   }
 
   private void validateHeader(String header) {

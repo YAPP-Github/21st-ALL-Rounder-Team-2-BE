@@ -2,7 +2,7 @@ package com.yapp.artie.domain.user.adapter.in.web;
 
 
 import com.yapp.artie.domain.user.application.port.in.RegisterUserUseCase;
-import com.yapp.artie.domain.user.application.port.out.JwtService;
+import com.yapp.artie.domain.user.application.port.out.TokenParsingPort;
 import com.yapp.artie.domain.user.domain.ArtieToken;
 import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.global.annotation.WebAdapter;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class RegisterUserController {
 
-  private final JwtService jwtService;
+  private final TokenParsingPort tokenParsingPort;
   private final RegisterUserUseCase registerUserUseCase;
 
   @Operation(summary = "유저 생성", description = "Firebase를 통해 생성한 UID 기반 유저 생성")
@@ -41,7 +41,7 @@ public class RegisterUserController {
   public ResponseEntity<CreateUserResponseDto> register(
       HttpServletRequest request, @RequestParam("uid") String uid) {
     String authorization = request.getHeader("Authorization");
-    ArtieToken decodedToken = jwtService.verify(authorization);
+    ArtieToken decodedToken = tokenParsingPort.parseToken(authorization);
     validateUidWithToken(uid, decodedToken);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(

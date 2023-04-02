@@ -1,6 +1,6 @@
 package com.yapp.artie.global.authentication;
 
-import com.yapp.artie.domain.user.application.port.out.JwtService;
+import com.yapp.artie.domain.user.application.port.out.TokenParsingPort;
 import com.yapp.artie.domain.user.domain.ArtieToken;
 import java.io.IOException;
 import java.util.NoSuchElementException;
@@ -22,12 +22,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtFilter extends OncePerRequestFilter {
 
   private final UserDetailsService userDetailsService;
-  private final JwtService jwtService;
+  private final TokenParsingPort tokenParsingPort;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
       FilterChain filterChain) throws ServletException, IOException {
-    setTokenAtSecurityContext(jwtService.verify(request.getHeader("Authorization")));
+    setTokenAtSecurityContext(tokenParsingPort.parseToken(request.getHeader("Authorization")));
     filterChain.doFilter(request, response);
   }
 

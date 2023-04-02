@@ -22,21 +22,22 @@ class GetUserThumbnailServiceTest {
       loadUserPort, exhibitService);
 
   @Test
-  void loadUserThumbnailWithId_사용자를_찾을_수_없으면_예외를_발생한다() {
+  void loadUserThumbnailById_사용자를_찾을_수_없으면_예외를_발생한다() {
     givenUserFindWillFail();
     assertThatThrownBy(() -> getUserThumbnailService.loadUserThumbnailById(1L))
         .isInstanceOf(UserNotFoundException.class);
   }
 
   @Test
-  public void loadUserThumbnailWithId_사용자의_닉네임과_전시개수를_반환한다() throws Exception {
+  void loadUserThumbnailById_사용자의_닉네임과_전시개수를_반환한다() {
     User user = defaultUser()
         .withName("tomcat")
         .build();
     givenUserByReference(user);
     givenExhibitCountWillReturnBy(5);
 
-    UserThumbnailResponseDto userThumbnail = getUserThumbnailService.loadUserThumbnailById(user.getId());
+    UserThumbnailResponseDto userThumbnail = getUserThumbnailService.loadUserThumbnailById(
+        user.getId());
     assertThat(userThumbnail.getExhibitCount()).isEqualTo(5);
     assertThat(userThumbnail.getName()).isEqualTo("tomcat");
   }

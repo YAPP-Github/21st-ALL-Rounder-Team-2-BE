@@ -12,21 +12,21 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class WithdrawalHandler {
+public class FirebaseUserRemover {
 
   private final FirebaseAuth firebaseAuth;
 
-  public void withdraw(String uid) {
+  public void remove(String uid) {
     try {
       firebaseAuth.deleteUser(uid);
     } catch (IllegalArgumentException e) {
       throw new InvalidFirebaseUidException();
     } catch (FirebaseAuthException e) {
-      throw processWithDrawException(e);
+      throw processRemoveException(e);
     }
   }
 
-  private BusinessException processWithDrawException(FirebaseAuthException e) {
+  private BusinessException processRemoveException(FirebaseAuthException e) {
     if (Objects.requireNonNull(e.getAuthErrorCode()) == AuthErrorCode.USER_NOT_FOUND) {
       return new FirebaseUserNotFoundException();
     }

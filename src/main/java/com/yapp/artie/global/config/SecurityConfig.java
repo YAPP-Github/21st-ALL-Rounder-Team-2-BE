@@ -1,7 +1,7 @@
 package com.yapp.artie.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yapp.artie.domain.user.application.port.out.JwtService;
+import com.yapp.artie.domain.user.application.port.out.TokenParsingPort;
 import com.yapp.artie.global.authentication.JwtExceptionHandler;
 import com.yapp.artie.global.authentication.JwtFilter;
 import lombok.RequiredArgsConstructor;
@@ -25,14 +25,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final UserDetailsService userDetailsService;
-  private final JwtService jwtService;
+  private final TokenParsingPort tokenParsingPort;
 
   @Override
   public void configure(HttpSecurity http) throws Exception {
     http.authorizeRequests()
         .anyRequest()
         .authenticated().and()
-        .addFilterBefore(new JwtFilter(userDetailsService, jwtService),
+        .addFilterBefore(new JwtFilter(userDetailsService, tokenParsingPort),
             UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(new JwtExceptionHandler(new ObjectMapper()), JwtFilter.class);
 
