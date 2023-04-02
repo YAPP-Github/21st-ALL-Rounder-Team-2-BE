@@ -1,7 +1,6 @@
 package com.yapp.artie.domain.user.adapter.out.authentication;
 
 import com.google.firebase.auth.AbstractFirebaseAuth;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.yapp.artie.global.exception.authentication.ExpiredTokenException;
