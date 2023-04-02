@@ -8,8 +8,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
+import com.yapp.artie.domain.user.application.port.out.DeleteExternalUserPort;
 import com.yapp.artie.domain.user.application.port.out.DeleteUserPort;
-import com.yapp.artie.domain.user.application.port.out.JwtService;
 import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.exception.UserNotFoundException;
@@ -19,12 +19,13 @@ import org.mockito.Mockito;
 class UserWithdrawalServiceTest {
 
   private final CategoryRepository categoryRepository = Mockito.mock(CategoryRepository.class);
-  private final JwtService jwtService = Mockito.mock(JwtService.class);
+  private final DeleteExternalUserPort deleteExternalUserPort = Mockito.mock(
+      DeleteExternalUserPort.class);
   private final LoadUserPort loadUserPort = Mockito.mock(LoadUserPort.class);
   private final DeleteUserPort deleteUserPort = Mockito.mock(DeleteUserPort.class);
 
   private final UserWithdrawalService userWithdrawalService = new UserWithdrawalService(
-      jwtService, categoryRepository, loadUserPort, deleteUserPort);
+      deleteExternalUserPort, categoryRepository, loadUserPort, deleteUserPort);
 
   @Test
   void delete_사용자를_찾을_수_없으면_예외를_발생한다() {
@@ -37,9 +38,9 @@ class UserWithdrawalServiceTest {
   void delete_사용자_삭제_요청을_받으면_firebase에서_삭제되도록_요청한다() {
     givenUser();
     userWithdrawalService.delete(1L);
-    then(jwtService)
+    then(deleteExternalUserPort)
         .should()
-        .withdraw(any());
+        .delete(any());
   }
 
   @Test
