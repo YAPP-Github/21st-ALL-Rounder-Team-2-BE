@@ -8,7 +8,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
-import com.yapp.artie.domain.user.application.port.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.application.port.out.DeleteExternalUserPort;
 import com.yapp.artie.domain.user.application.port.out.DeleteUserPort;
 import com.yapp.artie.domain.user.application.port.out.LoadUserPort;

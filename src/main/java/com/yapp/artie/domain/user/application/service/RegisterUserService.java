@@ -1,6 +1,5 @@
 package com.yapp.artie.domain.user.application.service;
 
-import com.yapp.artie.domain.user.application.port.exception.UserNotFoundException;
 import com.yapp.artie.domain.user.application.port.in.RegisterUserResponse;
 import com.yapp.artie.domain.user.application.port.in.RegisterUserUseCase;
 import com.yapp.artie.domain.user.application.port.out.LoadUserPort;

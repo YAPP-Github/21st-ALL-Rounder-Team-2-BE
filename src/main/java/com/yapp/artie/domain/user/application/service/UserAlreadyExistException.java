@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.user.application.port.exception;
+package com.yapp.artie.domain.user.application.service;
 
 import com.yapp.artie.global.exception.common.BusinessException;
 import com.yapp.artie.global.exception.response.ErrorCode;
