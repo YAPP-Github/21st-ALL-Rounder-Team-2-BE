@@ -4,8 +4,8 @@ import static com.yapp.artie.common.UserTestData.defaultUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.application.port.exception.UserNotFoundException;
+import com.yapp.artie.domain.user.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;

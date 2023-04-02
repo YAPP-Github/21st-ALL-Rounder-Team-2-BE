@@ -1,10 +1,10 @@
 package com.yapp.artie.domain.user.adapter.in.web;
 
 
+import com.yapp.artie.domain.user.application.port.in.RegisterUserResponse;
 import com.yapp.artie.domain.user.application.port.in.RegisterUserUseCase;
 import com.yapp.artie.domain.user.application.port.out.TokenParsingPort;
 import com.yapp.artie.domain.user.domain.ArtieToken;
-import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.global.annotation.WebAdapter;
 import com.yapp.artie.global.exception.common.InvalidValueException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,10 +35,10 @@ public class RegisterUserController {
       @ApiResponse(
           responseCode = "201",
           description = "유저가 성공적으로 생성됨",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateUserResponseDto.class))),
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = RegisterUserResponse.class))),
   })
   @PostMapping()
-  public ResponseEntity<CreateUserResponseDto> register(
+  public ResponseEntity<RegisterUserResponse> register(
       HttpServletRequest request, @RequestParam("uid") String uid) {
     String authorization = request.getHeader("Authorization");
     ArtieToken decodedToken = tokenParsingPort.parseToken(authorization);

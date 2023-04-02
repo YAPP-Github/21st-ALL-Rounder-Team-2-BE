@@ -2,7 +2,7 @@ package com.yapp.artie.domain.user.adapter.in.web;
 
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.domain.user.application.port.in.GetUserThumbnailQuery;
-import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
+import com.yapp.artie.domain.user.application.port.in.GetUserThumbnailResponse;
 import com.yapp.artie.global.annotation.WebAdapter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,7 +33,7 @@ public class GetUserThumbnailController {
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserJpaEntity.class))),
   })
   @GetMapping("/my-page")
-  public ResponseEntity<UserThumbnailResponseDto> my(Authentication authentication) {
+  public ResponseEntity<GetUserThumbnailResponse> my(Authentication authentication) {
 
     Long userId = getUserId(authentication);
     return ResponseEntity.ok().body(getUserThumbnailQuery.loadUserThumbnailById(userId));

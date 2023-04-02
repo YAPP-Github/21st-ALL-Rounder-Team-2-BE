@@ -7,10 +7,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
+import com.yapp.artie.domain.user.application.port.exception.UserNotFoundException;
+import com.yapp.artie.domain.user.application.port.in.RegisterUserResponse;
 import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
 import com.yapp.artie.domain.user.application.port.out.SaveUserPort;
-import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
-import com.yapp.artie.domain.user.application.port.exception.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -24,7 +24,7 @@ class RegisterUserServiceTest {
   @Test
   void register_이미_등록된_사용자라면_ID를_그대로_반환한다() {
     givenUser();
-    CreateUserResponseDto actual = registerUserService.register("1", "test", null);
+    RegisterUserResponse actual = registerUserService.register("1", "test", null);
     assertThat(actual.getId()).isEqualTo(1L);
   }
 
@@ -42,7 +42,7 @@ class RegisterUserServiceTest {
     Long expectedId = 2L;
     givenUserFindWithUidWillFail();
     givenSaveWillReturnId(expectedId);
-    CreateUserResponseDto actual = registerUserService.register("1", "test", null);
+    RegisterUserResponse actual = registerUserService.register("1", "test", null);
     assertThat(actual.getId()).isEqualTo(expectedId);
     then(saveUserPort)
         .should()

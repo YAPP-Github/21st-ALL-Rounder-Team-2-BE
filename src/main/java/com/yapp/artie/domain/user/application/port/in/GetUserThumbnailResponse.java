@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.user.dto.response;
+package com.yapp.artie.domain.user.application.port.in;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Schema(description = "마이 페이지 조회 Response")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserThumbnailResponseDto {
+public class GetUserThumbnailResponse {
 
   @Schema(description = "사용자 이름")
   private String name;
@@ -16,7 +16,7 @@ public class UserThumbnailResponseDto {
   @Schema(description = "전시 개수")
   private int exhibitCount;
 
-  public UserThumbnailResponseDto(String name, int exhibitCount) {
+  public GetUserThumbnailResponse(String name, int exhibitCount) {
     this.name = name;
     this.exhibitCount = exhibitCount;
   }

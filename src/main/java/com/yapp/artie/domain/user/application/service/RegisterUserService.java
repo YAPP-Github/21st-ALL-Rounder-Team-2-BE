@@ -1,11 +1,11 @@
 package com.yapp.artie.domain.user.application.service;
 
 import com.yapp.artie.domain.user.application.port.exception.UserNotFoundException;
+import com.yapp.artie.domain.user.application.port.in.RegisterUserResponse;
 import com.yapp.artie.domain.user.application.port.in.RegisterUserUseCase;
 import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
 import com.yapp.artie.domain.user.application.port.out.SaveUserPort;
 import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.domain.user.dto.response.CreateUserResponseDto;
 import com.yapp.artie.global.annotation.UseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +19,12 @@ public class RegisterUserService implements RegisterUserUseCase {
   private final SaveUserPort saveUserPort;
 
   @Override
-  public CreateUserResponseDto register(final String uid, final String username,
+  public RegisterUserResponse register(final String uid, final String username,
       final String picture) {
     try {
-      return new CreateUserResponseDto(getIdIfExists(uid));
+      return new RegisterUserResponse(getIdIfExists(uid));
     } catch (UserNotFoundException notFoundException) {
-      return new CreateUserResponseDto(saveUser(User.withoutId(uid, picture, username)));
+      return new RegisterUserResponse(saveUser(User.withoutId(uid, picture, username)));
     }
   }
 

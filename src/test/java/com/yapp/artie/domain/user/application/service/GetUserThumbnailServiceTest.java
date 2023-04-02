@@ -7,10 +7,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import com.yapp.artie.domain.archive.service.ExhibitService;
+import com.yapp.artie.domain.user.application.port.exception.UserNotFoundException;
+import com.yapp.artie.domain.user.application.port.in.GetUserThumbnailResponse;
 import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
 import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.domain.user.dto.response.UserThumbnailResponseDto;
-import com.yapp.artie.domain.user.application.port.exception.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -36,7 +36,7 @@ class GetUserThumbnailServiceTest {
     givenUserByReference(user);
     givenExhibitCountWillReturnBy(5);
 
-    UserThumbnailResponseDto userThumbnail = getUserThumbnailService.loadUserThumbnailById(
+    GetUserThumbnailResponse userThumbnail = getUserThumbnailService.loadUserThumbnailById(
         user.getId());
     assertThat(userThumbnail.getExhibitCount()).isEqualTo(5);
     assertThat(userThumbnail.getName()).isEqualTo("tomcat");
