@@ -1,4 +1,4 @@
-package com.yapp.artie.global.authentication;
+package com.yapp.artie.global.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yapp.artie.global.exception.common.BusinessException;

@@ -1,4 +1,4 @@
-package com.yapp.artie.global.exception;
+package com.yapp.artie.global.filter;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;

@@ -1,4 +1,4 @@
-package com.yapp.artie.global.authentication;
+package com.yapp.artie.global.filter;
 
 import com.yapp.artie.domain.user.application.port.out.TokenParsingPort;
 import com.yapp.artie.domain.user.domain.ArtieToken;
