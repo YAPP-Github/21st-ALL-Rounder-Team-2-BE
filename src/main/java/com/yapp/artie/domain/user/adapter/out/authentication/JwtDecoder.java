@@ -1,5 +1,6 @@
 package com.yapp.artie.domain.user.adapter.out.authentication;
 
+import com.google.firebase.auth.AbstractFirebaseAuth;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class JwtDecoder {
 
-  private final FirebaseAuth firebaseAuth;
+  private final AbstractFirebaseAuth firebaseAuth;
 
   public FirebaseToken decode(String token) {
     try {

@@ -1,7 +1,7 @@
 package com.yapp.artie.domain.user.adapter.out.authentication;
 
+import com.google.firebase.auth.AbstractFirebaseAuth;
 import com.google.firebase.auth.AuthErrorCode;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.yapp.artie.global.exception.authentication.FirebaseUserNotFoundException;
 import com.yapp.artie.global.exception.authentication.InvalidFirebaseUidException;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class FirebaseUserRemover {
 
-  private final FirebaseAuth firebaseAuth;
+  private final AbstractFirebaseAuth firebaseAuth;
 
   public void remove(String uid) {
     try {
