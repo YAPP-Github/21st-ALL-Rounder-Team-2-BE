@@ -18,7 +18,7 @@ class RegisterUserService implements RegisterUserUseCase {
   private final SaveUserPort saveUserPort;
 
   @Override
-  public RegisterUserResponse register(final String uid, final String username,
+  public RegisterUserResponse register(String uid, String username,
       final String picture) {
     try {
       return new RegisterUserResponse(getIdIfExists(uid));
