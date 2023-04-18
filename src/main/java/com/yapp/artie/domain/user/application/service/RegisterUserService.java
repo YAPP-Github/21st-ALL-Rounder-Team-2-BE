@@ -28,11 +28,11 @@ class RegisterUserService implements RegisterUserUseCase {
     }
   }
 
-  private Long saveUser(final User user) {
+  private Long saveUser(User user) {
     return saveUserPort.save(user);
   }
 
-  private Long getIdIfExists(final String uid) {
+  private Long getIdIfExists(String uid) {
     return loadUserPort.loadByUid(uid).getId();
   }
 }
