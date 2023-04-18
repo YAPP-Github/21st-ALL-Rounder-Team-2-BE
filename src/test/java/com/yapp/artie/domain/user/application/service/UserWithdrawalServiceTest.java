@@ -4,26 +4,23 @@ import static com.yapp.artie.common.UserTestData.defaultUser;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
+import com.yapp.artie.common.BaseUserUnitTest;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.user.application.port.out.DeleteExternalUserPort;
 import com.yapp.artie.domain.user.application.port.out.DeleteUserPort;
-import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.domain.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class UserWithdrawalServiceTest {
+class UserWithdrawalServiceTest extends BaseUserUnitTest {
 
   private final CategoryRepository categoryRepository = Mockito.mock(CategoryRepository.class);
   private final DeleteExternalUserPort deleteExternalUserPort = Mockito.mock(
       DeleteExternalUserPort.class);
-  private final LoadUserPort loadUserPort = Mockito.mock(LoadUserPort.class);
   private final DeleteUserPort deleteUserPort = Mockito.mock(DeleteUserPort.class);
-
   private final UserWithdrawalService userWithdrawalService = new UserWithdrawalService(
       deleteExternalUserPort, categoryRepository, loadUserPort, deleteUserPort);
 
@@ -60,20 +57,5 @@ class UserWithdrawalServiceTest {
     then(deleteUserPort)
         .should()
         .delete(eq(user));
-  }
-
-  private void givenUserByReference(User user) {
-    given(loadUserPort.loadById(any()))
-        .willReturn(user);
-  }
-
-  private void givenUser() {
-    given(loadUserPort.loadById(any()))
-        .willReturn(defaultUser().build());
-  }
-
-  private void givenUserFindWillFail() {
-    given(loadUserPort.loadById(any()))
-        .willThrow(UserNotFoundException.class);
   }
 }

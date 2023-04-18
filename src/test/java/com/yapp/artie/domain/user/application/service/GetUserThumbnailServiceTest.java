@@ -6,17 +6,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import com.yapp.artie.common.BaseUserUnitTest;
 import com.yapp.artie.domain.archive.service.ExhibitService;
 import com.yapp.artie.domain.user.application.port.in.GetUserThumbnailResponse;
-import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.domain.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class GetUserThumbnailServiceTest {
+class GetUserThumbnailServiceTest extends BaseUserUnitTest {
 
-  private final LoadUserPort loadUserPort = Mockito.mock(LoadUserPort.class);
   private final ExhibitService exhibitService = Mockito.mock(ExhibitService.class);
   private final GetUserThumbnailService getUserThumbnailService = new GetUserThumbnailService(
       loadUserPort, exhibitService);
@@ -45,15 +44,5 @@ class GetUserThumbnailServiceTest {
   private void givenExhibitCountWillReturnBy(int count) {
     given(exhibitService.getExhibitCount(any()))
         .willReturn(count);
-  }
-
-  private void givenUserByReference(User user) {
-    given(loadUserPort.loadById(any()))
-        .willReturn(user);
-  }
-
-  private void givenUserFindWillFail() {
-    given(loadUserPort.loadById(any()))
-        .willThrow(UserNotFoundException.class);
   }
 }

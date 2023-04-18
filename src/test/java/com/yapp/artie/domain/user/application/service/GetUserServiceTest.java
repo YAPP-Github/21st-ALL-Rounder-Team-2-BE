@@ -3,18 +3,14 @@ package com.yapp.artie.domain.user.application.service;
 import static com.yapp.artie.common.UserTestData.defaultUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
-import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
+import com.yapp.artie.common.BaseUserUnitTest;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.domain.UserNotFoundException;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
-class GetUserServiceTest {
+class GetUserServiceTest extends BaseUserUnitTest {
 
-  private final LoadUserPort loadUserPort = Mockito.mock(LoadUserPort.class);
   private final GetUserService getUserService = new GetUserService(loadUserPort);
 
   @Test
@@ -30,15 +26,5 @@ class GetUserServiceTest {
     givenUserByReference(user);
     User actual = getUserService.loadUserById(1L);
     assertThat(actual.getId()).isEqualTo(user.getId());
-  }
-
-  private void givenUserByReference(User user) {
-    given(loadUserPort.loadById(any()))
-        .willReturn(user);
-  }
-
-  private void givenUserFindWillFail() {
-    given(loadUserPort.loadById(any()))
-        .willThrow(UserNotFoundException.class);
   }
 }

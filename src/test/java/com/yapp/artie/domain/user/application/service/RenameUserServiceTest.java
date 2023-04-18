@@ -3,20 +3,17 @@ package com.yapp.artie.domain.user.application.service;
 import static com.yapp.artie.common.UserTestData.defaultUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
-import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
+import com.yapp.artie.common.BaseUserUnitTest;
 import com.yapp.artie.domain.user.application.port.out.UpdateUserStatePort;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.domain.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-class RenameUserServiceTest {
+class RenameUserServiceTest extends BaseUserUnitTest {
 
   private final UpdateUserStatePort updateUserStatePort = Mockito.mock(UpdateUserStatePort.class);
-  private final LoadUserPort loadUserPort = Mockito.mock(LoadUserPort.class);
   private final RenameUserService renameUserService = new RenameUserService(loadUserPort,
       updateUserStatePort);
 
@@ -41,15 +38,5 @@ class RenameUserServiceTest {
 
     assertThat(user.getName()).isEqualTo(expectedName);
     assertThat(user.getName()).isNotEqualTo(beforeName);
-  }
-
-  private void givenUserByReference(User user) {
-    given(loadUserPort.loadById(any()))
-        .willReturn(user);
-  }
-
-  private void givenUserFindWillFail() {
-    given(loadUserPort.loadById(any()))
-        .willThrow(UserNotFoundException.class);
   }
 }
