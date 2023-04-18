@@ -4,8 +4,8 @@ import com.yapp.artie.domain.user.application.port.out.DeleteUserPort;
 import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
 import com.yapp.artie.domain.user.application.port.out.SaveUserPort;
 import com.yapp.artie.domain.user.application.port.out.UpdateUserStatePort;
-import com.yapp.artie.domain.user.application.service.UserNotFoundException;
 import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserNotFoundException;
 import com.yapp.artie.global.common.annotation.PersistenceAdapter;
 import lombok.RequiredArgsConstructor;
 

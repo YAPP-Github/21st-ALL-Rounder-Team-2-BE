@@ -10,6 +10,7 @@ import static org.mockito.Mockito.never;
 import com.yapp.artie.domain.user.application.port.in.RegisterUserResponse;
 import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
 import com.yapp.artie.domain.user.application.port.out.SaveUserPort;
+import com.yapp.artie.domain.user.domain.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 

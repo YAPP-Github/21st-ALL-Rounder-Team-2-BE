@@ -12,6 +12,7 @@ import com.yapp.artie.domain.user.application.port.out.DeleteExternalUserPort;
 import com.yapp.artie.domain.user.application.port.out.DeleteUserPort;
 import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
 import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.domain.UserNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
