@@ -53,7 +53,6 @@ class RenameUserController {
   public ResponseEntity<? extends HttpEntity> rename(Authentication authentication,
       @Parameter(name = "name", description = "변경할 닉네임", in = ParameterIn.QUERY) @Valid @RequestParam("name") String name) {
 
-    System.out.println(authentication);
     Long userId = getUserId(authentication);
     renameUserUseCase.rename(userId, name);
     return ResponseEntity.noContent().build();
