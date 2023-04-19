@@ -3,7 +3,7 @@ package com.yapp.artie.domain.archive.service;
 import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.archive.domain.tag.Tag;
 import com.yapp.artie.domain.archive.repository.TagRepository;
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -25,7 +25,7 @@ public class TagService {
 
   @Transactional
   public void addTagsToArtwork(List<String> tagNames, Artwork artwork,
-      User user) {
+      UserJpaEntity user) {
     AtomicInteger seq = new AtomicInteger(1);
     List<Tag> tags = tagNames.stream()
         .map(tagName -> new Tag(user, artwork, seq.getAndIncrement(), tagName))

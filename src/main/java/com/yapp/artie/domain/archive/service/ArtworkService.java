@@ -10,8 +10,8 @@ import com.yapp.artie.domain.archive.dto.artwork.UpdateArtworkRequestDto;
 import com.yapp.artie.domain.archive.exception.ArtworkNotFoundException;
 import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.s3.service.S3Service;
-import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.domain.user.service.UserService;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
+import com.yapp.artie.global.deprecated.LoadUserJpaEntityApi;
 import com.yapp.artie.global.util.S3Utils;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ArtworkService {
 
-  private final UserService userService;
+  private final LoadUserJpaEntityApi loadUserJpaEntityApi;
   private final TagService tagService;
   private final ExhibitService exhibitService;
   private final S3Service s3Service;
@@ -68,7 +68,7 @@ public class ArtworkService {
         Artwork.create(exhibit, artworkNum <= 0, createArtworkRequestDto.getName(),
             createArtworkRequestDto.getArtist(), createArtworkRequestDto.getImageUri()));
 
-    User user = userService.findById(userId);
+    UserJpaEntity user = loadUserJpaEntityApi.findById(userId);
     if (createArtworkRequestDto.getTags() != null) {
       tagService.addTagsToArtwork(createArtworkRequestDto.getTags(), artwork, user);
     }
@@ -126,7 +126,7 @@ public class ArtworkService {
     if (updateArtworkRequestDto.getTags() != null) {
       tagService.deleteAllByArtwork(artwork);
       tagService.addTagsToArtwork(updateArtworkRequestDto.getTags(), artwork,
-          userService.findById(userId));
+          loadUserJpaEntityApi.findById(userId));
     }
   }
 
@@ -163,7 +163,7 @@ public class ArtworkService {
 
   private Artwork findById(Long id, Long userId) {
     Artwork artwork = artworkRepository.findById(id).orElseThrow(ArtworkNotFoundException::new);
-    exhibitService.validateOwnedByUser(userService.findById(userId), artwork.getExhibit());
+    exhibitService.validateOwnedByUser(loadUserJpaEntityApi.findById(userId), artwork.getExhibit());
     return artwork;
   }
 }

@@ -13,7 +13,7 @@ import com.yapp.artie.domain.archive.dto.exhibit.PostInfoByCategoryDtoPage;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.archive.dto.exhibit.UpdateExhibitRequestDto;
 import com.yapp.artie.domain.archive.service.ExhibitService;
-import com.yapp.artie.global.exception.response.ErrorResponse;
+import com.yapp.artie.global.common.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

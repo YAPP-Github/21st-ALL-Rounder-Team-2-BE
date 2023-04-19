@@ -10,7 +10,7 @@ import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkRequestDto;
 import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkResponseDto;
 import com.yapp.artie.domain.archive.dto.artwork.UpdateArtworkRequestDto;
 import com.yapp.artie.domain.archive.service.ArtworkService;
-import com.yapp.artie.global.exception.response.ErrorResponse;
+import com.yapp.artie.global.common.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

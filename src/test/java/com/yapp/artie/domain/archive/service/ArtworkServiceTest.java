@@ -10,7 +10,7 @@ import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
 import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,8 +45,8 @@ class ArtworkServiceTest {
   @Autowired
   ArtworkService artworkService;
 
-  User createUser(String name, String uid) {
-    User user = new User();
+  UserJpaEntity createUser(String name, String uid) {
+    UserJpaEntity user = new UserJpaEntity();
     user.setName(name);
     user.setUid(uid);
     em.persist(user);
@@ -58,7 +58,7 @@ class ArtworkServiceTest {
   @Test
   @DisplayName("정상 작품 등록")
   public void create_정상_작품_등록() throws Exception {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
     Exhibit exhibit = exhibitRepository.save(
         Exhibit.create("test", LocalDate.now(), defaultCategory, user, null));
@@ -82,7 +82,7 @@ class ArtworkServiceTest {
   @Test
   @DisplayName("태그 없이도 정상 작품 등록")
   public void create_태그_없이_등록() throws Exception {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
     Exhibit exhibit = exhibitRepository.save(
         Exhibit.create("test", LocalDate.now(), defaultCategory, user, null));
@@ -104,7 +104,7 @@ class ArtworkServiceTest {
   @Test
   @DisplayName("빌더로 작품 등록")
   public void create_빌더로_등록() throws Exception {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
     Exhibit exhibit = exhibitRepository.save(
         Exhibit.create("test", LocalDate.now(), defaultCategory, user, null));
@@ -131,7 +131,7 @@ class ArtworkServiceTest {
   @Test
   @DisplayName("전시에 등록되는 첫 작품은 대표 작품으로 설정")
   public void create_첫_작품_대표_작품_설정() {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
     Exhibit exhibit = exhibitRepository.save(
         Exhibit.create("test", LocalDate.now(), defaultCategory, user, null));
@@ -160,7 +160,7 @@ class ArtworkServiceTest {
   @Test
   @DisplayName("정상 다중 작품 등록")
   public void createBatch_정상_다중_작품_등록() {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
     Exhibit exhibit = exhibitRepository.save(
         Exhibit.create("test", LocalDate.now(), defaultCategory, user, null));
@@ -185,7 +185,7 @@ class ArtworkServiceTest {
   @Test
   @DisplayName("대표 작품을 삭제하였을 경우, 자동으로 다른 대표 작품을 설정해야합니다")
   public void delete_대표_작품_삭제() {
-    User user = createUser("user", "tu");
+    UserJpaEntity user = createUser("user", "tu");
     Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
     Exhibit exhibit = exhibitRepository.save(
         Exhibit.create("test", LocalDate.now(), defaultCategory, user, null));
