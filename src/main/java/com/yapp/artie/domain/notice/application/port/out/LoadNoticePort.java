@@ -1,11 +1,12 @@
 package com.yapp.artie.domain.notice.application.port.out;
 
-import com.yapp.artie.domain.notice.application.port.in.GetNoticeDetailResponse;
+import com.yapp.artie.domain.notice.domain.Notice;
 import java.util.List;
+import java.util.Optional;
 
 public interface LoadNoticePort {
 
-  List<GetNoticeDetailResponse> loadNoticeList();
+  List<Notice> loadNoticeList();
 
-  GetNoticeDetailResponse loadNoticeDetail(Long id);
+  Optional<Notice> loadNoticeDetail(Long id);
 }
