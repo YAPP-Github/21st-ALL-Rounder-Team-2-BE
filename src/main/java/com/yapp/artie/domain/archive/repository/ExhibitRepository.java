@@ -43,7 +43,7 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
           + "where e.user = :user "
           + "and e.category = :category "
           + "and e.publication.isPublished = true",
-      countQuery = "select count(e.id) from Exhibit e"
+      countQuery = "select count(e.id) from Exhibit e where e.publication.isPublished = true"
   )
   Page<Exhibit> findExhibitByCategoryAsPage(Pageable pageable, @Param("user") UserJpaEntity user,
       @Param("category") Category category);
@@ -52,7 +52,7 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
       value = "select e from Exhibit e "
           + "where e.user = :user "
           + "and e.publication.isPublished = true",
-      countQuery = "select count(e.id) from Exhibit e"
+      countQuery = "select count(e.id) from Exhibit e where e.publication.isPublished = true"
   )
   Page<Exhibit> findExhibitAsPage(Pageable pageable, @Param("user") UserJpaEntity user);
 
