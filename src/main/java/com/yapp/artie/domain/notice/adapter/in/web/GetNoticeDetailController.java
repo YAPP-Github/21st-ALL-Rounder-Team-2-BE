@@ -1,8 +1,8 @@
 package com.yapp.artie.domain.notice.adapter.in.web;
 
 
+import com.yapp.artie.domain.notice.application.port.in.GetNoticeDetailQuery;
 import com.yapp.artie.domain.notice.application.port.in.GetNoticeDetailResponse;
-import com.yapp.artie.domain.notice.service.NoticeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class GetNoticeDetailController {
 
-  private final NoticeService noticeService;
+  private final GetNoticeDetailQuery getNoticeDetailQuery;
 
   @Operation(summary = "공지사항 상세 조회", description = "특정 공지사항 상세를 조회")
   @ApiResponses(value = {
@@ -31,6 +31,6 @@ public class GetNoticeDetailController {
   })
   @GetMapping("/{id}")
   public ResponseEntity<GetNoticeDetailResponse> getNoticeDetail(@PathVariable("id") Long id) {
-    return ResponseEntity.ok(noticeService.notice(id));
+    return ResponseEntity.ok(getNoticeDetailQuery.loadNoticeDetail(id));
   }
 }

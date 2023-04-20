@@ -2,7 +2,7 @@ package com.yapp.artie.domain.notice.adapter.in.web;
 
 
 import com.yapp.artie.domain.notice.application.port.in.GetNoticeDetailResponse;
-import com.yapp.artie.domain.notice.service.NoticeService;
+import com.yapp.artie.domain.notice.application.port.in.GetNoticeListQuery;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class GetNoticeListController {
 
-  private final NoticeService noticeService;
+  private final GetNoticeListQuery getNoticeListQuery;
 
   @Operation(summary = "공지사항 목록 조회", description = "공지사항 목록을 조회")
   @ApiResponses(value = {
@@ -32,6 +32,6 @@ public class GetNoticeListController {
   })
   @GetMapping()
   public ResponseEntity<List<GetNoticeDetailResponse>> getNotices() {
-    return ResponseEntity.ok(noticeService.notices());
+    return ResponseEntity.ok(getNoticeListQuery.loadNoticeList());
   }
 }
