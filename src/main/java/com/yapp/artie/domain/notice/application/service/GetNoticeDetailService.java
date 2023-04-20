@@ -4,7 +4,7 @@ import com.yapp.artie.domain.notice.application.port.in.GetNoticeDetailQuery;
 import com.yapp.artie.domain.notice.application.port.in.GetNoticeDetailResponse;
 import com.yapp.artie.domain.notice.application.port.out.LoadNoticePort;
 import com.yapp.artie.domain.notice.domain.Notice;
-import com.yapp.artie.domain.notice.exception.NoticeNotFoundException;
+import com.yapp.artie.domain.notice.domain.NoticeNotFoundException;
 import com.yapp.artie.global.common.annotation.UseCase;
 import lombok.AllArgsConstructor;
 

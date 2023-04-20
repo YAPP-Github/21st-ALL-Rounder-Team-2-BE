@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yapp.artie.domain.notice.application.port.in.GetNoticeDetailResponse;
 import com.yapp.artie.domain.notice.domain.Notice;
-import com.yapp.artie.domain.notice.exception.NoticeNotFoundException;
+import com.yapp.artie.domain.notice.domain.NoticeNotFoundException;
 import java.util.List;
 import javax.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
