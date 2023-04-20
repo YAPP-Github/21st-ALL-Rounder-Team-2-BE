@@ -2,9 +2,9 @@ package com.yapp.artie.domain.notice.adapter.out.persistence;
 
 import com.yapp.artie.domain.notice.application.port.out.LoadNoticePort;
 import com.yapp.artie.domain.notice.domain.Notice;
+import com.yapp.artie.domain.notice.domain.NoticeNotFoundException;
 import com.yapp.artie.global.common.annotation.PersistenceAdapter;
 import java.util.List;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 
 @PersistenceAdapter
@@ -19,7 +19,7 @@ public class NoticePersistenceAdapter implements LoadNoticePort {
   }
 
   @Override
-  public Optional<Notice> loadNoticeDetail(Long id) {
-    return noticeRepository.findById(id);
+  public Notice loadNoticeDetail(Long id) {
+    return noticeRepository.findById(id).orElseThrow(NoticeNotFoundException::new);
   }
 }
