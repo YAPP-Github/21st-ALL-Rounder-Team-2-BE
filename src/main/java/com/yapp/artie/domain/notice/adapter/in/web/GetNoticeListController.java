@@ -3,6 +3,7 @@ package com.yapp.artie.domain.notice.adapter.in.web;
 
 import com.yapp.artie.domain.notice.application.port.in.GetNoticeDetailResponse;
 import com.yapp.artie.domain.notice.application.port.in.GetNoticeListQuery;
+import com.yapp.artie.global.common.annotation.WebAdapter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@WebAdapter
 @RequestMapping("/notice")
 @RequiredArgsConstructor
 @RestController
