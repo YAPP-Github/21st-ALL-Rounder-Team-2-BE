@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/notice")
 @RequiredArgsConstructor
 @RestController
-public class GetNoticeListController {
+class GetNoticeListController {
 
   private final GetNoticeListQuery getNoticeListQuery;
 

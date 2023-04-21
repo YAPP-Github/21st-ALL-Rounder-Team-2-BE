@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 
 @PersistenceAdapter
 @AllArgsConstructor
-public class NoticePersistenceAdapter implements LoadNoticePort {
+class NoticePersistenceAdapter implements LoadNoticePort {
 
   final NoticeRepository noticeRepository;
 

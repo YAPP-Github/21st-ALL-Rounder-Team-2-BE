@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 
 @UseCase
 @AllArgsConstructor
-public class GetNoticeListService implements GetNoticeListQuery {
+class GetNoticeListService implements GetNoticeListQuery {
 
   final LoadNoticePort loadNoticePort;
 
