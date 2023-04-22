@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 class NoticePersistenceAdapter implements LoadNoticePort {
 
-  final NoticeRepository noticeRepository;
+  private final NoticeRepository noticeRepository;
 
   @Override
   public List<Notice> loadNoticeList() {

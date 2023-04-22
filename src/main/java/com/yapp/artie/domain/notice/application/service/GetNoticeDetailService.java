@@ -11,7 +11,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 class GetNoticeDetailService implements GetNoticeDetailQuery {
 
-  final LoadNoticePort loadNoticePort;
+  private final LoadNoticePort loadNoticePort;
 
   @Override
   public GetNoticeDetailResponse loadNoticeDetail(Long id) {
