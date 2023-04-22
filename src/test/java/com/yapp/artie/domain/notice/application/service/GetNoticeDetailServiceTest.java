@@ -40,7 +40,6 @@ class GetNoticeDetailServiceTest {
   private void givenNotice(Notice notice) {
     given(loadNoticePort.loadNoticeDetail(any()))
         .willReturn(notice);
-
   }
 
   private void givenNoticeByIdWillFail() {
