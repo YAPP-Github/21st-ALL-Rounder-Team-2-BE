@@ -7,8 +7,10 @@ import com.yapp.artie.global.common.annotation.UseCase;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @UseCase
+@Transactional(readOnly = true)
 @AllArgsConstructor
 class GetNoticeListService implements GetNoticeListQuery {
 
