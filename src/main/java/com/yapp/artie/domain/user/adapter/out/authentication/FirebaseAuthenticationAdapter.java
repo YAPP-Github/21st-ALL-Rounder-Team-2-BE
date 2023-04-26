@@ -1,6 +1,7 @@
 package com.yapp.artie.domain.user.adapter.out.authentication;
 
 import com.yapp.artie.domain.user.application.port.out.DeleteExternalUserPort;
+import com.yapp.artie.domain.user.application.port.out.GenerateTestTokenPort;
 import com.yapp.artie.domain.user.application.port.out.TokenParsingPort;
 import com.yapp.artie.domain.user.domain.ArtieToken;
 import com.yapp.artie.global.common.annotation.AuthenticationAdapter;
@@ -10,11 +11,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @AuthenticationAdapter
 @RequiredArgsConstructor
-class FirebaseAuthenticationAdapter implements DeleteExternalUserPort, TokenParsingPort {
+class FirebaseAuthenticationAdapter implements DeleteExternalUserPort, TokenParsingPort,
+    GenerateTestTokenPort {
 
   private final FirebaseUserRemover firebaseUserRemover;
   private final JwtDecoder decoder;
   private final TokenGenerator tokenGenerator;
+  private final FirebaseTokenGenerator firebaseTokenGenerator;
 
   @Override
   public ArtieToken parseToken(String header) {
@@ -41,5 +44,10 @@ class FirebaseAuthenticationAdapter implements DeleteExternalUserPort, TokenPars
     }
 
     return header;
+  }
+
+  @Override
+  public String generateTestToken(String uid) {
+    return firebaseTokenGenerator.generate(uid);
   }
 }
