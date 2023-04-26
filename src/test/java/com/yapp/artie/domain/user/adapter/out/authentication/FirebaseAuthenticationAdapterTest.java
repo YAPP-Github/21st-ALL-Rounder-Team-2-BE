@@ -20,8 +20,11 @@ class FirebaseAuthenticationAdapterTest {
   private final JwtDecoder jwtDecoder = Mockito.mock(JwtDecoder.class);
   private final FirebaseUserRemover firebaseUserRemover = Mockito.mock(FirebaseUserRemover.class);
   private final TokenGenerator tokenGenerator = Mockito.mock(TokenGenerator.class);
+  private final FirebaseTokenGenerator firebaseTokenGenerator = Mockito.mock(
+      FirebaseTokenGenerator.class);
   private final FirebaseAuthenticationAdapter adapterUnderTest =
-      new FirebaseAuthenticationAdapter(firebaseUserRemover, jwtDecoder, tokenGenerator);
+      new FirebaseAuthenticationAdapter(firebaseUserRemover, jwtDecoder, tokenGenerator,
+          firebaseTokenGenerator);
 
   @Test
   void parseToken_헤더가_null인_경우_예외를_발생한다() {
@@ -76,6 +79,12 @@ class FirebaseAuthenticationAdapterTest {
     then(firebaseUserRemover)
         .should()
         .remove(eq("uid"));
+  }
+
+  @Test
+  public void generateTestToken_주어진_uid를_가지는_테스트유저의_FirebaseCustomToken발급을_요청한다() {
+    adapterUnderTest.generateTestToken("uid");
+    then(firebaseTokenGenerator).should().generate("uid");
   }
 
   private void givenArtieTokenByReference(User user) {
