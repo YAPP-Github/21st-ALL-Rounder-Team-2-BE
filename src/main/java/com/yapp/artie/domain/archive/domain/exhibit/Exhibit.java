@@ -3,8 +3,8 @@ package com.yapp.artie.domain.archive.domain.exhibit;
 
 import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.archive.domain.category.Category;
-import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.global.common.BaseEntity;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
+import com.yapp.artie.global.common.persistence.BaseEntity;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ public class Exhibit extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+  private UserJpaEntity user;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "category_id", nullable = false)
@@ -57,7 +57,7 @@ public class Exhibit extends BaseEntity {
   @Column(nullable = false, columnDefinition = "varchar(32) default 'NONE'")
   private PinType pinType;
 
-  private Exhibit(User user, Category category, ExhibitContents contents, Publication publication) {
+  private Exhibit(UserJpaEntity user, Category category, ExhibitContents contents, Publication publication) {
     this.user = user;
     this.category = category;
     this.contents = contents;
@@ -77,7 +77,7 @@ public class Exhibit extends BaseEntity {
     this.category = category;
   }
 
-  public boolean ownedBy(User user) {
+  public boolean ownedBy(UserJpaEntity user) {
     return this.user.equals(user);
   }
 
@@ -98,7 +98,7 @@ public class Exhibit extends BaseEntity {
     artwork.display(this);
   }
 
-  public static Exhibit create(String name, LocalDate postDate, Category category, User user,
+  public static Exhibit create(String name, LocalDate postDate, Category category, UserJpaEntity user,
       String attachedLink) {
     ExhibitContents contents = new ExhibitContents(name, null, attachedLink, postDate);
     Publication publication = new Publication();

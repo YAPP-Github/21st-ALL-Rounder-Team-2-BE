@@ -1,7 +1,7 @@
 package com.yapp.artie.domain.archive.domain.tag;
 
 import com.yapp.artie.domain.archive.domain.artwork.Artwork;
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,7 +25,7 @@ public class Tag {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+  private UserJpaEntity user;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "image_id", nullable = false)
@@ -37,7 +37,7 @@ public class Tag {
   @Column(nullable = false)
   private String name;
 
-  public Tag(User user, Artwork artwork, int sequence, String name) {
+  public Tag(UserJpaEntity user, Artwork artwork, int sequence, String name) {
     this.user = user;
     this.artwork = artwork;
     this.sequence = sequence;

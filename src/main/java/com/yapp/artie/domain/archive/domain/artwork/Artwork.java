@@ -2,7 +2,7 @@ package com.yapp.artie.domain.archive.domain.artwork;
 
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.archive.domain.tag.Tag;
-import com.yapp.artie.global.common.BaseEntity;
+import com.yapp.artie.global.common.persistence.BaseEntity;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;

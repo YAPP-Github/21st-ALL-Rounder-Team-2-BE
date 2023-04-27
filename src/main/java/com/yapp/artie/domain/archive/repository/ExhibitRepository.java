@@ -6,7 +6,7 @@ import com.yapp.artie.domain.archive.domain.exhibit.PinType;
 import com.yapp.artie.domain.archive.dto.exhibit.CalenderQueryResultDto;
 import com.yapp.artie.domain.archive.dto.exhibit.ExhibitByDateResponseDto;
 import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +25,7 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
   @Query("select count(e.id) from Exhibit e "
       + "where e.user = :user "
       + "and  e.publication.isPublished = true")
-  int countExhibit(@Param("user") User user);
+  int countExhibit(@Param("user") UserJpaEntity user);
 
   @EntityGraph(attributePaths = {"user"})
   Optional<Exhibit> findExhibitEntityGraphById(Long id);
@@ -36,25 +36,29 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
   @Query("select new com.yapp.artie.domain.archive.dto.exhibit."
       + "PostInfoDto(e.id, e.contents.name, e.contents.date, e.contents.attachedLink, e.publication.isPublished) "
       + "from Exhibit e where e.user = :user and e.publication.isPublished = false")
-  List<PostInfoDto> findDraftExhibitDto(@Param("user") User user);
+  List<PostInfoDto> findDraftExhibitDto(@Param("user") UserJpaEntity user);
 
   @Query(
       value = "select e from Exhibit e "
           + "where e.user = :user "
           + "and e.category = :category "
           + "and e.publication.isPublished = true",
-      countQuery = "select count(e.id) from Exhibit e"
+      countQuery = "select count(e.id) from Exhibit e "
+          + "where e.publication.isPublished = true "
+          + "and e.category = :category"
   )
-  Page<Exhibit> findExhibitByCategoryAsPage(Pageable pageable, @Param("user") User user,
+  Page<Exhibit> findExhibitByCategoryAsPage(Pageable pageable, @Param("user") UserJpaEntity user,
       @Param("category") Category category);
 
   @Query(
       value = "select e from Exhibit e "
           + "where e.user = :user "
           + "and e.publication.isPublished = true",
-      countQuery = "select count(e.id) from Exhibit e"
+      countQuery = "select count(e.id) from Exhibit e "
+          + "where e.publication.isPublished = true "
+          + "and e.user = :user"
   )
-  Page<Exhibit> findExhibitAsPage(Pageable pageable, @Param("user") User user);
+  Page<Exhibit> findExhibitAsPage(Pageable pageable, @Param("user") UserJpaEntity user);
 
   @Query(value = "SELECT p.calenderDate, p.postId, p.postNum, image. `uri` FROM "
       + "( SELECT DATE(created_at) as calenderDate, MAX(id) AS postId, count(*) postNum FROM post "
@@ -81,7 +85,7 @@ public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
           + "WHERE e.createdAt BETWEEN :start AND :end "
           + "AND e.user = :user AND e.publication.isPublished = true "
           + "ORDER BY e.createdAt DESC")
-  List<ExhibitByDateResponseDto> findExhibitsByDate(@Param("user") User user,
+  List<ExhibitByDateResponseDto> findExhibitsByDate(@Param("user") UserJpaEntity user,
       @Param("start") LocalDateTime start,
       @Param("end") LocalDateTime end);
 

@@ -1,11 +1,16 @@
 package com.yapp.artie.domain.user.domain;
 
-import org.junit.jupiter.api.DisplayName;
+import static com.yapp.artie.common.UserTestData.defaultUser;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("User 테스트")
-public class UserTest {
+import org.junit.jupiter.api.Test;
 
-  public static final User TEST_USER = User.create("test-uid", "test-name", "test-profile");
-  public static final User TEST_SAVED_USER = User.create(1L, "test-uid", "test-name",
-      "test-profile");
+class UserTest {
+
+  @Test
+  void rename_사용자_이름을_변경한다() {
+    User user = defaultUser().build();
+    user.rename("tomcat");
+    assertThat(user.getName()).isEqualTo("tomcat");
+  }
 }

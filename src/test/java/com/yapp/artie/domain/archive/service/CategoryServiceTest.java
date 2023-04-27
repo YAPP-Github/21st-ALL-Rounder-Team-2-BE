@@ -19,8 +19,8 @@ import com.yapp.artie.domain.archive.repository.ArtworkRepository;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 import com.yapp.artie.domain.archive.repository.TagRepository;
-import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.domain.user.repository.UserRepository;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
+import com.yapp.artie.domain.user.adapter.out.persistence.UserRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,24 +72,24 @@ class CategoryServiceTest {
   }
 
   private void createUser(String name, String uid) {
-    User user = new User();
+    UserJpaEntity user = new UserJpaEntity();
     user.setName(name);
     user.setUid(uid);
     em.persist(user);
   }
 
-  private User findUser(String uid) {
+  private UserJpaEntity findUser(String uid) {
     return userRepository.findByUid(uid).get();
   }
 
 
-  private void createCategoryBy(User user, int count) {
+  private void createCategoryBy(UserJpaEntity user, int count) {
     for (int sequence = 0; sequence < count; sequence++) {
       createCategory(user, Integer.toString(sequence));
     }
   }
 
-  private Long createCategory(User user, String name) {
+  private Long createCategory(UserJpaEntity user, String name) {
     return categoryService.create(new CreateCategoryRequestDto(name), user.getId());
   }
 
@@ -106,7 +106,7 @@ class CategoryServiceTest {
 
   @Test
   public void findCategoryWithUser_카테고리와_함께_유저_프록시도_초기화_해야한다() throws Exception {
-    User user = findUser("1");
+    UserJpaEntity user = findUser("1");
     Long created = createCategory(user, "test");
     Category categoryWithUser = categoryService.findCategoryWithUser(created, user.getId());
 
@@ -115,7 +115,7 @@ class CategoryServiceTest {
 
   @Test
   public void categoriesOf_카테고리_목록_정상_조회() {
-    User user = findUser("1");
+    UserJpaEntity user = findUser("1");
     Category category1 = categoryRepository.save(Category.create(user, "test-category-1", 1));
     Category category2 = categoryRepository.save(Category.create(user, "test-category-2", 2));
     exhibitRepository.save(
@@ -169,7 +169,7 @@ class CategoryServiceTest {
 
   @Test
   public void delete_카테고리를_삭제한다() throws Exception {
-    User user = findUser("1");
+    UserJpaEntity user = findUser("1");
     Long created = createCategory(user, "test");
     categoryService.delete(created, user.getId());
     assertThat(Optional.ofNullable(findCategory(created))).isNotPresent();
@@ -177,7 +177,7 @@ class CategoryServiceTest {
 
   @Test
   public void delete_카테고리를_삭제하면_전시데이터도_삭제된다() throws Exception {
-    User user = findUser("1");
+    UserJpaEntity user = findUser("1");
     Long created = createCategory(user, "test");
     Exhibit exhibit = exhibitRepository.save(
         Exhibit.create("test", LocalDate.now(), findCategory(created), user, "link"));
@@ -203,8 +203,8 @@ class CategoryServiceTest {
 
   @Test
   public void delete_다른사람의_카테고리를_삭제하려_시도할_경우_예외를_발생한다() throws Exception {
-    User user1 = findUser("1");
-    User user2 = findUser("2");
+    UserJpaEntity user1 = findUser("1");
+    UserJpaEntity user2 = findUser("2");
     Long created = createCategory(user2, "test");
 
     assertThatThrownBy(() -> {
@@ -214,7 +214,7 @@ class CategoryServiceTest {
 
   @Test
   public void update_카테고리를_수정한다() throws Exception {
-    User user = findUser("1");
+    UserJpaEntity user = findUser("1");
     Long created = createCategory(user, "test");
     categoryService.update(new UpdateCategoryRequestDto("rename"), created, user.getId());
     assertThat(findCategory(created).getName()).isEqualTo("rename");
@@ -222,8 +222,8 @@ class CategoryServiceTest {
 
   @Test
   public void update_다른사람의_카테고리를_수정하려_시도할_경우_예외를_발생한다() throws Exception {
-    User user1 = findUser("1");
-    User user2 = findUser("2");
+    UserJpaEntity user1 = findUser("1");
+    UserJpaEntity user2 = findUser("2");
     Long created = createCategory(user2, "test");
 
     assertThatThrownBy(() -> {
@@ -233,7 +233,7 @@ class CategoryServiceTest {
 
   @Test
   public void sequence_카테고리_생성_시_시퀀스가_오름차순으로_생성된다() throws Exception {
-    User user = findUser("1");
+    UserJpaEntity user = findUser("1");
     createCategoryBy(user, 5);
     List<CategoryDto> categories = categoryService.categoriesOf(user.getId());
     for (int expected = 0; expected < categories.size(); expected++) {
@@ -245,7 +245,7 @@ class CategoryServiceTest {
   @ParameterizedTest(name = "[시퀀스 벌크성 업데이트 테스트 #{index}] => {0}번 카테고리가 삭제될 경우")
   @ValueSource(ints = {1, 2, 3, 4, 5})
   public void sequence_카테고리_삭제_시_시퀀스가_누락된_숫자없이_오름차순으로_정렬된다(int target) throws Exception {
-    User user = findUser("1");
+    UserJpaEntity user = findUser("1");
     createCategoryBy(user, 5);
 
     List<CategoryDto> categories = categoryService.categoriesOf(user.getId());
@@ -268,7 +268,7 @@ class CategoryServiceTest {
         .mapToInt(Integer::parseInt)
         .boxed()
         .collect(Collectors.toList());
-    User user = findUser("1");
+    UserJpaEntity user = findUser("1");
     createCategoryBy(user, expected.length());
 
     //when
@@ -289,7 +289,7 @@ class CategoryServiceTest {
 
   @Test
   public void shuffle_주어진_리스트가_원본_카테고리의_수와_같지않으면_예외를_발생한다() throws Exception {
-    User user = findUser("1");
+    UserJpaEntity user = findUser("1");
     createCategoryBy(user, 5);
 
     assertThatThrownBy(() -> {
