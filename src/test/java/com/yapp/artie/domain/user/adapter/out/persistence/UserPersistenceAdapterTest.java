@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.domain.UserNotFoundException;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -55,6 +56,20 @@ class UserPersistenceAdapterTest {
 
   @Test
   @Sql("UserPersistenceAdapterTest.sql")
+  void loadJoinDateById_id를_이용해서_사용자_조회() {
+    LocalDateTime joinDate = adapterUnderTest.loadJoinDateById(1L);
+    assertThat(joinDate).isEqualTo(LocalDateTime.of(2023, 2, 4, 21, 58, 50));
+  }
+
+  @Test
+  void loadJoinDateById_사용자를_찾을_수_없으면_예외를_발생한다() {
+    assertThatThrownBy(() -> {
+      adapterUnderTest.loadJoinDateById(1L);
+    }).isInstanceOf(UserNotFoundException.class);
+  }
+
+  @Test
+  @Sql("UserPersistenceAdapterTest.sql")
   void delete_사용자를_데이터베이스에서_삭제한다() {
     adapterUnderTest.delete(adapterUnderTest.loadById(1L));
 
@@ -85,9 +100,7 @@ class UserPersistenceAdapterTest {
 
     adapterUnderTest.updateName(user);
 
-    String actual = userRepository.findById(1L)
-        .orElseThrow()
-        .getName();
+    String actual = userRepository.findById(1L).orElseThrow().getName();
     assertThat(actual).isEqualTo("tomcat");
   }
 
