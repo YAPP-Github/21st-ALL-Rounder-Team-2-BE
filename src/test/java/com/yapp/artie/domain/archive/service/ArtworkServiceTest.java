@@ -206,5 +206,25 @@ class ArtworkServiceTest {
     assertThat(newArtworks.get(0).getId()).isEqualTo(artworks.get(2).getId());
     assertThat(newArtworks.get(0).isMain()).isFalse();
   }
+
+  @Test
+  @DisplayName("대표 작품이었던 작품에 대해 대표 작품을 설정하려는 요청이 있어도, 정상적으로 대표 작품 상태를 유지해야합니다.")
+  public void setMainArtwork_이미_대표_작품을_대표_작품으로_설정() {
+    UserJpaEntity user = createUser("user", "tu");
+    Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
+    Exhibit exhibit = exhibitRepository.save(
+        Exhibit.create("test", LocalDate.now(), defaultCategory, user, null));
+    artworkRepository.save(Artwork.create(exhibit, true, "sample-uri")).getId();
+    em.flush();
+    em.clear();
+
+    artworkService.setMainArtwork(1L, user.getId());
+    em.flush();
+    em.clear();
+
+    Artwork updatedArtwork = em.find(Artwork.class, 1L);
+
+    assertThat(updatedArtwork.isMain()).isTrue();
+  }
 }
 

@@ -133,8 +133,10 @@ public class ArtworkService {
   @Transactional
   public void setMainArtwork(Long artworkId, Long userId) {
     Artwork artwork = findById(artworkId, userId);
-    artworkRepository.updateArtworkNotMainByExhibit(artwork.getExhibit());
-    artwork.setMainArtwork();
+    if (!artwork.isMain()) {
+      artworkRepository.updateArtworkNotMainByExhibit(artwork.getExhibit());
+      artwork.setMainArtwork();
+    }
   }
 
   private ArtworkThumbnailDto buildArtworkThumbnail(Artwork artwork) {
