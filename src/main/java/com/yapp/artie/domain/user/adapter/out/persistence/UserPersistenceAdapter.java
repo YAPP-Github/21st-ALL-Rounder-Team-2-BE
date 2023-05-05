@@ -7,6 +7,7 @@ import com.yapp.artie.domain.user.application.port.out.UpdateUserStatePort;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.domain.UserNotFoundException;
 import com.yapp.artie.global.common.annotation.PersistenceAdapter;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 
 @PersistenceAdapter
@@ -25,6 +26,11 @@ class UserPersistenceAdapter implements DeleteUserPort, SaveUserPort, LoadUserPo
   @Override
   public User loadByUid(String uid) {
     return userMapper.mapToDomainEntity(findByUidOrElseThrow(uid));
+  }
+
+  @Override
+  public LocalDateTime loadJoinDateById(Long userId) {
+    return findByIdOrElseThrow(userId).getCreatedAt();
   }
 
   @Override
