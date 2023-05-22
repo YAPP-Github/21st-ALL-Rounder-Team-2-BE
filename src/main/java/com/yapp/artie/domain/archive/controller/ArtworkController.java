@@ -20,7 +20,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
-import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
@@ -81,8 +80,7 @@ public class ArtworkController {
   public ResponseEntity<CreateArtworkResponseDto> createArtwork(Authentication authentication,
       @RequestBody @Valid
       CreateArtworkRequestDto createArtworkRequestDto) {
-
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     Long id = artworkService.create(createArtworkRequestDto, userId);
 
     return ResponseEntity.status(HttpStatus.CREATED)
@@ -122,8 +120,7 @@ public class ArtworkController {
       @RequestParam(value = "page", required = false, defaultValue = "0") int page,
       @Parameter(name = "direction", description = "페이지네이션의 정렬기준. DESC=최신순, ASC=오래된순", in = ParameterIn.QUERY)
       @RequestParam(name = "direction", required = false, defaultValue = "DESC") Direction direction) {
-
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     return ResponseEntity.ok()
         .body(artworkService.getArtworkAsPage(exhibitId, userId, page, size, direction));
   }
@@ -159,7 +156,7 @@ public class ArtworkController {
   public ResponseEntity<ArtworkInfoDto> getArtworkInfo(
       Authentication authentication,
       @Parameter(name = "id", description = "작품 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long artworkId) {
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     return ResponseEntity.ok().body(artworkService.getArtworkInfo(artworkId, userId));
   }
 
@@ -194,8 +191,7 @@ public class ArtworkController {
   public ResponseEntity<List<ArtworkBrowseThumbnailDto>> getArtworkBrowseThumbnails(
       Authentication authentication,
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long exhibitId) {
-
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     return ResponseEntity.ok().body(artworkService.getArtworkBrowseThumbnail(exhibitId, userId));
   }
 
@@ -230,8 +226,7 @@ public class ArtworkController {
   public ResponseEntity<? extends HttpEntity> deleteArtwork(
       Authentication authentication,
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long id) {
-
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     artworkService.delete(id, userId);
     return ResponseEntity.noContent().build();
   }
@@ -272,8 +267,7 @@ public class ArtworkController {
       Authentication authentication,
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long exhibitId,
       @RequestBody @Valid CreateArtworkBatchRequestDto createArtworkBatchRequestDtoRequestDto) {
-
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
 
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(new CreateArtworkBatchResponseDto(
@@ -317,8 +311,7 @@ public class ArtworkController {
       @Parameter(name = "id", description = "작품 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long artworkId,
       @RequestBody @Valid
       UpdateArtworkRequestDto updateArtworkRequestDto) {
-
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     artworkService.update(artworkId, userId, updateArtworkRequestDto);
     return ResponseEntity.noContent().build();
   }
@@ -353,17 +346,8 @@ public class ArtworkController {
   @PatchMapping("/main/{id}")
   public ResponseEntity<? extends HttpEntity> setMainArtwork(Authentication authentication,
       @Parameter(name = "id", description = "작품 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long artworkId) {
-
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     artworkService.setMainArtwork(artworkId, userId);
     return ResponseEntity.noContent().build();
-  }
-
-  // TODO : 앱 배포했을 때에는 0L 대신에 exception을 던지도록 변경해야 합니다.
-  private Long getUserId(Authentication authentication) {
-    if (Optional.ofNullable(authentication).isPresent()) {
-      return Long.parseLong(authentication.getName());
-    }
-    return 1L;
   }
 }
