@@ -7,7 +7,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -31,16 +30,8 @@ class UserWithdrawalController {
   })
   @DeleteMapping()
   public ResponseEntity<? extends HttpEntity> deleteUser(Authentication authentication) {
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     userWithdrawalUseCase.delete(userId);
     return ResponseEntity.noContent().build();
-  }
-
-  // TODO : 앱 배포했을 때에는 1L 대신에 exception을 던지도록 변경해야 합니다.
-  private Long getUserId(Authentication authentication) {
-    if (Optional.ofNullable(authentication).isPresent()) {
-      return Long.parseLong(authentication.getName());
-    }
-    return 1L;
   }
 }
