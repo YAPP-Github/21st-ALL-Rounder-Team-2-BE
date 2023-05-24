@@ -2,6 +2,7 @@ package com.yapp.artie.domain.archive.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.archive.domain.category.Category;
@@ -26,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -259,32 +259,30 @@ class CategoryServiceTest {
     }
   }
 
-  @ParameterizedTest(name = "[카테고리 순서 변경 테스트 #{index}] => {0}순으로 재배열하는 경우")
-  @ValueSource(strings = {"01234", "12430", "14023", "43210", "02134", "20431", "12304", "12034",
-      "43021", "32140", "32014", "1230", "0321", "021", "201", "102", "01", "10", "0"})
-  public void shuffle_카테고리의_순서를_변경한다(String expected) throws Exception {
+  @Test
+  public void shuffle_카테고리의_순서를_변경한다() throws Exception {
     //given
-    List<Integer> expectedList = Arrays.stream(expected.split(""))
-        .mapToInt(Integer::parseInt)
-        .boxed()
-        .collect(Collectors.toList());
     UserJpaEntity user = findUser("1");
-    createCategoryBy(user, expected.length());
+    createCategoryBy(user, 5);
+
+    List<CategoryDto> shuffled = new ArrayList<>();
+    shuffled.add(new CategoryDto(1L, "0", 1));
+    shuffled.add(new CategoryDto(2L, "1", 3));
+    shuffled.add(new CategoryDto(3L, "2", 4));
+    shuffled.add(new CategoryDto(4L, "3", 2));
+    shuffled.add(new CategoryDto(5L, "4", 0));
 
     //when
-    List<CategoryDto> shuffled = new ArrayList<>();
-    List<CategoryDto> categories = categoryService.categoriesOf(user.getId());
-    expectedList.forEach(index -> {
-      shuffled.add(categories.get(index));
-    });
     categoryService.shuffle(shuffled, user.getId());
 
     //then
-    StringBuilder actual = new StringBuilder();
-    categoryService.categoriesOf(user.getId())
-        .forEach(categoryDto -> actual.append(categoryDto.getName()));
-
-    assertThat(actual.toString()).isEqualTo(expected);
+    List<Category> categories = categoryRepository.findCategoriesByUserOrderBySequence(
+        user);
+    long[] shuffledIds = new long[5];
+    for (int i = 0; i < 5; i++) {
+      shuffledIds[i] = categories.get(i).getId();
+    }
+    assertArrayEquals(new long[]{5, 1, 4, 2, 3}, shuffledIds);
   }
 
   @Test
