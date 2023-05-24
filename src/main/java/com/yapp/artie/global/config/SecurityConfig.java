@@ -47,7 +47,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   public void configure(WebSecurity web) throws Exception {
     web.ignoring().antMatchers(HttpMethod.POST, "/user")
-        .antMatchers("/**")
         .antMatchers("/")
         .antMatchers("/swagger-ui/**")
         .antMatchers("/v3/api-docs/**")
