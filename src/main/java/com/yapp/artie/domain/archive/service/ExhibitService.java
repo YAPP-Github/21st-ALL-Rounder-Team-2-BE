@@ -163,11 +163,27 @@ public class ExhibitService {
     Exhibit exhibit = exhibitRepository.findExhibitEntityGraphById(id)
         .orElseThrow(ExhibitNotFoundException::new);
     validateOwnedByUser(findUser(userId), exhibit);
-    Category category = categoryService.findCategoryWithUser(
-        updateExhibitRequestDto.getCategoryId(), userId);
 
-    exhibit.update(updateExhibitRequestDto.getName(), updateExhibitRequestDto.getPostDate(),
-        updateExhibitRequestDto.getAttachedLink(), category);
+    String name = exhibit.contents().getName();
+    LocalDate date = exhibit.contents().getDate();
+    Category category = exhibit.getCategory();
+    String attachedLink = exhibit.contents().getAttachedLink();
+
+    if (updateExhibitRequestDto.getName() != null) {
+      name = updateExhibitRequestDto.getName();
+    }
+    if (updateExhibitRequestDto.getPostDate() != null) {
+      date = updateExhibitRequestDto.getPostDate();
+    }
+    if (updateExhibitRequestDto.getCategoryId() != null) {
+      category = categoryService.findCategoryWithUser(
+          updateExhibitRequestDto.getCategoryId(), userId);
+    }
+    if (updateExhibitRequestDto.getAttachedLink() != null) {
+      attachedLink = updateExhibitRequestDto.getAttachedLink();
+    }
+
+    exhibit.update(name, date, attachedLink, category);
   }
 
   @Transactional

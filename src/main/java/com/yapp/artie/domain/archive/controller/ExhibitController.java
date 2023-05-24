@@ -178,7 +178,7 @@ public class ExhibitController {
           description = "전시가 성공적으로 수정됨",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class))),
   })
-  @PutMapping("/{id}")
+  @PatchMapping("/{id}")
   public ResponseEntity<? extends HttpEntity> updatePost(Authentication authentication,
       @PathVariable("id") Long id, @RequestBody
   UpdateExhibitRequestDto updateExhibitRequestDto) {
