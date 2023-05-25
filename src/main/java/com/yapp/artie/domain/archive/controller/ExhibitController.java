@@ -23,7 +23,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
-import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpEntity;
@@ -60,7 +59,7 @@ public class ExhibitController {
   @GetMapping("/{id}")
   public ResponseEntity<PostInfoDto> getPost(Authentication authentication,
       @PathVariable("id") Long id) {
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     PostInfoDto exhibitInformation = exhibitService.getExhibitInformation(id, userId);
 
     return ResponseEntity.ok().body(exhibitInformation);
@@ -80,7 +79,7 @@ public class ExhibitController {
       @RequestParam("year") int year,
       @Parameter(example = "02", description = "mm")
       @RequestParam("month") int month) {
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
 
     return ResponseEntity.ok()
         .body(
@@ -96,7 +95,7 @@ public class ExhibitController {
   })
   @GetMapping("/draft")
   public ResponseEntity<List<PostInfoDto>> getDraftPosts(Authentication authentication) {
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     return ResponseEntity.ok().body(exhibitService.getDraftExhibits(userId));
   }
 
@@ -120,7 +119,7 @@ public class ExhibitController {
       @RequestParam(name = "direction", required = false, defaultValue = "DESC") Direction direction,
       @PathVariable("id") Long id) {
 
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(id, userId, page, size,
         direction);
 
@@ -147,7 +146,7 @@ public class ExhibitController {
       @RequestParam(name = "category", required = false) Long categoryId
   ) {
 
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     Page<PostDetailInfo> pageResult = exhibitService.getExhibitByPage(categoryId, userId, page,
         size,
         direction);
@@ -165,7 +164,7 @@ public class ExhibitController {
   @PostMapping()
   public ResponseEntity<CreateExhibitResponseDto> createPost(Authentication authentication,
       @RequestBody CreateExhibitRequestDto createExhibitRequestDto) {
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     Long id = exhibitService.create(createExhibitRequestDto, userId);
 
     return ResponseEntity.status(HttpStatus.CREATED)
@@ -179,11 +178,11 @@ public class ExhibitController {
           description = "전시가 성공적으로 수정됨",
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseEntity.class))),
   })
-  @PutMapping("/{id}")
+  @PatchMapping("/{id}")
   public ResponseEntity<? extends HttpEntity> updatePost(Authentication authentication,
       @PathVariable("id") Long id, @RequestBody
   UpdateExhibitRequestDto updateExhibitRequestDto) {
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
 
     exhibitService.update(updateExhibitRequestDto, id, userId);
     return ResponseEntity.noContent().build();
@@ -199,7 +198,7 @@ public class ExhibitController {
   @DeleteMapping("/{id}")
   public ResponseEntity<? extends HttpEntity> deletePost(Authentication authentication,
       @PathVariable("id") Long id) {
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     exhibitService.delete(id, userId);
 
     return ResponseEntity.noContent().build();
@@ -215,7 +214,7 @@ public class ExhibitController {
   @PutMapping("/publish/{id}")
   public ResponseEntity<? extends HttpEntity> publishPost(Authentication authentication,
       @PathVariable("id") Long id) {
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     exhibitService.publish(id, userId);
     return ResponseEntity.noContent().build();
   }
@@ -251,7 +250,7 @@ public class ExhibitController {
   public ResponseEntity<PostDetailInfo> getPostInfoWithCategory(
       Authentication authentication,
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long id) {
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     return ResponseEntity.ok().body(exhibitService.getDetailExhibitInformation(id, userId));
   }
 
@@ -274,7 +273,7 @@ public class ExhibitController {
       @Parameter(name = "pinned", description = "고정 여부. 고정하도록 설정한다면 true, 고정 해제하도록 설정한다면 false", in = ParameterIn.QUERY)
       @RequestParam(value = "pinned", required = true, defaultValue = "true") boolean pinned
   ) {
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     exhibitService.updatePostPinType(userId, exhibitId, categoryType, pinned);
     return ResponseEntity.noContent().build();
   }
@@ -293,8 +292,7 @@ public class ExhibitController {
       @RequestParam(value = "size", required = false, defaultValue = "20") int size,
       @Parameter(name = "id", description = "카테고리 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long categoryId
   ) {
-
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     return ResponseEntity.ok(
         exhibitService.getExhibitThumbnailByCategory(userId, categoryId, page, size));
   }
@@ -315,17 +313,8 @@ public class ExhibitController {
       @Parameter(name = "day", description = "조회할 일", in = ParameterIn.QUERY, example = "1")
       @RequestParam(value = "day", required = true) int day
   ) {
-
-    Long userId = getUserId(authentication);
+    Long userId = Long.parseLong(authentication.getName());
     return ResponseEntity.ok(
         exhibitService.getExhibitsByDate(userId, year, month, day));
-  }
-
-  // TODO : 앱 배포했을 때에는 1L 대신에 exception을 던지도록 변경해야 합니다.
-  private Long getUserId(Authentication authentication) {
-    if (Optional.ofNullable(authentication).isPresent()) {
-      return Long.parseLong(authentication.getName());
-    }
-    return 1L;
   }
 }

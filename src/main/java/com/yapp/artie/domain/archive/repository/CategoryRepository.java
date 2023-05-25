@@ -30,5 +30,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
   @Modifying(clearAutomatically = true)
   void deleteAllByUser(UserJpaEntity user);
+
+  List<Category> findCategoriesByUser(UserJpaEntity userJpaEntity);
 }
 

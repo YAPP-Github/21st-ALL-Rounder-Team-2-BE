@@ -80,15 +80,16 @@ public class CategoryService {
   @Transactional
   public void shuffle(List<CategoryDto> changeCategorySequenceDtos, Long userId) {
     UserJpaEntity user = findUser(userId);
-    List<Category> categories = categoryRepository.findCategoriesByUserOrderBySequence(user);
+    List<Category> categories = categoryRepository.findCategoriesByUser(user);
     validateChangeCategoriesLengthWithOriginal(changeCategorySequenceDtos, categories);
 
-    int sequence = 0;
     for (CategoryDto changeCategorySequenceDto : changeCategorySequenceDtos) {
-      int originSequence = changeCategorySequenceDto.getSequence();
-      Category category = categories.get(originSequence);
-
-      category.rearrange(sequence++);
+      categoryRepository.findById(changeCategorySequenceDto.getId())
+          .ifPresent(value -> {
+            if (value.ownedBy(user)) {
+              value.rearrange(changeCategorySequenceDto.getSequence());
+            }
+          });
     }
   }
 
