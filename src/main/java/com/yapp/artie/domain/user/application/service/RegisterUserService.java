@@ -1,7 +1,7 @@
 package com.yapp.artie.domain.user.application.service;
 
-import com.yapp.artie.domain.user.application.port.in.RegisterUserResponse;
-import com.yapp.artie.domain.user.application.port.in.RegisterUserUseCase;
+import com.yapp.artie.domain.user.application.port.in.command.RegisterUserUseCase;
+import com.yapp.artie.domain.user.application.port.in.response.RegisterUserResponse;
 import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
 import com.yapp.artie.domain.user.application.port.out.SaveUserPort;
 import com.yapp.artie.domain.user.domain.User;

@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.user.application.port.in;
+package com.yapp.artie.domain.user.application.port.in.command;
 
 public interface UserWithdrawalUseCase {
 

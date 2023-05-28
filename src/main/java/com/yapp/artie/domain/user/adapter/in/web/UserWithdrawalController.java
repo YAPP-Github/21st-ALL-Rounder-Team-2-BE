@@ -1,6 +1,6 @@
 package com.yapp.artie.domain.user.adapter.in.web;
 
-import com.yapp.artie.domain.user.application.port.in.UserWithdrawalUseCase;
+import com.yapp.artie.domain.user.application.port.in.command.UserWithdrawalUseCase;
 import com.yapp.artie.global.common.annotation.WebAdapter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

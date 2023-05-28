@@ -6,7 +6,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
 import com.yapp.artie.common.BaseUserUnitTest;
-import com.yapp.artie.domain.user.application.port.in.RegisterUserResponse;
+import com.yapp.artie.domain.user.application.port.in.response.RegisterUserResponse;
 import org.junit.jupiter.api.Test;
 
 class RegisterUserServiceTest extends BaseUserUnitTest {

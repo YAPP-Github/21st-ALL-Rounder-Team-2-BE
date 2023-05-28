@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.user.application.port.in;
+package com.yapp.artie.domain.user.application.port.in.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;

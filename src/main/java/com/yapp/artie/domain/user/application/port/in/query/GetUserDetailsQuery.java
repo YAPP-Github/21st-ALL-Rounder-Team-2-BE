@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.user.application.port.in;
+package com.yapp.artie.domain.user.application.port.in.query;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

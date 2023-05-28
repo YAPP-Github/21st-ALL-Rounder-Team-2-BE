@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.yapp.artie.common.BaseControllerIntegrationTest;
-import com.yapp.artie.domain.user.application.port.in.GetTestUserTokenQuery;
+import com.yapp.artie.domain.user.application.port.in.query.GetTestUserTokenQuery;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
