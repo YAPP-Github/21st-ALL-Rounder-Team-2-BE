@@ -1,7 +1,7 @@
 package com.yapp.artie.domain.user.adapter.in.web;
 
-import com.yapp.artie.domain.user.application.port.in.GetUserJoinDateQuery;
-import com.yapp.artie.domain.user.application.port.in.GetUserJoinDateResponse;
+import com.yapp.artie.domain.user.application.port.in.query.GetUserJoinDateQuery;
+import com.yapp.artie.domain.user.application.port.in.response.GetUserJoinDateResponse;
 import com.yapp.artie.global.common.annotation.WebAdapter;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
