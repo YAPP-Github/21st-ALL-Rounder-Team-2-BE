@@ -139,10 +139,9 @@ class CategoryServiceTest {
   }
 
   @Test
-  public void categoriesOf_카테고리가_하나도_존재하지_않으면_예외를_발생한다() throws Exception {
-    assertThatThrownBy(() -> {
-      categoryService.categoriesOf(findUser("1").getId());
-    }).isInstanceOf(CategoryNotFoundException.class);
+  public void categoriesOf_카테고리가_하나도_존재하지_않는다면_빈_리스트를_반환한다() throws Exception {
+    List<CategoryDto> actual = categoryService.categoriesOf(findUser("1").getId());
+    assertThat(actual.size()).isEqualTo(0);
   }
 
   @Test
