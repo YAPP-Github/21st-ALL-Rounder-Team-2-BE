@@ -40,13 +40,10 @@ public class CategoryService {
   }
 
   public List<CategoryDto> categoriesOf(Long userId) {
-    UserJpaEntity user = findUser(userId);
-    List<CategoryDto> categories = categoryRepository.findCategoriesByUserOrderBySequence(user)
-        .stream().map(this::buildCategoryDto).collect(
-            Collectors.toList());
-    validateExistAtLeastOneCategory(categories);
-
-    return categories;
+    return categoryRepository.findCategoriesByUserOrderBySequence(findUser(userId))
+        .stream()
+        .map(this::buildCategoryDto)
+        .collect(Collectors.toList());
   }
 
   @Transactional
@@ -108,12 +105,6 @@ public class CategoryService {
 
   private int getSequence(UserJpaEntity user) {
     return categoryRepository.countCategoriesByUser(user);
-  }
-
-  private void validateExistAtLeastOneCategory(List<CategoryDto> categories) {
-    if (categories.size() == 0) {
-      throw new CategoryNotFoundException();
-    }
   }
 
   private void validateDuplicateCategory(String name, UserJpaEntity user) {
