@@ -1,6 +1,6 @@
 package com.yapp.artie.domain.user.application.service;
 
-import com.yapp.artie.domain.user.application.port.in.GetTestUserTokenQuery;
+import com.yapp.artie.domain.user.application.port.in.query.GetTestUserTokenQuery;
 import com.yapp.artie.domain.user.application.port.out.GenerateTestTokenPort;
 import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
 import com.yapp.artie.global.common.annotation.UseCase;

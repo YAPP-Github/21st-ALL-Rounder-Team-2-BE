@@ -1,6 +1,6 @@
 package com.yapp.artie.domain.user.application.service;
 
-import com.yapp.artie.domain.user.application.port.in.RenameUserUseCase;
+import com.yapp.artie.domain.user.application.port.in.command.RenameUserUseCase;
 import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
 import com.yapp.artie.domain.user.application.port.out.UpdateUserStatePort;
 import com.yapp.artie.domain.user.domain.User;

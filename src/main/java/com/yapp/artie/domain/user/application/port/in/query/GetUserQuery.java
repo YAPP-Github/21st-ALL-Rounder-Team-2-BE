@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.user.application.port.in;
+package com.yapp.artie.domain.user.application.port.in.query;
 
 import com.yapp.artie.domain.user.domain.User;
 

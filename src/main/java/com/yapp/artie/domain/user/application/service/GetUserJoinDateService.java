@@ -1,6 +1,6 @@
 package com.yapp.artie.domain.user.application.service;
 
-import com.yapp.artie.domain.user.application.port.in.GetUserJoinDateQuery;
+import com.yapp.artie.domain.user.application.port.in.query.GetUserJoinDateQuery;
 import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
 import com.yapp.artie.global.common.annotation.UseCase;
 import java.time.LocalDateTime;

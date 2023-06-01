@@ -2,7 +2,7 @@ package com.yapp.artie.domain.user.application.service;
 
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
-import com.yapp.artie.domain.user.application.port.in.UserWithdrawalUseCase;
+import com.yapp.artie.domain.user.application.port.in.command.UserWithdrawalUseCase;
 import com.yapp.artie.domain.user.application.port.out.DeleteExternalUserPort;
 import com.yapp.artie.domain.user.application.port.out.DeleteUserPort;
 import com.yapp.artie.domain.user.application.port.out.LoadUserPort;

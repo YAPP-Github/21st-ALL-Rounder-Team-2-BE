@@ -8,7 +8,7 @@ import static org.mockito.BDDMockito.given;
 
 import com.yapp.artie.common.BaseUserUnitTest;
 import com.yapp.artie.domain.archive.service.ExhibitService;
-import com.yapp.artie.domain.user.application.port.in.GetUserThumbnailResponse;
+import com.yapp.artie.domain.user.application.port.in.response.GetUserThumbnailResponse;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.domain.UserNotFoundException;
 import org.junit.jupiter.api.Test;

@@ -1,8 +1,8 @@
 package com.yapp.artie.domain.user.adapter.in.web;
 
 
-import com.yapp.artie.domain.user.application.port.in.RegisterUserResponse;
-import com.yapp.artie.domain.user.application.port.in.RegisterUserUseCase;
+import com.yapp.artie.domain.user.application.port.in.command.RegisterUserUseCase;
+import com.yapp.artie.domain.user.application.port.in.response.RegisterUserResponse;
 import com.yapp.artie.domain.user.application.port.out.TokenParsingPort;
 import com.yapp.artie.domain.user.domain.ArtieToken;
 import com.yapp.artie.global.common.annotation.WebAdapter;
