@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 
 @Getter
-@Schema(description = "전시 Response")
+@Schema(description = "임시 전시 정보 Response")
 @RequiredArgsConstructor
 public class ExhibitionDraftResponse {
 

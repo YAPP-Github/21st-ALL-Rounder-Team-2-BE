@@ -7,7 +7,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@Schema(description = "월별 전시 조회 Response")
+@Schema(description = "월별 전시 조회의 날짜별 전시 정보 Response")
 @RequiredArgsConstructor
 public class ExhibitionByMonthlyResponse {
 

@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 
 @Getter
-@Schema(description = "카테고리 페이지 내 전시 목록 썸네일")
+@Schema(description = "카테고리별 전시 정보 Response")
 @RequiredArgsConstructor
 public class ExhibitionByCategoryResponse {
 

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @Getter
-@Schema(description = "작품 목록의 작품 썸네일 정보")
+@Schema(description = "작품 세부 정보 Response")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ArtworkDetailResponse {
 

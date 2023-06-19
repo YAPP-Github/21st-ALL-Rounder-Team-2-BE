@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Schema(description = "카테고리 Response")
+@Schema(description = "카테고리 세부 정보 Response")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CategoryDetailResponse {
 

@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 @Getter
-@Schema(description = "전시 Response")
+@Schema(description = "전시 세부 정보 Response")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ExhibitionDetailResponse {
 

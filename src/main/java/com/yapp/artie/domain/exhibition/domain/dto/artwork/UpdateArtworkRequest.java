@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Schema(description = "전시 작품 생성 Request")
+@Schema(description = "전시 작품 수정 Request")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UpdateArtworkRequest {
 

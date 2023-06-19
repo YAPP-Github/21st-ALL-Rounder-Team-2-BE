@@ -6,7 +6,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@Schema(description = "작품 목록의 작품 썸네일 정보")
+@Schema(description = "작품 상세 페이지의 작품 소형 썸네일 이미지 Response")
 @RequiredArgsConstructor
 public class ArtworkImageThumbnailResponse {
 
