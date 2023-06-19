@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.archive.dto.exhibit;
+package com.yapp.artie.domain.exhibition.domain.dto.exhibition;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Schema(description = "전시 생성 Request")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CreateExhibitRequestDto {
+public class CreateExhibitionRequest {
 
   @Schema(description = "전시명")
   private String name;
@@ -23,7 +23,7 @@ public class CreateExhibitRequestDto {
   @Schema(description = "전시 링크", nullable = true)
   private String attachedLink;
 
-  public CreateExhibitRequestDto(String name, Long categoryId, LocalDate postDate,
+  public CreateExhibitionRequest(String name, Long categoryId, LocalDate postDate,
       String attachedLink) {
     this.name = name;
     this.categoryId = categoryId;

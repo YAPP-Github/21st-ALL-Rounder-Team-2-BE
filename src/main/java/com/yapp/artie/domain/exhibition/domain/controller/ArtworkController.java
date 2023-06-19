@@ -1,15 +1,14 @@
 package com.yapp.artie.domain.exhibition.domain.controller;
 
-import com.yapp.artie.domain.archive.dto.artwork.ArtworkBrowseThumbnailDto;
-import com.yapp.artie.domain.archive.dto.artwork.ArtworkInfoDto;
-import com.yapp.artie.domain.archive.dto.artwork.ArtworkThumbnailDto;
-import com.yapp.artie.domain.archive.dto.artwork.ArtworkThumbnailDtoPage;
-import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkBatchRequestDto;
-import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkBatchResponseDto;
-import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkRequestDto;
-import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkResponseDto;
-import com.yapp.artie.domain.archive.dto.artwork.UpdateArtworkRequestDto;
-import com.yapp.artie.domain.archive.service.ArtworkService;
+import com.yapp.artie.domain.exhibition.domain.dto.artwork.ArtworkDetailResponse;
+import com.yapp.artie.domain.exhibition.domain.dto.artwork.ArtworkImageThumbnailResponse;
+import com.yapp.artie.domain.exhibition.domain.dto.artwork.ArtworkThumbnailResponse;
+import com.yapp.artie.domain.exhibition.domain.dto.artwork.CreateArtworkBatchRequest;
+import com.yapp.artie.domain.exhibition.domain.dto.artwork.CreateArtworkBatchResponse;
+import com.yapp.artie.domain.exhibition.domain.dto.artwork.CreateArtworkRequest;
+import com.yapp.artie.domain.exhibition.domain.dto.artwork.CreateArtworkResponse;
+import com.yapp.artie.domain.exhibition.domain.dto.artwork.UpdateArtworkRequest;
+import com.yapp.artie.domain.exhibition.domain.service.ArtworkService;
 import com.yapp.artie.global.common.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -50,7 +49,7 @@ public class ArtworkController {
       @ApiResponse(
           responseCode = "201",
           description = "전시 작품이 성공적으로 추가됨",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateArtworkResponseDto.class))),
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateArtworkResponse.class))),
       @ApiResponse(
           responseCode = "400",
           description = "잘못된 입력",
@@ -77,14 +76,14 @@ public class ArtworkController {
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
   })
   @PostMapping()
-  public ResponseEntity<CreateArtworkResponseDto> createArtwork(Authentication authentication,
+  public ResponseEntity<CreateArtworkResponse> createArtwork(Authentication authentication,
       @RequestBody @Valid
-      CreateArtworkRequestDto createArtworkRequestDto) {
+      CreateArtworkRequest createArtworkRequest) {
     Long userId = Long.parseLong(authentication.getName());
-    Long id = artworkService.create(createArtworkRequestDto, userId);
+    Long id = artworkService.create(createArtworkRequest, userId);
 
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(new CreateArtworkResponseDto(id));
+        .body(new CreateArtworkResponse(id));
   }
 
   @Operation(summary = "전시의 작품 목록 조회", description = "전시 상세 페이지의 작품 목록 조회")
@@ -92,7 +91,7 @@ public class ArtworkController {
       @ApiResponse(
           responseCode = "200",
           description = "전시 작품 목록 조회",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArtworkThumbnailDtoPage.class))),
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArtworkThumbnailResponse.Page.class))),
       @ApiResponse(
           responseCode = "400",
           description = "잘못된 입력",
@@ -111,7 +110,7 @@ public class ArtworkController {
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
   })
   @GetMapping("/post/{id}")
-  public ResponseEntity<Page<ArtworkThumbnailDto>> getArtworkPageFromPost(
+  public ResponseEntity<Page<ArtworkThumbnailResponse>> getArtworkThumbnails(
       Authentication authentication,
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long exhibitId,
       @Parameter(name = "size", description = "페이지네이션의 페이지당 데이터 수", in = ParameterIn.QUERY)
@@ -122,7 +121,7 @@ public class ArtworkController {
       @RequestParam(name = "direction", required = false, defaultValue = "DESC") Direction direction) {
     Long userId = Long.parseLong(authentication.getName());
     return ResponseEntity.ok()
-        .body(artworkService.getArtworkAsPage(exhibitId, userId, page, size, direction));
+        .body(artworkService.getArtworkThumbnails(exhibitId, userId, page, size, direction));
   }
 
   @Operation(summary = "작품 상세 정보 조회", description = "작품 상세 페이지의 작품 상세 정보 조회")
@@ -130,7 +129,7 @@ public class ArtworkController {
       @ApiResponse(
           responseCode = "200",
           description = "작품 상세 정보 조회",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArtworkInfoDto.class))),
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = ArtworkDetailResponse.class))),
       @ApiResponse(
           responseCode = "400",
           description = "잘못된 입력",
@@ -153,11 +152,11 @@ public class ArtworkController {
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
   })
   @GetMapping("/{id}")
-  public ResponseEntity<ArtworkInfoDto> getArtworkInfo(
+  public ResponseEntity<ArtworkDetailResponse> getArtworkDetail(
       Authentication authentication,
       @Parameter(name = "id", description = "작품 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long artworkId) {
     Long userId = Long.parseLong(authentication.getName());
-    return ResponseEntity.ok().body(artworkService.getArtworkInfo(artworkId, userId));
+    return ResponseEntity.ok().body(artworkService.getArtworkDetail(artworkId, userId));
   }
 
   @Operation(summary = "작품 탐색 썸네일 목록 조회", description = "작품 상세 페이지의 작품 썸네일 목록 조회")
@@ -165,7 +164,7 @@ public class ArtworkController {
       @ApiResponse(
           responseCode = "200",
           description = "작품 썸네일 목록 조회",
-          content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ArtworkBrowseThumbnailDto.class)))),
+          content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ArtworkImageThumbnailResponse.class)))),
       @ApiResponse(
           responseCode = "400",
           description = "잘못된 입력",
@@ -188,11 +187,11 @@ public class ArtworkController {
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
   })
   @GetMapping("post/{id}/thumbnail")
-  public ResponseEntity<List<ArtworkBrowseThumbnailDto>> getArtworkBrowseThumbnails(
+  public ResponseEntity<List<ArtworkImageThumbnailResponse>> getArtworkImageThumbnails(
       Authentication authentication,
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long exhibitId) {
     Long userId = Long.parseLong(authentication.getName());
-    return ResponseEntity.ok().body(artworkService.getArtworkBrowseThumbnail(exhibitId, userId));
+    return ResponseEntity.ok().body(artworkService.getArtworkImageThumbnails(exhibitId, userId));
   }
 
   @Operation(summary = "작품 삭제")
@@ -236,7 +235,7 @@ public class ArtworkController {
       @ApiResponse(
           responseCode = "201",
           description = "전시 작품이 성공적으로 추가됨",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateArtworkBatchResponseDto.class))),
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateArtworkBatchResponse.class))),
       @ApiResponse(
           responseCode = "400",
           description = "잘못된 입력",
@@ -263,15 +262,15 @@ public class ArtworkController {
           content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))),
   })
   @PostMapping("batch/{id}")
-  public ResponseEntity<CreateArtworkBatchResponseDto> createArtworkBatch(
+  public ResponseEntity<CreateArtworkBatchResponse> createArtworkBatch(
       Authentication authentication,
       @Parameter(name = "id", description = "전시 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long exhibitId,
-      @RequestBody @Valid CreateArtworkBatchRequestDto createArtworkBatchRequestDtoRequestDto) {
+      @RequestBody @Valid CreateArtworkBatchRequest createArtworkBatchRequest) {
     Long userId = Long.parseLong(authentication.getName());
 
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(new CreateArtworkBatchResponseDto(
-            artworkService.createBatch(createArtworkBatchRequestDtoRequestDto.getImageUriList(),
+        .body(new CreateArtworkBatchResponse(
+            artworkService.createBatch(createArtworkBatchRequest.getImageUriList(),
                 exhibitId, userId)));
   }
 
@@ -310,9 +309,9 @@ public class ArtworkController {
   public ResponseEntity<? extends HttpEntity> updateArtwork(Authentication authentication,
       @Parameter(name = "id", description = "작품 ID", in = ParameterIn.PATH) @Valid @PathVariable("id") Long artworkId,
       @RequestBody @Valid
-      UpdateArtworkRequestDto updateArtworkRequestDto) {
+      UpdateArtworkRequest updateArtworkRequest) {
     Long userId = Long.parseLong(authentication.getName());
-    artworkService.update(artworkId, userId, updateArtworkRequestDto);
+    artworkService.update(artworkId, userId, updateArtworkRequest);
     return ResponseEntity.noContent().build();
   }
 

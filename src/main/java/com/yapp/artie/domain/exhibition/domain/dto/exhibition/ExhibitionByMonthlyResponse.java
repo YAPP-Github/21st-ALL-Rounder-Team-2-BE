@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.archive.dto.exhibit;
+package com.yapp.artie.domain.exhibition.domain.dto.exhibition;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @Schema(description = "월별 전시 조회 Response")
 @RequiredArgsConstructor
-public class CalendarExhibitResponseDto {
+public class ExhibitionByMonthlyResponse {
 
   @Schema(description = "관람 날짜", required = true)
   private final LocalDate postDate;

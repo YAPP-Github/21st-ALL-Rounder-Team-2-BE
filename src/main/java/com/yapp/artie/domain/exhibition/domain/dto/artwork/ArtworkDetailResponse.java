@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.archive.dto.artwork;
+package com.yapp.artie.domain.exhibition.domain.dto.artwork;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import lombok.NonNull;
 @Getter
 @Schema(description = "작품 목록의 작품 썸네일 정보")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ArtworkInfoDto {
+public class ArtworkDetailResponse {
 
   @NonNull
   @Schema(description = "작품 ID", required = true)
@@ -37,7 +37,7 @@ public class ArtworkInfoDto {
   private List<String> tags;
 
   @Builder
-  public ArtworkInfoDto(@NonNull Long id, @NonNull String imageURL, String name,
+  public ArtworkDetailResponse(@NonNull Long id, @NonNull String imageURL, String name,
       String artist, List<String> tags) {
     this.id = id;
     this.imageURL = imageURL;

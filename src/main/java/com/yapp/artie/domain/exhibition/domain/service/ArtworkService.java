@@ -1,16 +1,14 @@
-import com.yapp.artie.domain.archive.domain.artwork.Artwork;
-import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
-import com.yapp.artie.domain.archive.dto.artwork.ArtworkBrowseThumbnailDto;
-import com.yapp.artie.domain.archive.dto.artwork.ArtworkInfoDto;
-import com.yapp.artie.domain.archive.dto.artwork.ArtworkThumbnailDto;
-import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkRequestDto;
-import com.yapp.artie.domain.archive.dto.artwork.UpdateArtworkRequestDto;
-import com.yapp.artie.domain.archive.repository.ArtworkRepository;
+package com.yapp.artie.domain.exhibition.domain.service;
+
+import com.yapp.artie.domain.exhibition.domain.dto.artwork.ArtworkDetailResponse;
+import com.yapp.artie.domain.exhibition.domain.dto.artwork.ArtworkImageThumbnailResponse;
 import com.yapp.artie.domain.exhibition.domain.dto.artwork.ArtworkThumbnailResponse;
 import com.yapp.artie.domain.exhibition.domain.dto.artwork.CreateArtworkRequest;
 import com.yapp.artie.domain.exhibition.domain.dto.artwork.UpdateArtworkRequest;
 import com.yapp.artie.domain.exhibition.domain.entity.artwork.Artwork;
 import com.yapp.artie.domain.exhibition.domain.entity.exhibition.Exhibition;
+import com.yapp.artie.domain.exhibition.domain.exception.ArtworkNotFoundException;
+import com.yapp.artie.domain.exhibition.domain.repository.ArtworkRepository;
 import com.yapp.artie.domain.s3.service.S3Service;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.global.deprecated.LoadUserJpaEntityApi;
@@ -35,48 +33,51 @@ public class ArtworkService {
 
   private final LoadUserJpaEntityApi loadUserJpaEntityApi;
   private final TagService tagService;
-  private final ExhibitService exhibitService;
+  private final ExhibitionService exhibitionService;
   private final S3Service s3Service;
   private final ArtworkRepository artworkRepository;
   private final S3Utils s3Utils;
 
-  public Page<ArtworkThumbnailDto> getArtworkAsPage(Long exhibitId, Long userId, int page, int size,
+  public Page<ArtworkThumbnailResponse> getArtworkThumbnails(Long exhibitId, Long userId, int page,
+      int size,
       Direction direction) {
-    Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
+    Exhibition exhibition = exhibitionService.getExhibitionByUser(exhibitId, userId);
     Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt", "id"));
-    return artworkRepository.findAllArtworkAsPage(pageable, exhibit)
+    return artworkRepository.findAllArtworkAsPage(pageable, exhibition)
         .map(this::buildArtworkThumbnail);
   }
 
-  public ArtworkInfoDto getArtworkInfo(Long artworkId, Long userId) {
+  public ArtworkDetailResponse getArtworkDetail(Long artworkId, Long userId) {
     Artwork artwork = findById(artworkId, userId);
     List<String> tags = tagService.getTagNames(artwork);
     return buildArtworkInfo(artwork, tags);
   }
 
-  public List<ArtworkBrowseThumbnailDto> getArtworkBrowseThumbnail(Long exhibitId, Long userId) {
-    Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
-    return artworkRepository.findArtworksByExhibitOrderByCreatedAtDescIdDesc(exhibit).stream()
+  public List<ArtworkImageThumbnailResponse> getArtworkImageThumbnails(Long exhibitId,
+      Long userId) {
+    Exhibition exhibition = exhibitionService.getExhibitionByUser(exhibitId, userId);
+    return artworkRepository.findArtworksByExhibitionOrderByCreatedAtDescIdDesc(exhibition).stream()
         .map(this::buildArtworkBrowseThumbnail).collect(Collectors.toList());
   }
 
   @Transactional
-  public Long create(CreateArtworkRequestDto createArtworkRequestDto, Long userId) {
-    Exhibit exhibit = exhibitService.getExhibitByUser(createArtworkRequestDto.getPostId(), userId);
+  public Long create(CreateArtworkRequest createArtworkRequest, Long userId) {
+    Exhibition exhibition = exhibitionService.getExhibitionByUser(createArtworkRequest.getPostId(),
+        userId);
 
-    Long artworkNum = artworkRepository.countArtworkByExhibitId(exhibit.getId());
+    Long artworkNum = artworkRepository.countArtworkByExhibitionId(exhibition.getId());
 
     Artwork artwork = artworkRepository.save(
-        Artwork.create(exhibit, artworkNum <= 0, createArtworkRequestDto.getName(),
-            createArtworkRequestDto.getArtist(), createArtworkRequestDto.getImageUri()));
+        Artwork.create(exhibition, artworkNum <= 0, createArtworkRequest.getName(),
+            createArtworkRequest.getArtist(), createArtworkRequest.getImageUri()));
 
     UserJpaEntity user = loadUserJpaEntityApi.findById(userId);
-    if (createArtworkRequestDto.getTags() != null) {
-      tagService.addTagsToArtwork(createArtworkRequestDto.getTags(), artwork, user);
+    if (createArtworkRequest.getTags() != null) {
+      tagService.addTagsToArtwork(createArtworkRequest.getTags(), artwork, user);
     }
 
     if (artworkNum == 0) {
-      exhibit.publish();
+      exhibition.publish();
     }
 
     return artwork.getId();
@@ -84,15 +85,15 @@ public class ArtworkService {
 
   @Transactional
   public List<Long> createBatch(List<String> imageUriList, Long exhibitId, Long userId) {
-    Exhibit exhibit = exhibitService.getExhibitByUser(exhibitId, userId);
-    boolean emptyArtwork = artworkRepository.countArtworkByExhibitId(exhibit.getId()) <= 0;
+    Exhibition exhibition = exhibitionService.getExhibitionByUser(exhibitId, userId);
+    boolean emptyArtwork = artworkRepository.countArtworkByExhibitionId(exhibition.getId()) <= 0;
 
     List<Artwork> artworks = IntStream.range(0, imageUriList.size())
-        .mapToObj(i -> Artwork.create(exhibit, i == 0 && emptyArtwork, imageUriList.get(i)))
+        .mapToObj(i -> Artwork.create(exhibition, i == 0 && emptyArtwork, imageUriList.get(i)))
         .collect(
             Collectors.toList());
     if (emptyArtwork) {
-      exhibit.publish();
+      exhibition.publish();
     }
     return artworkRepository.saveAll(artworks).stream().map(Artwork::getId)
         .collect(Collectors.toList());
@@ -103,31 +104,31 @@ public class ArtworkService {
     Artwork artwork = findById(id, userId);
     String imageUri = artwork.getContents().getUri();
 
-    Long artworkNum = artworkRepository.countArtworkByExhibitId(artwork.getExhibit().getId());
+    Long artworkNum = artworkRepository.countArtworkByExhibitionId(artwork.getExhibition().getId());
     if (artworkNum <= 1) {
-      exhibitService.delete(artwork.getExhibit().getId(), userId);
+      exhibitionService.delete(artwork.getExhibition().getId(), userId);
     } else {
       artworkRepository.delete(artwork);
       if (artwork.isMain()) {
-        artworkRepository.findFirstByExhibitWithoutDeleted(
-            artwork.getExhibit(), artwork.getId()).get(0).setMainArtwork();
+        artworkRepository.findFirstByExhibitionWithoutDeleted(
+            artwork.getExhibition(), artwork.getId()).get(0).setMainArtwork();
       }
     }
     s3Service.deleteObject(imageUri);
   }
 
   @Transactional
-  public void update(Long artworkId, Long userId, UpdateArtworkRequestDto updateArtworkRequestDto) {
+  public void update(Long artworkId, Long userId, UpdateArtworkRequest updateArtworkRequest) {
     Artwork artwork = findById(artworkId, userId);
-    if (StringUtils.isNotBlank(updateArtworkRequestDto.getArtist())) {
-      artwork.getContents().updateArtist(updateArtworkRequestDto.getArtist());
+    if (StringUtils.isNotBlank(updateArtworkRequest.getArtist())) {
+      artwork.getContents().updateArtist(updateArtworkRequest.getArtist());
     }
-    if (StringUtils.isNotBlank(updateArtworkRequestDto.getName())) {
-      artwork.getContents().updateName(updateArtworkRequestDto.getName());
+    if (StringUtils.isNotBlank(updateArtworkRequest.getName())) {
+      artwork.getContents().updateName(updateArtworkRequest.getName());
     }
-    if (updateArtworkRequestDto.getTags() != null) {
+    if (updateArtworkRequest.getTags() != null) {
       tagService.deleteAllByArtwork(artwork);
-      tagService.addTagsToArtwork(updateArtworkRequestDto.getTags(), artwork,
+      tagService.addTagsToArtwork(updateArtworkRequest.getTags(), artwork,
           loadUserJpaEntityApi.findById(userId));
     }
   }
@@ -136,13 +137,13 @@ public class ArtworkService {
   public void setMainArtwork(Long artworkId, Long userId) {
     Artwork artwork = findById(artworkId, userId);
     if (!artwork.isMain()) {
-      artworkRepository.updateArtworkNotMainByExhibit(artwork.getExhibit());
+      artworkRepository.updateArtworkNotMainByExhibition(artwork.getExhibition());
       artwork.setMainArtwork();
     }
   }
 
-  private ArtworkThumbnailDto buildArtworkThumbnail(Artwork artwork) {
-    return ArtworkThumbnailDto.builder()
+  private ArtworkThumbnailResponse buildArtworkThumbnail(Artwork artwork) {
+    return ArtworkThumbnailResponse.builder()
         .id(artwork.getId())
         .imageURL(s3Utils.getFullUri(artwork.getContents().getUri()))
         .name(artwork.getContents().getName())
@@ -150,8 +151,8 @@ public class ArtworkService {
         .build();
   }
 
-  private ArtworkInfoDto buildArtworkInfo(Artwork artwork, List<String> tags) {
-    return ArtworkInfoDto.builder()
+  private ArtworkDetailResponse buildArtworkInfo(Artwork artwork, List<String> tags) {
+    return ArtworkDetailResponse.builder()
         .id(artwork.getId())
         .imageURL(s3Utils.getFullUri(artwork.getContents().getUri()))
         .name(artwork.getContents().getName())
@@ -160,14 +161,15 @@ public class ArtworkService {
         .build();
   }
 
-  private ArtworkBrowseThumbnailDto buildArtworkBrowseThumbnail(Artwork artwork) {
-    return new ArtworkBrowseThumbnailDto(artwork.getId(),
+  private ArtworkImageThumbnailResponse buildArtworkBrowseThumbnail(Artwork artwork) {
+    return new ArtworkImageThumbnailResponse(artwork.getId(),
         s3Utils.getFullUri(artwork.getContents().getUri()));
   }
 
   private Artwork findById(Long id, Long userId) {
     Artwork artwork = artworkRepository.findById(id).orElseThrow(ArtworkNotFoundException::new);
-    exhibitService.validateOwnedByUser(loadUserJpaEntityApi.findById(userId), artwork.getExhibit());
+    exhibitionService.validateOwnedByUser(loadUserJpaEntityApi.findById(userId),
+        artwork.getExhibition());
     return artwork;
   }
 }

@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import com.yapp.artie.common.BaseUserUnitTest;
-import com.yapp.artie.domain.archive.service.ExhibitService;
+import com.yapp.artie.domain.exhibition.domain.service.ExhibitionService;
 import com.yapp.artie.domain.user.application.port.in.response.GetUserThumbnailResponse;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.domain.UserNotFoundException;
@@ -16,9 +16,9 @@ import org.mockito.Mockito;
 
 class GetUserThumbnailServiceTest extends BaseUserUnitTest {
 
-  private final ExhibitService exhibitService = Mockito.mock(ExhibitService.class);
+  private final ExhibitionService exhibitionService = Mockito.mock(ExhibitionService.class);
   private final GetUserThumbnailService getUserThumbnailService = new GetUserThumbnailService(
-      loadUserPort, exhibitService);
+      loadUserPort, exhibitionService);
 
   @Test
   void loadUserThumbnailById_사용자를_찾을_수_없으면_예외를_발생한다() {
@@ -42,7 +42,7 @@ class GetUserThumbnailServiceTest extends BaseUserUnitTest {
   }
 
   private void givenExhibitCountWillReturnBy(int count) {
-    given(exhibitService.getExhibitCount(any()))
+    given(exhibitionService.getExhibitCount(any()))
         .willReturn(count);
   }
 }

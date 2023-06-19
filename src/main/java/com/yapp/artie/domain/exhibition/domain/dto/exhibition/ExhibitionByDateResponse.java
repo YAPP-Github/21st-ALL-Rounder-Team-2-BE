@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.archive.dto.exhibit;
+package com.yapp.artie.domain.exhibition.domain.dto.exhibition;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @Schema(description = "특정 날짜의 전시 목록 조회 Response")
 @RequiredArgsConstructor
-public class ExhibitByDateResponseDto {
+public class ExhibitionByDateResponse {
 
   @NonNull
   @Schema(description = "전시 ID", required = true)

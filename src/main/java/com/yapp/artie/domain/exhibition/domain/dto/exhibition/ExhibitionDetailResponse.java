@@ -1,17 +1,20 @@
-package com.yapp.artie.domain.archive.dto.exhibit;
+package com.yapp.artie.domain.exhibition.domain.dto.exhibition;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 @Getter
 @Schema(description = "전시 Response")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PostDetailInfo {
+public class ExhibitionDetailResponse {
 
   @NonNull
   @Schema(description = "전시 아이디", required = true)
@@ -46,7 +49,8 @@ public class PostDetailInfo {
   private boolean isPinned;
 
   @Builder
-  public PostDetailInfo(@NonNull Long id, @NonNull String name, @NonNull LocalDate postDate,
+  public ExhibitionDetailResponse(@NonNull Long id, @NonNull String name,
+      @NonNull LocalDate postDate,
       boolean isPublished, @NonNull Long categoryId, @NonNull String categoryName,
       String mainImage, String attachedLink, boolean isPinned) {
     this.id = id;
@@ -58,5 +62,13 @@ public class PostDetailInfo {
     this.mainImage = mainImage;
     this.attachedLink = attachedLink;
     this.isPinned = isPinned;
+  }
+
+  public static class HomePage extends PageImpl<ExhibitionDetailResponse> {
+
+    public HomePage(List<ExhibitionDetailResponse> content,
+        Pageable pageable, long total) {
+      super(content, pageable, total);
+    }
   }
 }

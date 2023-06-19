@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.archive.dto.exhibit;
+package com.yapp.artie.domain.exhibition.domain.dto.exhibition;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @Schema(description = "전시 생성 Response")
 @RequiredArgsConstructor
-public class CreateExhibitResponseDto {
+public class CreateExhibitionResponse {
 
   @Schema(description = "전시 아이디")
   private final Long id;

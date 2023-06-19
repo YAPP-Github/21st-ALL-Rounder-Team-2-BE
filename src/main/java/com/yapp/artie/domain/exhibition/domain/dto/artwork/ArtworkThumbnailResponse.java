@@ -1,16 +1,19 @@
-package com.yapp.artie.domain.archive.dto.artwork;
+package com.yapp.artie.domain.exhibition.domain.dto.artwork;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
 @Getter
 @Schema(description = "작품 목록의 작품 썸네일 정보")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ArtworkThumbnailDto {
+public class ArtworkThumbnailResponse {
 
   @NonNull
   @Schema(description = "작품 ID", required = true)
@@ -29,11 +32,19 @@ public class ArtworkThumbnailDto {
   private String artist;
 
   @Builder
-  public ArtworkThumbnailDto(@NonNull Long id, @NonNull String imageURL, String name,
+  public ArtworkThumbnailResponse(@NonNull Long id, @NonNull String imageURL, String name,
       String artist) {
     this.id = id;
     this.imageURL = imageURL;
     this.name = name == null ? "작품명 미입력" : name;
     this.artist = artist == null ? "작품명 미입력" : artist;
+  }
+
+  public static class Page extends PageImpl<ArtworkThumbnailResponse> {
+
+    public Page(List<ArtworkThumbnailResponse> content,
+        Pageable pageable, long total) {
+      super(content, pageable, total);
+    }
   }
 }
