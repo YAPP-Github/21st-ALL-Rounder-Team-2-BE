@@ -11,6 +11,8 @@ import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.archive.repository.CategoryRepository;
 import com.yapp.artie.domain.archive.repository.ExhibitRepository;
+package com.yapp.artie.domain.category.service;
+import com.yapp.artie.domain.category.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.global.deprecated.LoadUserJpaEntityApi;
 import java.util.List;

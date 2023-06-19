@@ -1,7 +1,7 @@
 package com.yapp.artie.domain.user.application.service;
 
 
-import com.yapp.artie.domain.archive.service.ExhibitService;
+import com.yapp.artie.domain.exhibition.domain.service.ExhibitionService;
 import com.yapp.artie.domain.user.application.port.in.query.GetUserThumbnailQuery;
 import com.yapp.artie.domain.user.application.port.in.response.GetUserThumbnailResponse;
 import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
@@ -16,12 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 class GetUserThumbnailService implements GetUserThumbnailQuery {
 
   private final LoadUserPort loadUserPort;
-  private final ExhibitService exhibitService;
+  private final ExhibitionService exhibitionService;
 
   @Override
   public GetUserThumbnailResponse loadUserThumbnailById(Long id) {
     User user = loadUserPort.loadById(id);
-    int exhibitCount = exhibitService.getExhibitCount(user.getId());
+    int exhibitCount = exhibitionService.getExhibitCount(user.getId());
     return new GetUserThumbnailResponse(user.getName(), exhibitCount);
   }
 }

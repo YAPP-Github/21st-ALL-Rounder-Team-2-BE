@@ -2,10 +2,8 @@ package com.yapp.artie.domain.archive.repository;
 
 import com.yapp.artie.domain.archive.domain.category.Category;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
-import com.yapp.artie.domain.archive.domain.exhibit.PinType;
 import com.yapp.artie.domain.archive.dto.exhibit.CalenderQueryResultDto;
 import com.yapp.artie.domain.archive.dto.exhibit.ExhibitByDateResponseDto;
-import com.yapp.artie.domain.archive.dto.exhibit.PostInfoDto;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,12 +18,14 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ExhibitRepository extends JpaRepository<Exhibit, Long> {
+public interface ExhibitionRepository extends JpaRepository<Exhibition, Long> {
 
   @Query("select count(e.id) from Exhibit e "
+  @Query("select count(e.id) from Exhibition e "
       + "where e.user = :user "
       + "and  e.publication.isPublished = true")
   int countExhibit(@Param("user") UserJpaEntity user);
+  int countExhibition(@Param("user") UserJpaEntity user);
 
   @EntityGraph(attributePaths = {"user"})
   Optional<Exhibit> findExhibitEntityGraphById(Long id);

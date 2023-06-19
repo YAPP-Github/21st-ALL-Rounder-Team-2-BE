@@ -35,10 +35,10 @@ public enum ErrorCode {
   CATEGORY_EXCEEDED_COUNT(409, "CA004", "카테고리 최대 생성 갯수 5개를 초과했습니다."),
   CATEGORY_WRONG_CHANGE_LENGTH(400, "CA005", "수정할 카테고리의 개수는 원본의 개수와 같아야 합니다. "),
 
-  // Exhibit
-  EXHIBIT_NOT_FOUND(404, "E001", "전시가 존재하지 않습니다."),
-  EXHIBIT_NOT_OWNER(403, "E002", "자신의 전시 정보만 접근할 수 있습니다."),
-  EXHIBIT_ALREADY_PUBLISHED(409, "E003", "이미 발행된 전시입니다."),
+  // Exhibition
+  EXHIBITION_NOT_FOUND(404, "E001", "전시가 존재하지 않습니다."),
+  EXHIBITION_NOT_OWNER(403, "E002", "자신의 전시 정보만 접근할 수 있습니다."),
+  EXHIBITION_ALREADY_PUBLISHED(409, "E003", "이미 발행된 전시입니다."),
 
   // Artwork
   ARTWORK_NOT_OWNER(403, "AW001", "자신의 작품 정보만 접근할 수 있습니다."),

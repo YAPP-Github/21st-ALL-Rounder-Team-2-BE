@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.archive.domain.artwork;
+package com.yapp.artie.domain.exhibition.domain.entity.artwork;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

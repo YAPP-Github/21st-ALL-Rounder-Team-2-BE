@@ -1,7 +1,6 @@
-package com.yapp.artie.domain.archive.domain.artwork;
+package com.yapp.artie.domain.exhibition.domain.entity.artwork;
 
-import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
-import com.yapp.artie.domain.archive.domain.tag.Tag;
+import com.yapp.artie.domain.exhibition.domain.entity.exhibition.Exhibition;
 import com.yapp.artie.global.common.persistence.BaseEntity;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,7 @@ public class Artwork extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "post_id", nullable = false)
-  private Exhibit exhibit;
+  private Exhibition exhibition;
 
   @Column(nullable = false, columnDefinition = "boolean default false", name = "is_main_image")
   private boolean isMain;
@@ -46,25 +45,25 @@ public class Artwork extends BaseEntity {
   @OneToMany(mappedBy = "artwork", cascade = CascadeType.REMOVE)
   List<Tag> tags = new ArrayList<>();
 
-  public Artwork(Exhibit exhibit, boolean isMain, ArtworkContents contents) {
-    this.exhibit = exhibit;
+  public Artwork(Exhibition exhibition, boolean isMain, ArtworkContents contents) {
+    this.exhibition = exhibition;
     this.isMain = isMain;
     this.contents = contents;
   }
 
-  public void display(Exhibit exhibit) {
-    this.exhibit = exhibit;
+  public void display(Exhibition exhibition) {
+    this.exhibition = exhibition;
   }
 
-  public static Artwork create(Exhibit exhibit, boolean isMain, String name,
+  public static Artwork create(Exhibition exhibition, boolean isMain, String name,
       String artist, String uri) {
     ArtworkContents contents = new ArtworkContents.Builder(uri).name(name).artist(artist).build();
-    return new Artwork(exhibit, isMain, contents);
+    return new Artwork(exhibition, isMain, contents);
   }
 
-  public static Artwork create(Exhibit exhibit, boolean isMain, String uri) {
+  public static Artwork create(Exhibition exhibition, boolean isMain, String uri) {
     ArtworkContents contents = new ArtworkContents.Builder(uri).build();
-    return new Artwork(exhibit, isMain, contents);
+    return new Artwork(exhibition, isMain, contents);
   }
 
   public void setMainArtwork() {

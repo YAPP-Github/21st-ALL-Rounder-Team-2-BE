@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.archive.controller;
+package com.yapp.artie.domain.exhibition.domain.controller;
 
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkBrowseThumbnailDto;
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkInfoDto;

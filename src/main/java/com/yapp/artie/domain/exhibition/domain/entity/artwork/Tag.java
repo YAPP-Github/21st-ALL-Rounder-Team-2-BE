@@ -1,6 +1,5 @@
-package com.yapp.artie.domain.archive.domain.tag;
+package com.yapp.artie.domain.exhibition.domain.entity.artwork;
 
-import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import javax.persistence.Column;
 import javax.persistence.Entity;

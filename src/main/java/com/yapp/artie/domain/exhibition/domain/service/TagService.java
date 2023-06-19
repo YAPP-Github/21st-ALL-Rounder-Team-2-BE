@@ -1,8 +1,8 @@
-package com.yapp.artie.domain.archive.service;
+package com.yapp.artie.domain.exhibition.domain.service;
 
-import com.yapp.artie.domain.archive.domain.artwork.Artwork;
-import com.yapp.artie.domain.archive.domain.tag.Tag;
-import com.yapp.artie.domain.archive.repository.TagRepository;
+import com.yapp.artie.domain.exhibition.domain.entity.artwork.Artwork;
+import com.yapp.artie.domain.exhibition.domain.entity.artwork.Tag;
+import com.yapp.artie.domain.exhibition.domain.repository.TagRepository;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;

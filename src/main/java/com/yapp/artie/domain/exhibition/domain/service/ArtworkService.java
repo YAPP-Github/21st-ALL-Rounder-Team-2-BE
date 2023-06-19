@@ -1,5 +1,3 @@
-package com.yapp.artie.domain.archive.service;
-
 import com.yapp.artie.domain.archive.domain.artwork.Artwork;
 import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkBrowseThumbnailDto;
@@ -7,8 +5,12 @@ import com.yapp.artie.domain.archive.dto.artwork.ArtworkInfoDto;
 import com.yapp.artie.domain.archive.dto.artwork.ArtworkThumbnailDto;
 import com.yapp.artie.domain.archive.dto.artwork.CreateArtworkRequestDto;
 import com.yapp.artie.domain.archive.dto.artwork.UpdateArtworkRequestDto;
-import com.yapp.artie.domain.archive.exception.ArtworkNotFoundException;
 import com.yapp.artie.domain.archive.repository.ArtworkRepository;
+import com.yapp.artie.domain.exhibition.domain.dto.artwork.ArtworkThumbnailResponse;
+import com.yapp.artie.domain.exhibition.domain.dto.artwork.CreateArtworkRequest;
+import com.yapp.artie.domain.exhibition.domain.dto.artwork.UpdateArtworkRequest;
+import com.yapp.artie.domain.exhibition.domain.entity.artwork.Artwork;
+import com.yapp.artie.domain.exhibition.domain.entity.exhibition.Exhibition;
 import com.yapp.artie.domain.s3.service.S3Service;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.global.deprecated.LoadUserJpaEntityApi;

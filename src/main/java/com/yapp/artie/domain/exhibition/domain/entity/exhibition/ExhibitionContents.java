@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.archive.domain.exhibit;
+package com.yapp.artie.domain.exhibition.domain.entity.exhibition;
 
 import java.time.LocalDate;
 import javax.persistence.Column;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ExhibitContents {
+public class ExhibitionContents {
 
   @Column(nullable = false)
   private String name;

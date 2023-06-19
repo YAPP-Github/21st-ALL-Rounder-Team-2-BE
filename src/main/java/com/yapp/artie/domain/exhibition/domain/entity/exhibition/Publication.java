@@ -1,6 +1,6 @@
-package com.yapp.artie.domain.archive.domain.exhibit;
+package com.yapp.artie.domain.exhibition.domain.entity.exhibition;
 
-import com.yapp.artie.domain.archive.exception.ExhibitAlreadyPublishedException;
+import com.yapp.artie.domain.exhibition.domain.exception.ExhibitionAlreadyPublishedException;
 import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -22,7 +22,7 @@ public class Publication {
 
   public void publish() {
     if (isPublished) {
-      throw new ExhibitAlreadyPublishedException();
+      throw new ExhibitionAlreadyPublishedException();
     }
 
     this.isPublished = true;

@@ -1,8 +1,8 @@
-package com.yapp.artie.domain.archive.domain.exhibit;
+package com.yapp.artie.domain.exhibition.domain.entity.exhibition;
 
 
-import com.yapp.artie.domain.archive.domain.artwork.Artwork;
-import com.yapp.artie.domain.archive.domain.category.Category;
+import com.yapp.artie.domain.category.domain.Category;
+import com.yapp.artie.domain.exhibition.domain.entity.artwork.Artwork;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.global.common.persistence.BaseEntity;
 import java.time.LocalDate;
@@ -30,7 +30,7 @@ import org.hibernate.annotations.DynamicInsert;
 @Table(name = "post")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicInsert
-public class Exhibit extends BaseEntity {
+public class Exhibition extends BaseEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,11 +44,11 @@ public class Exhibit extends BaseEntity {
   @JoinColumn(name = "category_id", nullable = false)
   private Category category;
 
-  @OneToMany(mappedBy = "exhibit", cascade = CascadeType.REMOVE)
+  @OneToMany(mappedBy = "exhibition", cascade = CascadeType.REMOVE)
   List<Artwork> artworks = new ArrayList<>();
 
   @Embedded
-  private ExhibitContents contents;
+  private ExhibitionContents contents;
 
   @Embedded
   private Publication publication;
@@ -57,7 +57,8 @@ public class Exhibit extends BaseEntity {
   @Column(nullable = false, columnDefinition = "varchar(32) default 'NONE'")
   private PinType pinType;
 
-  private Exhibit(UserJpaEntity user, Category category, ExhibitContents contents, Publication publication) {
+  private Exhibition(UserJpaEntity user, Category category, ExhibitionContents contents,
+      Publication publication) {
     this.user = user;
     this.category = category;
     this.contents = contents;
@@ -81,7 +82,7 @@ public class Exhibit extends BaseEntity {
     return this.user.equals(user);
   }
 
-  public ExhibitContents contents() {
+  public ExhibitionContents contents() {
     return this.contents;
   }
 
@@ -98,15 +99,16 @@ public class Exhibit extends BaseEntity {
     artwork.display(this);
   }
 
-  public static Exhibit create(String name, LocalDate postDate, Category category, UserJpaEntity user,
+  public static Exhibition create(String name, LocalDate postDate, Category category,
+      UserJpaEntity user,
       String attachedLink) {
-    ExhibitContents contents = new ExhibitContents(name, null, attachedLink, postDate);
+    ExhibitionContents contents = new ExhibitionContents(name, null, attachedLink, postDate);
     Publication publication = new Publication();
-    return new Exhibit(user, category, contents, publication);
+    return new Exhibition(user, category, contents, publication);
   }
 
   public void update(String name, LocalDate postDate, String attachedLink, Category category) {
-    this.contents = new ExhibitContents(name, contents().getReview(),
+    this.contents = new ExhibitionContents(name, contents().getReview(),
         attachedLink, postDate);
     categorize(category);
   }

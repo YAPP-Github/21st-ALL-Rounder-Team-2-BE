@@ -1,6 +1,6 @@
 package com.yapp.artie.domain.archive.domain.category;
 
-import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
+import com.yapp.artie.domain.exhibition.domain.entity.exhibition.Exhibition;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.global.common.persistence.BaseEntity;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class Category extends BaseEntity {
   private String name;
 
   @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
-  List<Exhibit> exhibits = new ArrayList<>();
+  List<Exhibition> exhibitions = new ArrayList<>();
 
   @Column(nullable = false, name = "seq")
   private int sequence;
@@ -51,9 +51,9 @@ public class Category extends BaseEntity {
     return new Category(user, name, sequence);
   }
 
-  public void addExhibit(Exhibit exhibit) {
-    this.exhibits.add(exhibit);
-    exhibit.categorize(this);
+  public void addExhibit(Exhibition exhibition) {
+    this.exhibitions.add(exhibition);
+    exhibition.categorize(this);
   }
 
   public boolean ownedBy(UserJpaEntity user) {
