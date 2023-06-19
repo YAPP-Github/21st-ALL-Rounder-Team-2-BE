@@ -51,11 +51,6 @@ public class Category extends BaseEntity {
     return new Category(user, name, sequence);
   }
 
-  public void addExhibit(Exhibition exhibition) {
-    this.exhibitions.add(exhibition);
-    exhibition.categorize(this);
-  }
-
   public boolean ownedBy(UserJpaEntity user) {
     return this.user.equals(user);
   }
