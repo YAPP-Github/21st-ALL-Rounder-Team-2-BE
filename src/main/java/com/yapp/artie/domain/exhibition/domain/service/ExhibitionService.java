@@ -47,7 +47,7 @@ public class ExhibitionService {
   private final CategoryService categoryService;
   private final S3Utils s3Utils;
 
-  public int getExhibitCount(Long userId) {
+  public int getExhibitionCount(Long userId) {
     return exhibitionRepository.countExhibition(findUser(userId));
   }
 
@@ -75,7 +75,7 @@ public class ExhibitionService {
     AtomicBoolean isFirstElement = new AtomicBoolean(page == 0);
     return exhibitionRepository
         .findExhibitionsAsPage(pageable, findUser(userId))
-        .map(exhibit -> buildExhibitionDetailResponse(exhibit, getMainImageUri(exhibit),
+        .map(exhibition -> buildExhibitionDetailResponse(exhibition, getMainImageUri(exhibition),
             isFirstElement.get() && isFirstElement.getAndSet(false), PinType.ALL));
   }
 
@@ -88,7 +88,7 @@ public class ExhibitionService {
     AtomicBoolean isFirstElement = new AtomicBoolean(page == 0);
     return exhibitionRepository
         .findExhibitionsByCategoryAsPage(pageable, findUser(userId), category)
-        .map(exhibit -> buildExhibitionDetailResponse(exhibit, getMainImageUri(exhibit),
+        .map(exhibition -> buildExhibitionDetailResponse(exhibition, getMainImageUri(exhibition),
             isFirstElement.get() && isFirstElement.getAndSet(false), PinType.CATEGORY));
   }
 
@@ -263,17 +263,17 @@ public class ExhibitionService {
   private void setExhibitionPinType(boolean categoryType, Exhibition exhibition) {
     PinType newPinType;
     if (categoryType) {
-      Optional<Exhibition> pinnedExhibit = exhibitionRepository.findPinnedExhibitionWithCategory(
+      Optional<Exhibition> pinnedExhibition = exhibitionRepository.findPinnedExhibitionWithCategory(
           exhibition.getCategory(),
           new PinType[]{PinType.BOTH, PinType.CATEGORY});
-      pinnedExhibit.ifPresent(value -> value.updatePinType(value
+      pinnedExhibition.ifPresent(value -> value.updatePinType(value
           .getPinType() == PinType.BOTH ? PinType.ALL : PinType.NONE));
 
       newPinType = exhibition.getPinType() == PinType.ALL ? PinType.BOTH : PinType.CATEGORY;
     } else {
-      Optional<Exhibition> pinnedExhibit = exhibitionRepository.findPinnedExhibition(
+      Optional<Exhibition> pinnedExhibition = exhibitionRepository.findPinnedExhibition(
           new PinType[]{PinType.BOTH, PinType.ALL});
-      pinnedExhibit.ifPresent(value -> value.updatePinType(value
+      pinnedExhibition.ifPresent(value -> value.updatePinType(value
           .getPinType() == PinType.BOTH ? PinType.CATEGORY : PinType.NONE));
 
       newPinType = exhibition.getPinType() == PinType.CATEGORY ? PinType.BOTH : PinType.ALL;

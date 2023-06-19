@@ -97,7 +97,7 @@ class ExhibitionServiceTest {
       Long created = exhibitionService.create(exhibitRequestDto, user.getId());
       exhibitionService.publish(created, user.getId());
     }
-    int exhibitCount = exhibitionService.getExhibitCount(user.getId());
+    int exhibitCount = exhibitionService.getExhibitionCount(user.getId());
     assertThat(exhibitCount).isEqualTo(5);
   }
 

@@ -21,7 +21,7 @@ class GetUserThumbnailService implements GetUserThumbnailQuery {
   @Override
   public GetUserThumbnailResponse loadUserThumbnailById(Long id) {
     User user = loadUserPort.loadById(id);
-    int exhibitCount = exhibitionService.getExhibitCount(user.getId());
+    int exhibitCount = exhibitionService.getExhibitionCount(user.getId());
     return new GetUserThumbnailResponse(user.getName(), exhibitCount);
   }
 }

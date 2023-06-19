@@ -42,7 +42,7 @@ class GetUserThumbnailServiceTest extends BaseUserUnitTest {
   }
 
   private void givenExhibitCountWillReturnBy(int count) {
-    given(exhibitionService.getExhibitCount(any()))
+    given(exhibitionService.getExhibitionCount(any()))
         .willReturn(count);
   }
 }
