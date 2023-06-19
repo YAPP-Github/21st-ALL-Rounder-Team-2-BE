@@ -4,22 +4,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
-import com.yapp.artie.domain.archive.domain.artwork.Artwork;
-import com.yapp.artie.domain.archive.domain.category.Category;
-import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
-import com.yapp.artie.domain.archive.domain.tag.Tag;
-import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
-import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
-import com.yapp.artie.domain.archive.dto.cateogry.UpdateCategoryRequestDto;
-import com.yapp.artie.domain.archive.exception.CategoryAlreadyExistException;
-import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
-import com.yapp.artie.domain.archive.exception.ChangeCategoryWrongLengthException;
-import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
-import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
-import com.yapp.artie.domain.archive.repository.ArtworkRepository;
-import com.yapp.artie.domain.archive.repository.CategoryRepository;
-import com.yapp.artie.domain.archive.repository.ExhibitRepository;
-import com.yapp.artie.domain.archive.repository.TagRepository;
+import com.yapp.artie.domain.category.domain.Category;
+import com.yapp.artie.domain.category.dto.CategoryDetailResponse;
+import com.yapp.artie.domain.category.dto.CreateCategoryRequest;
+import com.yapp.artie.domain.category.dto.UpdateCategoryRequest;
+import com.yapp.artie.domain.category.exception.CategoryAlreadyExistException;
+import com.yapp.artie.domain.category.exception.CategoryNotFoundException;
+import com.yapp.artie.domain.category.exception.ChangeCategoryWrongLengthException;
+import com.yapp.artie.domain.category.exception.ExceededCategoryCountException;
+import com.yapp.artie.domain.category.exception.NotOwnerOfCategoryException;
+import com.yapp.artie.domain.category.repository.CategoryRepository;
+import com.yapp.artie.domain.category.service.CategoryService;
+import com.yapp.artie.domain.exhibition.domain.entity.artwork.Artwork;
+import com.yapp.artie.domain.exhibition.domain.entity.artwork.Tag;
+import com.yapp.artie.domain.exhibition.domain.entity.exhibition.Exhibition;
+import com.yapp.artie.domain.exhibition.domain.repository.ArtworkRepository;
+import com.yapp.artie.domain.exhibition.domain.repository.ExhibitionRepository;
+import com.yapp.artie.domain.exhibition.domain.repository.TagRepository;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserRepository;
 import java.time.LocalDate;
@@ -54,7 +55,7 @@ class CategoryServiceTest {
   CategoryRepository categoryRepository;
 
   @Autowired
-  ExhibitRepository exhibitRepository;
+  ExhibitionRepository exhibitionRepository;
 
   @Autowired
   ArtworkRepository artworkRepository;
@@ -90,7 +91,7 @@ class CategoryServiceTest {
   }
 
   private Long createCategory(UserJpaEntity user, String name) {
-    return categoryService.create(new CreateCategoryRequestDto(name), user.getId());
+    return categoryService.create(new CreateCategoryRequest(name), user.getId());
   }
 
   private Category findCategory(Long id) {
@@ -118,14 +119,14 @@ class CategoryServiceTest {
     UserJpaEntity user = findUser("1");
     Category category1 = categoryRepository.save(Category.create(user, "test-category-1", 1));
     Category category2 = categoryRepository.save(Category.create(user, "test-category-2", 2));
-    exhibitRepository.save(
-            Exhibit.create("test", LocalDate.now(), category1, user, null))
+    exhibitionRepository.save(
+            Exhibition.create("test", LocalDate.now(), category1, user, null))
         .publish();
-    exhibitRepository.saveAll(
-        Arrays.asList(Exhibit.create("test", LocalDate.now(), category1, user, null),
-            Exhibit.create("test", LocalDate.now(), category2, user, null)));
+    exhibitionRepository.saveAll(
+        Arrays.asList(Exhibition.create("test", LocalDate.now(), category1, user, null),
+            Exhibition.create("test", LocalDate.now(), category2, user, null)));
 
-    List<CategoryDto> result = categoryService.categoriesOf(user.getId());
+    List<CategoryDetailResponse> result = categoryService.categoriesOf(user.getId());
 
     assertThat(result.size()).isEqualTo(2);
     assertThat(result.get(0).getId()).isEqualTo(category1.getId());
@@ -140,7 +141,7 @@ class CategoryServiceTest {
 
   @Test
   public void categoriesOf_카테고리가_하나도_존재하지_않는다면_빈_리스트를_반환한다() throws Exception {
-    List<CategoryDto> actual = categoryService.categoriesOf(findUser("1").getId());
+    List<CategoryDetailResponse> actual = categoryService.categoriesOf(findUser("1").getId());
     assertThat(actual.size()).isEqualTo(0);
   }
 
@@ -178,9 +179,9 @@ class CategoryServiceTest {
   public void delete_카테고리를_삭제하면_전시데이터도_삭제된다() throws Exception {
     UserJpaEntity user = findUser("1");
     Long created = createCategory(user, "test");
-    Exhibit exhibit = exhibitRepository.save(
-        Exhibit.create("test", LocalDate.now(), findCategory(created), user, "link"));
-    Artwork artwork = artworkRepository.save(Artwork.create(exhibit, true, "url"));
+    Exhibition exhibition = exhibitionRepository.save(
+        Exhibition.create("test", LocalDate.now(), findCategory(created), user, "link"));
+    Artwork artwork = artworkRepository.save(Artwork.create(exhibition, true, "url"));
     Tag tag = tagRepository.save(new Tag(user, artwork, 1, "tagName"));
     em.clear();
 
@@ -188,7 +189,7 @@ class CategoryServiceTest {
     em.flush();
 
     assertThat(Optional.ofNullable(findCategory(created))).isNotPresent();
-    assertThat(exhibitRepository.findById(exhibit.getId()).isEmpty()).isTrue();
+    assertThat(exhibitionRepository.findById(exhibition.getId()).isEmpty()).isTrue();
     assertThat(artworkRepository.findById(artwork.getId()).isEmpty()).isTrue();
     assertThat(tagRepository.findById(tag.getId()).isEmpty()).isTrue();
   }
@@ -215,7 +216,7 @@ class CategoryServiceTest {
   public void update_카테고리를_수정한다() throws Exception {
     UserJpaEntity user = findUser("1");
     Long created = createCategory(user, "test");
-    categoryService.update(new UpdateCategoryRequestDto("rename"), created, user.getId());
+    categoryService.update(new UpdateCategoryRequest("rename"), created, user.getId());
     assertThat(findCategory(created).getName()).isEqualTo("rename");
   }
 
@@ -226,7 +227,7 @@ class CategoryServiceTest {
     Long created = createCategory(user2, "test");
 
     assertThatThrownBy(() -> {
-      categoryService.update(new UpdateCategoryRequestDto("rename"), created, user1.getId());
+      categoryService.update(new UpdateCategoryRequest("rename"), created, user1.getId());
     }).isInstanceOf(NotOwnerOfCategoryException.class);
   }
 
@@ -234,7 +235,7 @@ class CategoryServiceTest {
   public void sequence_카테고리_생성_시_시퀀스가_오름차순으로_생성된다() throws Exception {
     UserJpaEntity user = findUser("1");
     createCategoryBy(user, 5);
-    List<CategoryDto> categories = categoryService.categoriesOf(user.getId());
+    List<CategoryDetailResponse> categories = categoryService.categoriesOf(user.getId());
     for (int expected = 0; expected < categories.size(); expected++) {
       assertThat(categories.get(expected).getSequence())
           .isEqualTo(expected);
@@ -247,11 +248,11 @@ class CategoryServiceTest {
     UserJpaEntity user = findUser("1");
     createCategoryBy(user, 5);
 
-    List<CategoryDto> categories = categoryService.categoriesOf(user.getId());
-    CategoryDto deleted = categories.get(target - 1);
+    List<CategoryDetailResponse> categories = categoryService.categoriesOf(user.getId());
+    CategoryDetailResponse deleted = categories.get(target - 1);
     categoryService.delete(deleted.getId(), user.getId());
 
-    List<CategoryDto> actualCategories = categoryService.categoriesOf(user.getId());
+    List<CategoryDetailResponse> actualCategories = categoryService.categoriesOf(user.getId());
     for (int expected = 0; expected < actualCategories.size(); expected++) {
       assertThat(actualCategories.get(expected).getSequence())
           .isEqualTo(expected);
@@ -264,12 +265,12 @@ class CategoryServiceTest {
     UserJpaEntity user = findUser("1");
     createCategoryBy(user, 5);
 
-    List<CategoryDto> shuffled = new ArrayList<>();
-    shuffled.add(new CategoryDto(1L, "0", 1));
-    shuffled.add(new CategoryDto(2L, "1", 3));
-    shuffled.add(new CategoryDto(3L, "2", 4));
-    shuffled.add(new CategoryDto(4L, "3", 2));
-    shuffled.add(new CategoryDto(5L, "4", 0));
+    List<CategoryDetailResponse> shuffled = new ArrayList<>();
+    shuffled.add(new CategoryDetailResponse(1L, "0", 1));
+    shuffled.add(new CategoryDetailResponse(2L, "1", 3));
+    shuffled.add(new CategoryDetailResponse(3L, "2", 4));
+    shuffled.add(new CategoryDetailResponse(4L, "3", 2));
+    shuffled.add(new CategoryDetailResponse(5L, "4", 0));
 
     //when
     categoryService.shuffle(shuffled, user.getId());
@@ -290,7 +291,7 @@ class CategoryServiceTest {
     createCategoryBy(user, 5);
 
     assertThatThrownBy(() -> {
-      categoryService.shuffle(List.of(new CategoryDto(1L, "test", 1)), user.getId());
+      categoryService.shuffle(List.of(new CategoryDetailResponse(1L, "test", 1)), user.getId());
     }).isInstanceOf(ChangeCategoryWrongLengthException.class);
   }
 }

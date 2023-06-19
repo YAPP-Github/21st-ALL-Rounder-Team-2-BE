@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.archive.dto.cateogry;
+package com.yapp.artie.domain.category.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Schema(description = "카테고리 Response")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CategoryDto {
+public class CategoryDetailResponse {
 
   @Schema(description = "카테고리 아이디")
   private Long id;
@@ -22,14 +22,14 @@ public class CategoryDto {
   @Schema(description = "카테고리 별 전시수")
   private int postNum;
 
-  public CategoryDto(Long id, String name, int sequence) {
+  public CategoryDetailResponse(Long id, String name, int sequence) {
     this.id = id;
     this.name = name;
     this.sequence = sequence;
     this.postNum = 0;
   }
 
-  public CategoryDto(Long id, String name, int sequence, int postNum) {
+  public CategoryDetailResponse(Long id, String name, int sequence, int postNum) {
     this.id = id;
     this.name = name;
     this.sequence = sequence;

@@ -1,10 +1,10 @@
-package com.yapp.artie.domain.archive.controller;
+package com.yapp.artie.domain.category.controller;
 
-import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
-import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
-import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryResponseDto;
-import com.yapp.artie.domain.archive.dto.cateogry.UpdateCategoryRequestDto;
-import com.yapp.artie.domain.archive.service.CategoryService;
+import com.yapp.artie.domain.category.dto.CategoryDetailResponse;
+import com.yapp.artie.domain.category.dto.CreateCategoryRequest;
+import com.yapp.artie.domain.category.dto.CreateCategoryResponse;
+import com.yapp.artie.domain.category.dto.UpdateCategoryRequest;
+import com.yapp.artie.domain.category.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -39,12 +39,12 @@ public class CategoryController {
       @ApiResponse(
           responseCode = "200",
           description = "카테고리가 성공적으로 조회됨",
-          content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CategoryDto.class)))),
+          content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CategoryDetailResponse.class)))),
   })
   @GetMapping()
-  public ResponseEntity<List<CategoryDto>> getCategories(Authentication authentication) {
+  public ResponseEntity<List<CategoryDetailResponse>> getCategories(Authentication authentication) {
     Long userId = Long.parseLong(authentication.getName());
-    List<CategoryDto> categories = categoryService.categoriesOf(userId);
+    List<CategoryDetailResponse> categories = categoryService.categoriesOf(userId);
 
     return ResponseEntity.ok(categories);
   }
@@ -54,16 +54,16 @@ public class CategoryController {
       @ApiResponse(
           responseCode = "201",
           description = "카테고리가 성공적으로 생성됨",
-          content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateCategoryResponseDto.class))),
+          content = @Content(mediaType = "application/json", schema = @Schema(implementation = CreateCategoryResponse.class))),
   })
   @PostMapping()
-  public ResponseEntity<CreateCategoryResponseDto> createCategories(Authentication authentication,
-      @RequestBody CreateCategoryRequestDto createCategoryRequestDto) {
+  public ResponseEntity<CreateCategoryResponse> createCategories(Authentication authentication,
+      @RequestBody CreateCategoryRequest createCategoryRequest) {
     Long userId = Long.parseLong(authentication.getName());
-    Long id = categoryService.create(createCategoryRequestDto, userId);
+    Long id = categoryService.create(createCategoryRequest, userId);
 
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(new CreateCategoryResponseDto(id));
+        .body(new CreateCategoryResponse(id));
   }
 
   @Operation(summary = "카테고리 수정", description = "카테고리 수정")
@@ -76,9 +76,9 @@ public class CategoryController {
   @PutMapping("/{id}")
   public ResponseEntity<? extends HttpEntity> updateCategory(Authentication authentication,
       @PathVariable("id") Long id, @RequestBody
-  UpdateCategoryRequestDto updateCategoryRequestDto) {
+  UpdateCategoryRequest updateCategoryRequest) {
     Long userId = Long.parseLong(authentication.getName());
-    categoryService.update(updateCategoryRequestDto, id, userId);
+    categoryService.update(updateCategoryRequest, id, userId);
 
     return ResponseEntity.noContent().build();
   }
@@ -110,9 +110,9 @@ public class CategoryController {
   })
   @PutMapping("/sequence")
   public ResponseEntity<? extends HttpEntity> updateCategorySequence(
-      Authentication authentication, @RequestBody CategoryDto[] changeCategorySequenceDtos) {
+      Authentication authentication, @RequestBody CategoryDetailResponse[] changedCategoryDetails) {
     Long userId = Long.parseLong(authentication.getName());
-    categoryService.shuffle(List.of(changeCategorySequenceDtos), userId);
+    categoryService.shuffle(List.of(changedCategoryDetails), userId);
 
     return ResponseEntity.noContent().build();
   }

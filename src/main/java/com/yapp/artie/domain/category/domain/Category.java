@@ -1,4 +1,4 @@
-package com.yapp.artie.domain.archive.domain.category;
+package com.yapp.artie.domain.category.domain;
 
 import com.yapp.artie.domain.exhibition.domain.entity.exhibition.Exhibition;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;

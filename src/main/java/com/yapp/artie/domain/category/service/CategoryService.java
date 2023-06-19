@@ -1,18 +1,16 @@
-package com.yapp.artie.domain.archive.service;
-
-import com.yapp.artie.domain.archive.domain.category.Category;
-import com.yapp.artie.domain.archive.dto.cateogry.CategoryDto;
-import com.yapp.artie.domain.archive.dto.cateogry.CreateCategoryRequestDto;
-import com.yapp.artie.domain.archive.dto.cateogry.UpdateCategoryRequestDto;
-import com.yapp.artie.domain.archive.exception.CategoryAlreadyExistException;
-import com.yapp.artie.domain.archive.exception.CategoryNotFoundException;
-import com.yapp.artie.domain.archive.exception.ChangeCategoryWrongLengthException;
-import com.yapp.artie.domain.archive.exception.ExceededCategoryCountException;
-import com.yapp.artie.domain.archive.exception.NotOwnerOfCategoryException;
-import com.yapp.artie.domain.archive.repository.CategoryRepository;
-import com.yapp.artie.domain.archive.repository.ExhibitRepository;
 package com.yapp.artie.domain.category.service;
+
+import com.yapp.artie.domain.category.domain.Category;
+import com.yapp.artie.domain.category.dto.CategoryDetailResponse;
+import com.yapp.artie.domain.category.dto.CreateCategoryRequest;
+import com.yapp.artie.domain.category.dto.UpdateCategoryRequest;
+import com.yapp.artie.domain.category.exception.CategoryAlreadyExistException;
+import com.yapp.artie.domain.category.exception.CategoryNotFoundException;
+import com.yapp.artie.domain.category.exception.ChangeCategoryWrongLengthException;
+import com.yapp.artie.domain.category.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.category.exception.NotOwnerOfCategoryException;
+import com.yapp.artie.domain.category.repository.CategoryRepository;
+import com.yapp.artie.domain.exhibition.domain.repository.ExhibitionRepository;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.global.deprecated.LoadUserJpaEntityApi;
 import java.util.List;
@@ -28,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CategoryService {
 
   private final CategoryRepository categoryRepository;
-  private final ExhibitRepository exhibitRepository;
+  private final ExhibitionRepository exhibitionRepository;
   private final LoadUserJpaEntityApi loadUserJpaEntityApi;
   private final int CATEGORY_LIMIT_COUNT = 5;
 
@@ -41,7 +39,7 @@ public class CategoryService {
     return category;
   }
 
-  public List<CategoryDto> categoriesOf(Long userId) {
+  public List<CategoryDetailResponse> categoriesOf(Long userId) {
     return categoryRepository.findCategoriesByUserOrderBySequence(findUser(userId))
         .stream()
         .map(this::buildCategoryDto)
@@ -49,9 +47,9 @@ public class CategoryService {
   }
 
   @Transactional
-  public Long create(CreateCategoryRequestDto createCategoryRequestDto, Long userId) {
+  public Long create(CreateCategoryRequest createCategoryRequest, Long userId) {
     UserJpaEntity user = findUser(userId);
-    String name = createCategoryRequestDto.getName();
+    String name = createCategoryRequest.getName();
     validateDuplicateCategory(name, user);
 
     return createCategory(name, user).getId();
@@ -68,21 +66,21 @@ public class CategoryService {
   }
 
   @Transactional
-  public void update(UpdateCategoryRequestDto updateCategoryRequestDto, Long id, Long userId) {
+  public void update(UpdateCategoryRequest updateCategoryRequest, Long id, Long userId) {
     UserJpaEntity user = findUser(userId);
     Category category = categoryRepository.findCategoryEntityGraphById(id);
     validateValidPair(user, category);
 
-    category.rename(updateCategoryRequestDto.getName());
+    category.rename(updateCategoryRequest.getName());
   }
 
   @Transactional
-  public void shuffle(List<CategoryDto> changeCategorySequenceDtos, Long userId) {
+  public void shuffle(List<CategoryDetailResponse> changeCategorySequenceDtos, Long userId) {
     UserJpaEntity user = findUser(userId);
     List<Category> categories = categoryRepository.findCategoriesByUser(user);
     validateChangeCategoriesLengthWithOriginal(changeCategorySequenceDtos, categories);
 
-    for (CategoryDto changeCategorySequenceDto : changeCategorySequenceDtos) {
+    for (CategoryDetailResponse changeCategorySequenceDto : changeCategorySequenceDtos) {
       categoryRepository.findById(changeCategorySequenceDto.getId())
           .ifPresent(value -> {
             if (value.ownedBy(user)) {
@@ -110,7 +108,7 @@ public class CategoryService {
   }
 
   private void validateDuplicateCategory(String name, UserJpaEntity user) {
-    List<CategoryDto> categories = categoryRepository.findCategoryDto(user);
+    List<CategoryDetailResponse> categories = categoryRepository.findCategoryDto(user);
     long count = categories.stream()
         .filter(categoryDto -> categoryDto.getName().equals(name))
         .count();
@@ -144,15 +142,15 @@ public class CategoryService {
   }
 
   private void validateChangeCategoriesLengthWithOriginal(
-      List<CategoryDto> changeCategorySequenceDtos,
+      List<CategoryDetailResponse> changeCategorySequenceDtos,
       List<Category> categories) {
     if (categories.size() != changeCategorySequenceDtos.size()) {
       throw new ChangeCategoryWrongLengthException();
     }
   }
 
-  private CategoryDto buildCategoryDto(Category category) {
-    return new CategoryDto(category.getId(), category.getName(), category.getSequence(),
-        exhibitRepository.countExhibitByCategory(category));
+  private CategoryDetailResponse buildCategoryDto(Category category) {
+    return new CategoryDetailResponse(category.getId(), category.getName(), category.getSequence(),
+        exhibitionRepository.countExhibitionByCategory(category));
   }
 }

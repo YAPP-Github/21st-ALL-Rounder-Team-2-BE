@@ -2,10 +2,14 @@ package com.yapp.artie.domain.archive.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.yapp.artie.domain.archive.domain.artwork.Artwork;
-import com.yapp.artie.domain.archive.domain.category.Category;
-import com.yapp.artie.domain.archive.domain.exhibit.Exhibit;
-import com.yapp.artie.domain.archive.domain.tag.Tag;
+import com.yapp.artie.domain.category.repository.CategoryRepository;
+import com.yapp.artie.domain.exhibition.domain.entity.artwork.Artwork;
+import com.yapp.artie.domain.category.domain.Category;
+import com.yapp.artie.domain.exhibition.domain.entity.exhibition.Exhibition;
+import com.yapp.artie.domain.exhibition.domain.entity.artwork.Tag;
+import com.yapp.artie.domain.exhibition.domain.repository.ArtworkRepository;
+import com.yapp.artie.domain.exhibition.domain.repository.ExhibitionRepository;
+import com.yapp.artie.domain.exhibition.domain.repository.TagRepository;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserRepository;
 import java.time.LocalDate;
@@ -35,7 +39,7 @@ public class CategoryRepositoryTest {
   CategoryRepository categoryRepository;
 
   @Autowired
-  ExhibitRepository exhibitRepository;
+  ExhibitionRepository exhibitionRepository;
 
   @Autowired
   ArtworkRepository artworkRepository;
@@ -48,9 +52,9 @@ public class CategoryRepositoryTest {
   void deleteAllByUser() {
     UserJpaEntity user = userRepository.save(TEST_SAVED_USER);
     Category category = categoryRepository.save(Category.create(user, "category-name", 1));
-    Exhibit exhibit = exhibitRepository.save(
-        Exhibit.create("exhibit-name", LocalDate.now(), category, user, "exhibit-link"));
-    Artwork artwork = artworkRepository.save(Artwork.create(exhibit, true, "artwork-uri"));
+    Exhibition exhibition = exhibitionRepository.save(
+        Exhibition.create("exhibition-name", LocalDate.now(), category, user, "exhibition-link"));
+    Artwork artwork = artworkRepository.save(Artwork.create(exhibition, true, "artwork-uri"));
     Tag tag = tagRepository.save(new Tag(user, artwork, 1, "tag-name"));
     em.flush();
     em.clear();
@@ -60,7 +64,7 @@ public class CategoryRepositoryTest {
 
     assertThat(userRepository.findById(user.getId()).isPresent()).isTrue();
     assertThat(categoryRepository.findById(category.getId()).isPresent()).isFalse();
-    assertThat(exhibitRepository.findById(exhibit.getId()).isPresent()).isFalse();
+    assertThat(exhibitionRepository.findById(exhibition.getId()).isPresent()).isFalse();
     assertThat(artworkRepository.findById(artwork.getId()).isPresent()).isFalse();
     assertThat(tagRepository.findById(tag.getId()).isPresent()).isFalse();
   }
