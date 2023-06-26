@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import com.yapp.artie.common.BaseUserUnitTest;
-import com.yapp.artie.domain.exhibition.domain.service.ExhibitionService;
+import com.yapp.artie.domain.gallery.domain.service.ExhibitionService;
 import com.yapp.artie.domain.user.application.port.in.response.GetUserThumbnailResponse;
 import com.yapp.artie.domain.user.domain.User;
 import com.yapp.artie.domain.user.domain.UserNotFoundException;

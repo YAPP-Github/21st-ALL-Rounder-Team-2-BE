@@ -10,7 +10,7 @@ import com.yapp.artie.domain.category.exception.ChangeCategoryWrongLengthExcepti
 import com.yapp.artie.domain.category.exception.ExceededCategoryCountException;
 import com.yapp.artie.domain.category.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.domain.category.repository.CategoryRepository;
-import com.yapp.artie.domain.exhibition.domain.repository.ExhibitionRepository;
+import com.yapp.artie.domain.gallery.domain.repository.ExhibitionRepository;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.global.deprecated.LoadUserJpaEntityApi;
 import java.util.List;

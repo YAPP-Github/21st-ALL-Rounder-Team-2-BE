@@ -1,6 +1,6 @@
 package com.yapp.artie.domain.category.domain;
 
-import com.yapp.artie.domain.exhibition.domain.entity.exhibition.Exhibition;
+import com.yapp.artie.domain.gallery.domain.entity.exhibition.Exhibition;
 import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.global.common.persistence.BaseEntity;
 import java.util.ArrayList;
