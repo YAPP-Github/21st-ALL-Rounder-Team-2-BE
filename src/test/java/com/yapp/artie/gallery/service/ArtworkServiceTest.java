@@ -1,4 +1,4 @@
-package com.yapp.artie.archive.service;
+package com.yapp.artie.gallery.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

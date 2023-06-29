@@ -1,9 +1,8 @@
-package com.yapp.artie.archive.repository;
+package com.yapp.artie.category.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.yapp.artie.category.domain.Category;
-import com.yapp.artie.category.repository.CategoryRepository;
 import com.yapp.artie.gallery.domain.entity.artwork.Artwork;
 import com.yapp.artie.gallery.domain.entity.artwork.Tag;
 import com.yapp.artie.gallery.domain.entity.exhibition.Exhibition;

@@ -1,4 +1,4 @@
-package com.yapp.artie.archive.service;
+package com.yapp.artie.category.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -14,7 +14,6 @@ import com.yapp.artie.category.exception.ChangeCategoryWrongLengthException;
 import com.yapp.artie.category.exception.ExceededCategoryCountException;
 import com.yapp.artie.category.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.category.repository.CategoryRepository;
-import com.yapp.artie.category.service.CategoryService;
 import com.yapp.artie.gallery.domain.entity.artwork.Artwork;
 import com.yapp.artie.gallery.domain.entity.artwork.Tag;
 import com.yapp.artie.gallery.domain.entity.exhibition.Exhibition;
