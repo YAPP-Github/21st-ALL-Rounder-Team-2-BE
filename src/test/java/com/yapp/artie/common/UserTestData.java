@@ -1,6 +1,6 @@
 package com.yapp.artie.common;
 
-import com.yapp.artie.domain.user.domain.User;
+import com.yapp.artie.user.domain.User;
 
 public class UserTestData {
 

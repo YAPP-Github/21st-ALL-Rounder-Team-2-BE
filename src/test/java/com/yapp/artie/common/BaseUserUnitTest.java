@@ -4,10 +4,10 @@ import static com.yapp.artie.common.UserTestData.defaultUser;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
-import com.yapp.artie.domain.user.application.port.out.LoadUserPort;
-import com.yapp.artie.domain.user.application.port.out.SaveUserPort;
-import com.yapp.artie.domain.user.domain.User;
-import com.yapp.artie.domain.user.domain.UserNotFoundException;
+import com.yapp.artie.user.application.port.out.LoadUserPort;
+import com.yapp.artie.user.application.port.out.SaveUserPort;
+import com.yapp.artie.user.domain.User;
+import com.yapp.artie.user.domain.UserNotFoundException;
 import org.mockito.Mockito;
 
 abstract public class BaseUserUnitTest {

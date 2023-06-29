@@ -1,7 +1,7 @@
 package com.yapp.artie.global.deprecated;
 
-import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
-import com.yapp.artie.domain.user.domain.UserNotFoundException;
+import com.yapp.artie.user.adapter.out.persistence.UserJpaEntity;
+import com.yapp.artie.user.domain.UserNotFoundException;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.yapp.artie.global.filter;
 
-import com.yapp.artie.domain.user.application.port.out.TokenParsingPort;
-import com.yapp.artie.domain.user.domain.ArtieToken;
+import com.yapp.artie.user.application.port.out.TokenParsingPort;
+import com.yapp.artie.user.domain.ArtieToken;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import javax.servlet.FilterChain;
