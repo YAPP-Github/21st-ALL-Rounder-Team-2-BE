@@ -1,6 +1,6 @@
 package com.yapp.artie.global.deprecated;
 
-import com.yapp.artie.domain.user.adapter.out.persistence.UserJpaEntity;
+import com.yapp.artie.user.adapter.out.persistence.UserJpaEntity;
 
 /**
  * @author le2ksy
