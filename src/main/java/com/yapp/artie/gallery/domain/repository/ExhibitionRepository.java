@@ -1,11 +1,11 @@
 package com.yapp.artie.gallery.domain.repository;
 
 import com.yapp.artie.category.domain.Category;
-import com.yapp.artie.gallery.domain.dto.exhibition.ExhibitionByDateResponse;
-import com.yapp.artie.gallery.domain.dto.exhibition.ExhibitionByDayQueryResponse;
-import com.yapp.artie.gallery.domain.dto.exhibition.ExhibitionDraftResponse;
 import com.yapp.artie.gallery.domain.entity.exhibition.Exhibition;
 import com.yapp.artie.gallery.domain.entity.exhibition.PinType;
+import com.yapp.artie.gallery.dto.exhibition.ExhibitionByDateResponse;
+import com.yapp.artie.gallery.dto.exhibition.ExhibitionByDayQueryResponse;
+import com.yapp.artie.gallery.dto.exhibition.ExhibitionDraftResponse;
 import com.yapp.artie.user.adapter.out.persistence.UserJpaEntity;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,7 +33,7 @@ public interface ExhibitionRepository extends JpaRepository<Exhibition, Long> {
   @EntityGraph(attributePaths = {"user", "category"})
   Optional<Exhibition> findDetailExhibitionEntityGraphById(Long id);
 
-  @Query("select new com.yapp.artie.gallery.domain.dto.exhibition."
+  @Query("select new com.yapp.artie.gallery.dto.exhibition."
       + "ExhibitionDraftResponse(e.id, e.contents.name, e.contents.date, e.contents.attachedLink, e.publication.isPublished) "
       + "from Exhibition e where e.user = :user and e.publication.isPublished = false")
   List<ExhibitionDraftResponse> findDraftExhibitions(@Param("user") UserJpaEntity user);
@@ -71,10 +71,10 @@ public interface ExhibitionRepository extends JpaRepository<Exhibition, Long> {
       @Param("end") LocalDateTime end, @Param("user_id") Long userId);
 
   @Query("SELECT e FROM Exhibition e WHERE e.pinType IN :types AND e.category = :category")
-  Optional<Exhibition> findPinnedExhibitionWithCategory(Category category, PinType[] types);
+  Optional<Exhibition> findPinnedExhibitionWithCategory(@Param("category") Category category, @Param("types") PinType[] types);
 
   @Query("SELECT e FROM Exhibition e WHERE e.pinType IN :types")
-  Optional<Exhibition> findPinnedExhibition(PinType[] types);
+  Optional<Exhibition> findPinnedExhibition(@Param("types") PinType[] types);
 
   @Modifying(clearAutomatically = true)
   @Query("update Exhibition e set e.createdAt = :createdAt where e.id = :exhibitionId")
@@ -82,7 +82,7 @@ public interface ExhibitionRepository extends JpaRepository<Exhibition, Long> {
       @Param("exhibitionId") Long exhibitionId);
 
   @Query(
-      "SELECT NEW com.yapp.artie.gallery.domain.dto.exhibition.ExhibitionByDateResponse(e.id, e.contents.name) "
+      "SELECT NEW com.yapp.artie.gallery.dto.exhibition.ExhibitionByDateResponse(e.id, e.contents.name) "
           + "FROM Exhibition e "
           + "WHERE e.createdAt BETWEEN :start AND :end "
           + "AND e.user = :user AND e.publication.isPublished = true "
