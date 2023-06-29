@@ -1,4 +1,4 @@
-package com.yapp.artie.gallery.domain.service;
+package com.yapp.artie.gallery.service;
 
 import com.yapp.artie.gallery.domain.entity.artwork.Artwork;
 import com.yapp.artie.gallery.domain.entity.artwork.Tag;

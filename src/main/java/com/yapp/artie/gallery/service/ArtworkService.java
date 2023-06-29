@@ -1,13 +1,13 @@
-package com.yapp.artie.gallery.domain.service;
+package com.yapp.artie.gallery.service;
 
-import com.yapp.artie.gallery.domain.dto.artwork.ArtworkDetailResponse;
-import com.yapp.artie.gallery.domain.dto.artwork.ArtworkImageThumbnailResponse;
-import com.yapp.artie.gallery.domain.dto.artwork.ArtworkThumbnailResponse;
-import com.yapp.artie.gallery.domain.dto.artwork.CreateArtworkRequest;
-import com.yapp.artie.gallery.domain.dto.artwork.UpdateArtworkRequest;
 import com.yapp.artie.gallery.domain.entity.artwork.Artwork;
 import com.yapp.artie.gallery.domain.entity.exhibition.Exhibition;
 import com.yapp.artie.gallery.domain.repository.ArtworkRepository;
+import com.yapp.artie.gallery.dto.artwork.ArtworkDetailResponse;
+import com.yapp.artie.gallery.dto.artwork.ArtworkImageThumbnailResponse;
+import com.yapp.artie.gallery.dto.artwork.ArtworkThumbnailResponse;
+import com.yapp.artie.gallery.dto.artwork.CreateArtworkRequest;
+import com.yapp.artie.gallery.dto.artwork.UpdateArtworkRequest;
 import com.yapp.artie.gallery.exception.ArtworkNotFoundException;
 import com.yapp.artie.global.deprecated.LoadUserJpaEntityApi;
 import com.yapp.artie.global.util.S3Utils;

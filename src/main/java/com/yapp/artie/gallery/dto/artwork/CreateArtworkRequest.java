@@ -1,4 +1,4 @@
-package com.yapp.artie.gallery.domain.dto.artwork;
+package com.yapp.artie.gallery.dto.artwork;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;

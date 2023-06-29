@@ -1,14 +1,14 @@
 package com.yapp.artie.gallery.controller;
 
-import com.yapp.artie.gallery.domain.dto.artwork.ArtworkDetailResponse;
-import com.yapp.artie.gallery.domain.dto.artwork.ArtworkImageThumbnailResponse;
-import com.yapp.artie.gallery.domain.dto.artwork.ArtworkThumbnailResponse;
-import com.yapp.artie.gallery.domain.dto.artwork.CreateArtworkBatchRequest;
-import com.yapp.artie.gallery.domain.dto.artwork.CreateArtworkBatchResponse;
-import com.yapp.artie.gallery.domain.dto.artwork.CreateArtworkRequest;
-import com.yapp.artie.gallery.domain.dto.artwork.CreateArtworkResponse;
-import com.yapp.artie.gallery.domain.dto.artwork.UpdateArtworkRequest;
-import com.yapp.artie.gallery.domain.service.ArtworkService;
+import com.yapp.artie.gallery.dto.artwork.ArtworkDetailResponse;
+import com.yapp.artie.gallery.dto.artwork.ArtworkImageThumbnailResponse;
+import com.yapp.artie.gallery.dto.artwork.ArtworkThumbnailResponse;
+import com.yapp.artie.gallery.dto.artwork.CreateArtworkBatchRequest;
+import com.yapp.artie.gallery.dto.artwork.CreateArtworkBatchResponse;
+import com.yapp.artie.gallery.dto.artwork.CreateArtworkRequest;
+import com.yapp.artie.gallery.dto.artwork.CreateArtworkResponse;
+import com.yapp.artie.gallery.dto.artwork.UpdateArtworkRequest;
+import com.yapp.artie.gallery.service.ArtworkService;
 import com.yapp.artie.global.common.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

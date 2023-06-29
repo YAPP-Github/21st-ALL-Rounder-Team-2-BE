@@ -1,15 +1,15 @@
 package com.yapp.artie.gallery.controller;
 
 
-import com.yapp.artie.gallery.domain.dto.exhibition.CreateExhibitionRequest;
-import com.yapp.artie.gallery.domain.dto.exhibition.CreateExhibitionResponse;
-import com.yapp.artie.gallery.domain.dto.exhibition.ExhibitionByCategoryResponse;
-import com.yapp.artie.gallery.domain.dto.exhibition.ExhibitionByDateResponse;
-import com.yapp.artie.gallery.domain.dto.exhibition.ExhibitionByMonthlyResponse;
-import com.yapp.artie.gallery.domain.dto.exhibition.ExhibitionDetailResponse;
-import com.yapp.artie.gallery.domain.dto.exhibition.ExhibitionDraftResponse;
-import com.yapp.artie.gallery.domain.dto.exhibition.UpdateExhibitionRequest;
-import com.yapp.artie.gallery.domain.service.ExhibitionService;
+import com.yapp.artie.gallery.dto.exhibition.CreateExhibitionRequest;
+import com.yapp.artie.gallery.dto.exhibition.CreateExhibitionResponse;
+import com.yapp.artie.gallery.dto.exhibition.ExhibitionByCategoryResponse;
+import com.yapp.artie.gallery.dto.exhibition.ExhibitionByDateResponse;
+import com.yapp.artie.gallery.dto.exhibition.ExhibitionByMonthlyResponse;
+import com.yapp.artie.gallery.dto.exhibition.ExhibitionDetailResponse;
+import com.yapp.artie.gallery.dto.exhibition.ExhibitionDraftResponse;
+import com.yapp.artie.gallery.dto.exhibition.UpdateExhibitionRequest;
+import com.yapp.artie.gallery.service.ExhibitionService;
 import com.yapp.artie.global.common.exception.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

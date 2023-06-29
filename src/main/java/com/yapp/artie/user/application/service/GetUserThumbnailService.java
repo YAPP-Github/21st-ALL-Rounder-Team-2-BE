@@ -1,7 +1,7 @@
 package com.yapp.artie.user.application.service;
 
 
-import com.yapp.artie.gallery.domain.service.ExhibitionService;
+import com.yapp.artie.gallery.service.ExhibitionService;
 import com.yapp.artie.global.common.annotation.UseCase;
 import com.yapp.artie.user.application.port.in.query.GetUserThumbnailQuery;
 import com.yapp.artie.user.application.port.in.response.GetUserThumbnailResponse;
