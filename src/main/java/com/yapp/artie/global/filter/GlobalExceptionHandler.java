@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
   }
 
   /**
-   * @ModelAttribut 으로 binding error 발생시 BindException 발생한다. ref
+   * @ModelAttribute 으로 binding error 발생시 BindException 발생한다. ref
    * https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-ann-modelattrib-method-args
    */
   @ExceptionHandler(BindException.class)

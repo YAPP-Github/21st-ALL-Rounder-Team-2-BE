@@ -1,4 +1,4 @@
-package com.yapp.artie.gallery.domain.controller;
+package com.yapp.artie.gallery.controller;
 
 import com.yapp.artie.gallery.domain.dto.artwork.ArtworkDetailResponse;
 import com.yapp.artie.gallery.domain.dto.artwork.ArtworkImageThumbnailResponse;
