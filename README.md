@@ -1,56 +1,60 @@
-# 아르티 백엔드 서버 (all-rounder team2) 🛠
+<div align="center">
+  <br>
+  <h2> 간편한 전시 관람 서비스</h2>
+  <h1> 아르티 ARTIE 🎨 </h1>
+  <strong>API 서버 레포지토리</strong>
+</div>
+<br>
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+## 프로젝트 소개
 
-## 1. 주요 스택
+아르티는 전시 중 관람기록을 간편하게 남길 수 있도록 도와주며 기록해둔 전시를 찾기 쉽게 도와주는 전시 기록 서비스입니다.
+
+소중한 영감을 한 눈에 볼 수 있도록 작품별로 기록하고, 전시 링크를 담아 나만의 기록물을 만들어보아요!
+
+작품마다 작품 명, 작가 명을 기록하고 그 순간의 감정을 기록하며, 각각의 전시는 나만의 카테고리로 분류할 수 있어요.
+
+[🤖 안드로이드 플레이스토어 🤖](https://play.google.com/store/apps/details?id=com.yapp.gallery)
+
+![프로젝트 소개](https://user-images.githubusercontent.com/70252417/234887246-25960d0e-f54a-4223-9f35-1ea246303358.png)
+
+### 프로젝트 기능
+[서비스 세부 기능](/docs/service_detail)
+
+## 기술 스택
 
 - spring boot:2.7.6
 - jdk:11
 - mysql:8.0
+- jpa
+- firebase authentication
+- aws : ecs, ecr, alb, rds, s3, cloudfront
 
-## 2. 서버 아키텍처 및 배포 파이프라인
-![ARTIE_아키텍처](https://user-images.githubusercontent.com/42285463/221746173-9fa37f59-bf37-48ed-926c-328539e93bf5.png)
+## 서버 아키텍처
 
-## 3. 커밋 메시지
+![서버 아키텍처](https://github.com/akalswl14/coding-test/assets/42285463/4f0eff30-fb90-44d2-aa8b-531f5e1be89e)
 
-커밋 메시지 형식은 아래와 같습니다. `subject`까지만 작성해도 괜찮습니다.
+## 배포 파이프라인
 
+![CD 아키텍처](https://github.com/akalswl14/coding-test/assets/42285463/733ee4b2-3224-4281-ab1d-7cee10e7465e)
+
+## 기여자
+
+| Avatar                                                                                         | Name   | Team         | 개발 기간 |
+| ---------------------------------------------------------------------------------------------- | ------ | ------------ | ------- |
+| <img src="https://avatars.githubusercontent.com/u/42285463?v=4" width="100px" height="100px"/> | 마민지 | 올라운더 2팀 | 2022.12 ~ ing |
+| <img src="https://avatars.githubusercontent.com/u/39932141?v=4" width="100px" height="100px"/> | 이하늘 | 올라운더 2팀 | 2022.12 ~ ing |
+
+## 실행
+
+### 서버 실행
+
+```shell
+$ ./gradlew clean build
+$ java -jar /build/libs/artie-0.0.1-SNAPSHOT.jar
 ```
-<type>(<scope>): <subject>
-<BLANK LINE>
-<body>
-<BLANK LINE>
-<footer>
-```
 
-## 3.1 커밋 타입(`<Type>`)
-
-- `feat` :  (feature)
-- `fix` :  (bug fix)
-- `docs`:  (documentation)
-- `style` : (formatting, missing semi colons, …)
-- `refactor`
-- `test` : (when adding missing tests)
-- `chore` : (maintain)
-
-## 4. 패키지 구조
-
-- `module`
-    - `controller`
-    - `domain`
-    - `dto`
-    - `exception`
-    - `repository`
-    - `service`
-
-## 5. 인텔리제이 자동 재시작 설정
-
-1. 설정  >  빌드, 실행, 배포  >  컴파일러  > 프로젝트 자동 빌드 체크
-2. 고급 설정 > 컴파일러 > 개발된 애플리케이션이 현재 실행 중인 경우에도 auto-make가 시작되도록 허용 체크
-
-## 6. 실행
-
-### 6.1 데이터베이스 실행 :
+### 데이터베이스 실행 (docker-compose)
 
 ```shell
 # mysql 실행
@@ -64,54 +68,12 @@ $ cd docker
 $ docker-compose down
 ```
 
-### 6.2 profile 환경변수 설정 :
+## 패키지 구조
 
-1. 인텔리제이 메뉴 Run > Edit Configurations 설정 접속 혹은 스크린 샷과 같이 접속
-   <img width="863" alt="스크린샷 2023-01-07 오후 4 06 05" src="https://user-images.githubusercontent.com/42285463/211137975-87d0e79c-7f8b-4640-9eae-0ad03d68fef5.png">
-2. Active profiles에 develop 입력 ( 개발용의 경우 develop, production의 경우 prod 입력 )
-   <img width="1042" alt="스크린샷 2023-01-07 오후 4 07 21" src="https://user-images.githubusercontent.com/42285463/211138359-e071c6ff-6fa5-432e-87e0-101e759b6037.png">
+[패키지 구조 설명](/docs/package_structure.md)
 
-### 6.3 환경 변수 추가 및 변경 시 ( production ) :
+## 컨벤션
+[컨벤션 문서](docs/convention.md)
 
-- application-dev.yml에 해당하는 환경변수를 추가하고, 환경변수 구조 파악을 위하여 application-prod.yml에 추가되는 환경변수의 이름을 추가.
-- 실제 환경변수 값이 포함된 application-prod.yml을 base 64로 인코딩하여 Github Secrets에 업데이트
-
-### 6.4 인텔리제이에 환경변수 추가 :
-
-1. 인텔리제이 메뉴 Run > Edit Configurations 설정 접속 ( profile 환경변수 설정 섹션 참고 )
-2. Modify Options > Environment Variables 체크
-3. 해당하는 환경변수 추가
-
-### 6.5 테스트 시 환경변수를 템플릿으로 설정 :
-
-테스트를 수행할 때마다, 환경변수를 설정하는 작업을, 인텔리제이에서 템플릿으로 설정하면 테스트마다 설정하지 않아도 됩니다.
-
-1. 인텔리제이 메뉴 Run > Edit Configurations 설정 접속 혹은 스크린 샷과 같이 접속
-   <img width="863" alt="스크린샷 2023-01-07 오후 4 06 05" src="https://user-images.githubusercontent.com/42285463/211137975-87d0e79c-7f8b-4640-9eae-0ad03d68fef5.png">
-2. 좌측 하단 Edit configuration templates 클릭
-   ![스크린샷 2023-02-08 오후 4 34 00](https://user-images.githubusercontent.com/42285463/217463831-b6ff6405-ffd6-4783-83c4-30db0bdfa8f0.png)
-3. JUnit을 선택한 후, 테스트 실행시와 동일한 설정값을 입력하고, 환경변수 입력한다. 그리고 테스트 설정을 설정할 범위를 'All in directory'에 명세한다.
-   ![스크린샷 2023-02-08 오후 4 34 47](https://user-images.githubusercontent.com/42285463/217464007-55927e00-94db-41bb-b1f7-56de17f3358e.png)
-
-## 7. 배포
-
-- Github actions를 시범 적용 중으로, ALB 이슈가 있어, Github Actions Workflow 중 기존 ECS Task를 중단해야함.
-- 현재 배포 시에 Github Secrets에 base64로 인코딩하여 저장해둔 firebase.json을 decode하여 생성 후 빌드하는 과정을 포함하고 있음.
-
-## 8. 기여자
-
-| Avatar                                                                                         | Name | Team    | 
-|------------------------------------------------------------------------------------------------|------|---------|
-| <img src="https://avatars.githubusercontent.com/u/42285463?v=4" width="100px" height="100px"/> | 마민지  | 올라운더 2팀 |
-| <img src="https://avatars.githubusercontent.com/u/39932141?v=4" width="100px" height="100px"/> | 이하늘  | 올라운더 2팀 | 
-
-## 9. 참고사항
-
-EC2가 아닌 로컬에서 실행할 때, `com.amazonaws.SdkClientException: Failed to connect to service endpoint:` 해결법
-
-1. 해당 구문은 EC2 메타데이터를 읽다가 이슈가 발생한 것으로 EC2 인스턴스가 아닌 환경에서 실행할 때에는 의미 없는 에러임
-2. 인텔리제이 메뉴 Run > Edit Configurations 설정 접속 ( profile 환경변수 설정 섹션 참고 )
-3. Modify Options > VM Options 체크
-4. VM Options 섹션에 `-Dcom.amazonaws.sdk.disableEc2Metadata=true` 추가
-5. 설정을 완료한 뒤, Springboot을 실행하면 `EC2 Instance Metadata Service is disabled` 라는 구문이 뜨면서 EC2 메타데이터 서비스를
-   제외하고 실행할 수 있음
+## 개발 환경 설정
+[개발 환경 문서](/docs/dev_setting.md)

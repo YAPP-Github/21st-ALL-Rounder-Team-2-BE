@@ -36,3 +36,4 @@ docker/.dbdata
 
 firebase.json
 .DS_Store
+.obsidian/
