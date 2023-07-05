@@ -4,22 +4,23 @@
 
 유저, 공지 도메인은 헥사고날 아키텍처에 따라 패키지 구조를 정의하였습니다!
 
+```
 user
 ├── adapter
-   ├── in
-	    └── web
-   └── out
-       ├── authentication
-       └── persistence
+│   ├── in.web
+│   └── out
+│       ├── authentication
+│       └── persistence
 ├── application
-   ├── port
-      ├── in
-         ├── command
-         ├── query
-         └── response
-      └── out
-   └── service
+│   ├── port
+│   │   ├── in
+│   │   │   ├── command
+│   │   │   ├── query
+│   │   │   └── response
+│   │   └── out
+│   └── service
 └── domain
+```
 
 ### 세부 정보
 
@@ -42,6 +43,7 @@ user
 
 ## 카테고리 category
 
+```
 category
 ├── controller
 ├── domain
@@ -49,24 +51,27 @@ category
 ├── exception
 ├── repository
 └── service
+```
 
 ## 전시 기록 gallery
 
 전시 기록은 전시(exhibition), 작품(artwork), 태그(tag) 등으로 이루어져있습니다.
 하나의 전시(exhibition)은 여러 작품(artwork)를 가질 수 있고, 전시별로 정보를 작품별로 정보를 가질 수 있습니다. 또 하나의 전시에는 여러 태그(tag)를 추가할 수 있습니다.
-이처럼 전시 기록은 다양한 기능과 도메인을 가진 핵심 개념입니다.
 
-따라서, 전시 기록(gallery)이라는 애그리거트 하에, 전시 기록 단위 처리 로직과 도메인별 세부 로직으로 구성하였습니다.
+따라서, 전시 기록(gallery)라는 큰 개념 아래에, 전시(exhibition), 작품(artwork), 태그(tag) 등을 하위 도메인으로 구성하였습니다.
+주로 전시 기록으로 비즈니스 로직을 처리하고, 각 하위 도메인 별 필요에 따라 세부적으로 처리할 수 있도록 구현하였습니다.
 
+```
 gallery
 ├── controller
-├── domain : 도메인별 세부 로직
-   ├── entity
-      ├── artwork
-      └── exhibition
-   └── repository
+├── domain
+│   ├── entity
+│   │   ├── artwork
+│   │   └── exhibition
+│   └── repository
 ├── dto
-   ├── artwork
-   └── exhibition
+│   ├── artwork
+│   └── exhibition
 ├── exception
 └── service
+```

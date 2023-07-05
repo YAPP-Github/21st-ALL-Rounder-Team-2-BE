@@ -19,7 +19,7 @@
 ![프로젝트 소개](https://user-images.githubusercontent.com/70252417/234887246-25960d0e-f54a-4223-9f35-1ea246303358.png)
 
 ### 프로젝트 기능
-[서비스 세부 기능](/docs/service_detail)
+[서비스 세부 기능](/docs/service_detail.md)
 
 ## 기술 스택
 
