@@ -52,7 +52,6 @@ category
 ├── domain
 ├── dto
 ├── exception
-├── repository
 └── service
 ```
 
