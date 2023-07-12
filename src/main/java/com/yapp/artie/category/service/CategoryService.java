@@ -25,10 +25,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CategoryService {
 
+  private static final int CATEGORY_LIMIT_COUNT = 5;
+
   private final CategoryRepository categoryRepository;
   private final ExhibitionRepository exhibitionRepository;
   private final LoadUserJpaEntityApi loadUserJpaEntityApi;
-  private final int CATEGORY_LIMIT_COUNT = 5;
 
   public Category findCategoryWithUser(Long id, Long userId) {
     Category category = Optional.ofNullable(categoryRepository.findCategoryEntityGraphById(id))
