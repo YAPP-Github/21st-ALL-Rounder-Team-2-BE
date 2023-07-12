@@ -23,7 +23,6 @@ import com.yapp.artie.gallery.domain.repository.TagRepository;
 import com.yapp.artie.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.user.adapter.out.persistence.UserRepository;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -260,28 +259,34 @@ class CategoryServiceTest {
 
   @Test
   public void shuffle_카테고리의_순서를_변경한다() throws Exception {
-    //given
     UserJpaEntity user = findUser("1");
     createCategoryBy(user, 5);
+    List<Category> originCategories = categoryRepository.findCategoriesByUserOrderBySequence(
+        user);
+    List<CategoryDetailResponse> shuffled = List.of(
+        new CategoryDetailResponse(originCategories.get(0).getId(), "0", 1),
+        new CategoryDetailResponse(originCategories.get(1).getId(), "1", 3),
+        new CategoryDetailResponse(originCategories.get(2).getId(), "2", 4),
+        new CategoryDetailResponse(originCategories.get(3).getId(), "3", 2),
+        new CategoryDetailResponse(originCategories.get(4).getId(), "4", 0)
+    );
 
-    List<CategoryDetailResponse> shuffled = new ArrayList<>();
-    shuffled.add(new CategoryDetailResponse(1L, "0", 1));
-    shuffled.add(new CategoryDetailResponse(2L, "1", 3));
-    shuffled.add(new CategoryDetailResponse(3L, "2", 4));
-    shuffled.add(new CategoryDetailResponse(4L, "3", 2));
-    shuffled.add(new CategoryDetailResponse(5L, "4", 0));
-
-    //when
     categoryService.shuffle(shuffled, user.getId());
 
-    //then
-    List<Category> categories = categoryRepository.findCategoriesByUserOrderBySequence(
+    List<Category> shuffledCategories = categoryRepository.findCategoriesByUserOrderBySequence(
         user);
     long[] shuffledIds = new long[5];
     for (int i = 0; i < 5; i++) {
-      shuffledIds[i] = categories.get(i).getId();
+      shuffledIds[i] = shuffledCategories.get(i).getId();
     }
-    assertArrayEquals(new long[]{5, 1, 4, 2, 3}, shuffledIds);
+
+    assertArrayEquals(new long[]{
+        originCategories.get(4).getId(),
+        originCategories.get(0).getId(),
+        originCategories.get(3).getId(),
+        originCategories.get(1).getId(),
+        originCategories.get(2).getId()
+    }, shuffledIds);
   }
 
   @Test
