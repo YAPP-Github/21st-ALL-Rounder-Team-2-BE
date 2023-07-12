@@ -1,6 +1,5 @@
-package com.yapp.artie.category.repository;
+package com.yapp.artie.category.domain;
 
-import com.yapp.artie.category.domain.Category;
 import com.yapp.artie.category.dto.CategoryDetailResponse;
 import com.yapp.artie.user.adapter.out.persistence.UserJpaEntity;
 import java.util.List;
@@ -33,4 +32,3 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
   List<Category> findCategoriesByUser(UserJpaEntity userJpaEntity);
 }
-

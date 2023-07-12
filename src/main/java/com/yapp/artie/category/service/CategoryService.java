@@ -1,6 +1,7 @@
 package com.yapp.artie.category.service;
 
 import com.yapp.artie.category.domain.Category;
+import com.yapp.artie.category.domain.CategoryRepository;
 import com.yapp.artie.category.dto.CategoryDetailResponse;
 import com.yapp.artie.category.dto.CreateCategoryRequest;
 import com.yapp.artie.category.dto.UpdateCategoryRequest;
@@ -9,7 +10,6 @@ import com.yapp.artie.category.exception.CategoryNotFoundException;
 import com.yapp.artie.category.exception.ChangeCategoryWrongLengthException;
 import com.yapp.artie.category.exception.ExceededCategoryCountException;
 import com.yapp.artie.category.exception.NotOwnerOfCategoryException;
-import com.yapp.artie.category.repository.CategoryRepository;
 import com.yapp.artie.gallery.domain.repository.ExhibitionRepository;
 import com.yapp.artie.global.deprecated.LoadUserJpaEntityApi;
 import com.yapp.artie.user.adapter.out.persistence.UserJpaEntity;

@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yapp.artie.category.domain.Category;
+import com.yapp.artie.category.domain.CategoryRepository;
 import com.yapp.artie.category.dto.CategoryDetailResponse;
 import com.yapp.artie.category.dto.CreateCategoryRequest;
 import com.yapp.artie.category.exception.NotOwnerOfCategoryException;
-import com.yapp.artie.category.repository.CategoryRepository;
 import com.yapp.artie.category.service.CategoryService;
 import com.yapp.artie.gallery.domain.entity.artwork.Artwork;
 import com.yapp.artie.gallery.domain.entity.exhibition.Exhibition;

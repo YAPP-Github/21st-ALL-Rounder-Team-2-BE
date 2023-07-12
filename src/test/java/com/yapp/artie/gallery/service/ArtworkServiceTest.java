@@ -3,8 +3,8 @@ package com.yapp.artie.gallery.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.yapp.artie.category.domain.Category;
+import com.yapp.artie.category.domain.CategoryRepository;
 import com.yapp.artie.category.dto.CreateCategoryRequest;
-import com.yapp.artie.category.repository.CategoryRepository;
 import com.yapp.artie.category.service.CategoryService;
 import com.yapp.artie.gallery.domain.entity.artwork.Artwork;
 import com.yapp.artie.gallery.domain.entity.exhibition.Exhibition;
