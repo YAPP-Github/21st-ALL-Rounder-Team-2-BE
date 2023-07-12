@@ -1,5 +1,7 @@
 package com.yapp.artie.category.domain;
 
+import com.yapp.artie.category.domain.exception.InvalidCategoryNameException;
+import com.yapp.artie.category.domain.exception.InvalidSequenceException;
 import com.yapp.artie.gallery.domain.entity.exhibition.Exhibition;
 import com.yapp.artie.global.common.persistence.BaseEntity;
 import com.yapp.artie.user.adapter.out.persistence.UserJpaEntity;
@@ -42,6 +44,9 @@ public class Category extends BaseEntity {
   private int sequence;
 
   private Category(UserJpaEntity user, String name, int sequence) {
+    validateSequenceRange(sequence);
+    validateNameLength(name);
+
     this.user = user;
     this.name = name;
     this.sequence = sequence;
@@ -56,10 +61,26 @@ public class Category extends BaseEntity {
   }
 
   public void rename(String name) {
+    validateNameLength(name);
+
     this.name = name;
   }
 
   public void rearrange(int sequence) {
+    validateSequenceRange(sequence);
+
     this.sequence = sequence;
+  }
+
+  private void validateSequenceRange(int sequence) {
+    if (sequence < 0 || sequence > 4) {
+      throw new InvalidSequenceException();
+    }
+  }
+
+  private void validateNameLength(String name) {
+    if (name == null || name.isBlank()) {
+      throw new InvalidCategoryNameException();
+    }
   }
 }
