@@ -76,16 +76,16 @@ public class CategoryService {
   }
 
   @Transactional
-  public void shuffle(List<CategoryDetailResponse> changeCategorySequenceDtos, Long userId) {
+  public void shuffle(List<CategoryDetailResponse> changedCategories, Long userId) {
     UserJpaEntity user = findUser(userId);
     List<Category> categories = categoryRepository.findCategoriesByUser(user);
-    validateChangeCategoriesLengthWithOriginal(changeCategorySequenceDtos, categories);
+    validateChangedCategoriesLengthWithOriginal(changedCategories, categories);
 
-    for (CategoryDetailResponse changeCategorySequenceDto : changeCategorySequenceDtos) {
-      categoryRepository.findById(changeCategorySequenceDto.getId())
+    for (CategoryDetailResponse changedCategory : changedCategories) {
+      categoryRepository.findById(changedCategory.getId())
           .ifPresent(value -> {
             if (value.ownedBy(user)) {
-              value.rearrange(changeCategorySequenceDto.getSequence());
+              value.rearrange(changedCategory.getSequence());
             }
           });
     }
@@ -142,10 +142,10 @@ public class CategoryService {
     }
   }
 
-  private void validateChangeCategoriesLengthWithOriginal(
-      List<CategoryDetailResponse> changeCategorySequenceDtos,
+  private void validateChangedCategoriesLengthWithOriginal(
+      List<CategoryDetailResponse> changedCategories,
       List<Category> categories) {
-    if (categories.size() != changeCategorySequenceDtos.size()) {
+    if (categories.size() != changedCategories.size()) {
       throw new ChangeCategoryWrongLengthException();
     }
   }
