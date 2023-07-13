@@ -45,7 +45,14 @@ class CategoryTest {
   void name_카테고리의_이름은_적어도_한_글자_이상이어야_한다(String source) {
     assertThatThrownBy(() -> Category.create(UserJpaEntity.create("", "", ""), source, 1))
         .isInstanceOf(InvalidCategoryNameException.class)
-        .hasMessage("카테고리의 이름은 적어도 한 글자 이상이어야 합니다.");
+        .hasMessage("카테고리의 이름 길이는 1-20자입니다.");
+  }
+
+  @Test
+  void name_카테고리의_이름은_최대_20_글자_이하이다() {
+    assertThatThrownBy(() -> Category.create(UserJpaEntity.create("", "", ""), "a".repeat(21), 1))
+        .isInstanceOf(InvalidCategoryNameException.class)
+        .hasMessage("카테고리의 이름 길이는 1-20자입니다.");
   }
 
   @Test
@@ -64,6 +71,15 @@ class CategoryTest {
 
     assertThatThrownBy(() -> category.rename(source))
         .isInstanceOf(InvalidCategoryNameException.class)
-        .hasMessage("카테고리의 이름은 적어도 한 글자 이상이어야 합니다.");
+        .hasMessage("카테고리의 이름 길이는 1-20자입니다.");
+  }
+
+  @Test
+  void rename_변경할_카테고리의_이름은_최대_20글자를_초과할_수_없다() {
+    Category category = Category.create(UserJpaEntity.create("", "", ""), "sample", 1);
+
+    assertThatThrownBy(() -> category.rename("1".repeat(21)))
+        .isInstanceOf(InvalidCategoryNameException.class)
+        .hasMessage("카테고리의 이름 길이는 1-20자입니다.");
   }
 }

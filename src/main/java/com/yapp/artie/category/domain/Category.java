@@ -79,7 +79,7 @@ public class Category extends BaseEntity {
   }
 
   private void validateNameLength(String name) {
-    if (name == null || name.isBlank()) {
+    if (name == null || name.isBlank() || name.length() > 20) {
       throw new InvalidCategoryNameException();
     }
   }
