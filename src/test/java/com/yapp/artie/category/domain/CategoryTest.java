@@ -3,8 +3,8 @@ package com.yapp.artie.category.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.yapp.artie.category.domain.exception.InvalidCategoryNameException;
-import com.yapp.artie.category.domain.exception.InvalidSequenceException;
+import com.yapp.artie.category.exception.InvalidCategoryNameException;
+import com.yapp.artie.category.exception.InvalidSequenceException;
 import com.yapp.artie.user.adapter.out.persistence.UserJpaEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

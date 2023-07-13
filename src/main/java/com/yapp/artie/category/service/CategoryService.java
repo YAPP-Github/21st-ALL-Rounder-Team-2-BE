@@ -2,12 +2,12 @@ package com.yapp.artie.category.service;
 
 import com.yapp.artie.category.domain.Category;
 import com.yapp.artie.category.domain.CategoryRepository;
+import com.yapp.artie.category.domain.ShuffleSequenceService;
 import com.yapp.artie.category.dto.CategoryDetailResponse;
 import com.yapp.artie.category.dto.CreateCategoryRequest;
 import com.yapp.artie.category.dto.UpdateCategoryRequest;
 import com.yapp.artie.category.exception.CategoryAlreadyExistException;
 import com.yapp.artie.category.exception.CategoryNotFoundException;
-import com.yapp.artie.category.exception.ChangeCategoryWrongLengthException;
 import com.yapp.artie.category.exception.ExceededCategoryCountException;
 import com.yapp.artie.category.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.gallery.domain.repository.ExhibitionRepository;
@@ -30,6 +30,7 @@ public class CategoryService {
   private final CategoryRepository categoryRepository;
   private final ExhibitionRepository exhibitionRepository;
   private final LoadUserJpaEntityApi loadUserJpaEntityApi;
+  private final ShuffleSequenceService shuffleSequenceService;
 
   public Category findCategoryWithUser(Long id, Long userId) {
     Category category = Optional.ofNullable(categoryRepository.findCategoryEntityGraphById(id))
@@ -79,16 +80,8 @@ public class CategoryService {
   public void shuffle(List<CategoryDetailResponse> changedCategories, Long userId) {
     UserJpaEntity user = findUser(userId);
     List<Category> categories = categoryRepository.findCategoriesByUser(user);
-    validateChangedCategoriesLengthWithOriginal(changedCategories, categories);
 
-    for (CategoryDetailResponse changedCategory : changedCategories) {
-      categoryRepository.findById(changedCategory.getId())
-          .ifPresent(value -> {
-            if (value.ownedBy(user)) {
-              value.rearrange(changedCategory.getSequence());
-            }
-          });
-    }
+    shuffleSequenceService.shuffle(categories, changedCategories);
   }
 
   private Category createCategory(String name, UserJpaEntity user) {
@@ -139,14 +132,6 @@ public class CategoryService {
   private void validateExceedLimitCategoryCount(int sequence) {
     if (sequence >= CATEGORY_LIMIT_COUNT) {
       throw new ExceededCategoryCountException();
-    }
-  }
-
-  private void validateChangedCategoriesLengthWithOriginal(
-      List<CategoryDetailResponse> changedCategories,
-      List<Category> categories) {
-    if (categories.size() != changedCategories.size()) {
-      throw new ChangeCategoryWrongLengthException();
     }
   }
 
