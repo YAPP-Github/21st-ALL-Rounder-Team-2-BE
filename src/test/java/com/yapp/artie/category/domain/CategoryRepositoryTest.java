@@ -66,4 +66,15 @@ public class CategoryRepositoryTest {
     assertThat(artworkRepository.findById(artwork.getId()).isPresent()).isFalse();
     assertThat(tagRepository.findById(tag.getId()).isPresent()).isFalse();
   }
+
+  @DisplayName("유저 기반 카테고리 조회")
+  @Test
+  void findCategoryEntityGraphById() {
+    UserJpaEntity user = userRepository.save(TEST_SAVED_USER);
+    Category category = categoryRepository.save(Category.create(user, "category-name", 1));
+    em.flush();
+    em.clear();
+
+    categoryRepository.findUserCategory(category.getId(), user.getId());
+  }
 }

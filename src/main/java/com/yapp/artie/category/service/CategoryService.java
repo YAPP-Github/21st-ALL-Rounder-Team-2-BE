@@ -9,12 +9,10 @@ import com.yapp.artie.category.dto.UpdateCategoryRequest;
 import com.yapp.artie.category.exception.CategoryAlreadyExistException;
 import com.yapp.artie.category.exception.CategoryNotFoundException;
 import com.yapp.artie.category.exception.ExceededCategoryCountException;
-import com.yapp.artie.category.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.gallery.domain.repository.ExhibitionRepository;
 import com.yapp.artie.global.deprecated.LoadUserJpaEntityApi;
 import com.yapp.artie.user.adapter.out.persistence.UserJpaEntity;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,12 +31,7 @@ public class CategoryService {
   private final ShuffleSequenceService shuffleSequenceService;
 
   public Category findCategoryWithUser(Long id, Long userId) {
-    Category category = Optional.ofNullable(categoryRepository.findCategoryEntityGraphById(id))
-        .orElseThrow(CategoryNotFoundException::new);
-    UserJpaEntity user = findUser(userId);
-    validateOwnedByUser(category, user);
-
-    return category;
+    return findUserCategory(id, userId);
   }
 
   public List<CategoryDetailResponse> categoriesOf(Long userId) {
@@ -60,8 +53,7 @@ public class CategoryService {
   @Transactional
   public void delete(Long id, Long userId) {
     UserJpaEntity user = findUser(userId);
-    Category category = categoryRepository.findCategoryEntityGraphById(id);
-    validateValidPair(user, category);
+    Category category = findUserCategory(id, userId);
 
     categoryRepository.bulkSequenceMinus(user, category.getSequence());
     categoryRepository.deleteById(id);
@@ -69,9 +61,7 @@ public class CategoryService {
 
   @Transactional
   public void update(UpdateCategoryRequest updateCategoryRequest, Long id, Long userId) {
-    UserJpaEntity user = findUser(userId);
-    Category category = categoryRepository.findCategoryEntityGraphById(id);
-    validateValidPair(user, category);
+    Category category = findUserCategory(id, userId);
 
     category.rename(updateCategoryRequest.getName());
   }
@@ -93,6 +83,11 @@ public class CategoryService {
     return category;
   }
 
+  private Category findUserCategory(Long id, Long userId) {
+    return categoryRepository.findUserCategory(id, userId)
+        .orElseThrow(CategoryNotFoundException::new);
+  }
+
   private UserJpaEntity findUser(Long userId) {
     return loadUserJpaEntityApi.findById(userId);
   }
@@ -109,23 +104,6 @@ public class CategoryService {
 
     if (count != 0) {
       throw new CategoryAlreadyExistException();
-    }
-  }
-
-  private void validateValidPair(UserJpaEntity user, Category category) {
-    validateCategoryFound(category);
-    validateOwnedByUser(category, user);
-  }
-
-  private void validateCategoryFound(Category category) {
-    if (category == null) {
-      throw new CategoryNotFoundException();
-    }
-  }
-
-  private void validateOwnedByUser(Category category, UserJpaEntity user) {
-    if (!category.ownedBy(user)) {
-      throw new NotOwnerOfCategoryException();
     }
   }
 

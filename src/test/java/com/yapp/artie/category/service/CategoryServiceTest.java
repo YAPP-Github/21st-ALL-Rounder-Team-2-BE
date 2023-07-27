@@ -13,7 +13,6 @@ import com.yapp.artie.category.exception.CategoryAlreadyExistException;
 import com.yapp.artie.category.exception.CategoryNotFoundException;
 import com.yapp.artie.category.exception.ChangeCategoryWrongLengthException;
 import com.yapp.artie.category.exception.ExceededCategoryCountException;
-import com.yapp.artie.category.exception.NotOwnerOfCategoryException;
 import com.yapp.artie.gallery.domain.entity.artwork.Artwork;
 import com.yapp.artie.gallery.domain.entity.artwork.Tag;
 import com.yapp.artie.gallery.domain.entity.exhibition.Exhibition;
@@ -207,7 +206,7 @@ class CategoryServiceTest {
 
     assertThatThrownBy(() -> {
       categoryService.delete(created, user1.getId());
-    }).isInstanceOf(NotOwnerOfCategoryException.class);
+    }).isInstanceOf(CategoryNotFoundException.class);
   }
 
   @Test
@@ -226,7 +225,7 @@ class CategoryServiceTest {
 
     assertThatThrownBy(() -> {
       categoryService.update(new UpdateCategoryRequest("rename"), created, user1.getId());
-    }).isInstanceOf(NotOwnerOfCategoryException.class);
+    }).isInstanceOf(CategoryNotFoundException.class);
   }
 
   @Test

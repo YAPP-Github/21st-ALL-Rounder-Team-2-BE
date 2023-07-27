@@ -70,10 +70,6 @@ public class Category extends BaseEntity {
     return new Category(id, user, name, sequence);
   }
 
-  public boolean ownedBy(UserJpaEntity user) {
-    return this.user.equals(user);
-  }
-
   public void rename(String name) {
     validateNameLength(name);
 

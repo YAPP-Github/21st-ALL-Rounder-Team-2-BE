@@ -209,7 +209,9 @@ class ExhibitionServiceTest {
   @Test
   public void getExhibitByMonthly_월_별로_전시를_조회한다() throws Exception {
     UserJpaEntity user = createUser("user", "tu");
-    Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
+    List<Category> categoriesByUser = categoryRepository.findCategoriesByUser(user);
+    Category defaultCategory = categoryService.findCategoryWithUser(
+        categoriesByUser.get(0).getId(), user.getId());
 
     for (int i = 1; i <= 5; i++) {
       Exhibition exhibition = Exhibition.create("test", LocalDate.now(), defaultCategory, user,
@@ -443,7 +445,9 @@ class ExhibitionServiceTest {
   @Test
   public void getExhibitsByDate_특정_일자의_전시_목록_조회() throws Exception {
     UserJpaEntity user = createUser("user", "tu");
-    Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
+    List<Category> categoriesByUser = categoryRepository.findCategoriesByUser(user);
+    Category defaultCategory = categoryService.findCategoryWithUser(
+        categoriesByUser.get(0).getId(), user.getId());
 
     for (int i = 1; i <= 2; i++) {
       exhibitionRepository.save(
