@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.then;
 
-import com.yapp.artie.category.repository.CategoryRepository;
+import com.yapp.artie.category.domain.CategoryRepository;
 import com.yapp.artie.common.BaseUserUnitTest;
 import com.yapp.artie.user.application.port.out.DeleteExternalUserPort;
 import com.yapp.artie.user.application.port.out.DeleteUserPort;

@@ -1,6 +1,6 @@
 package com.yapp.artie.user.application.service;
 
-import com.yapp.artie.category.repository.CategoryRepository;
+import com.yapp.artie.category.domain.CategoryRepository;
 import com.yapp.artie.global.common.annotation.UseCase;
 import com.yapp.artie.user.adapter.out.persistence.UserJpaEntity;
 import com.yapp.artie.user.application.port.in.command.UserWithdrawalUseCase;

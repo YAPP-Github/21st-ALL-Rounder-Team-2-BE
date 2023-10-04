@@ -1,8 +1,7 @@
-package com.yapp.artie.category.repository;
+package com.yapp.artie.category.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.yapp.artie.category.domain.Category;
 import com.yapp.artie.gallery.domain.entity.artwork.Artwork;
 import com.yapp.artie.gallery.domain.entity.artwork.Tag;
 import com.yapp.artie.gallery.domain.entity.exhibition.Exhibition;
@@ -66,5 +65,16 @@ public class CategoryRepositoryTest {
     assertThat(exhibitionRepository.findById(exhibition.getId()).isPresent()).isFalse();
     assertThat(artworkRepository.findById(artwork.getId()).isPresent()).isFalse();
     assertThat(tagRepository.findById(tag.getId()).isPresent()).isFalse();
+  }
+
+  @DisplayName("유저 기반 카테고리 조회")
+  @Test
+  void findCategoryEntityGraphById() {
+    UserJpaEntity user = userRepository.save(TEST_SAVED_USER);
+    Category category = categoryRepository.save(Category.create(user, "category-name", 1));
+    em.flush();
+    em.clear();
+
+    categoryRepository.findUserCategory(category.getId(), user.getId());
   }
 }

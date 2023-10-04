@@ -1,10 +1,9 @@
-package com.yapp.artie.category.repository;
+package com.yapp.artie.category.domain;
 
-import com.yapp.artie.category.domain.Category;
 import com.yapp.artie.category.dto.CategoryDetailResponse;
 import com.yapp.artie.user.adapter.out.persistence.UserJpaEntity;
 import java.util.List;
-import org.springframework.data.jpa.repository.EntityGraph;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,8 +20,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
   @Query("update Category c set c.sequence = c.sequence - 1 where c.sequence > :sequence and c.user = :user")
   void bulkSequenceMinus(@Param("user") UserJpaEntity user, @Param("sequence") int sequence);
 
-  @EntityGraph(attributePaths = {"user"})
-  Category findCategoryEntityGraphById(Long id);
+  @Query("select c from Category c where c.id = :id and c.user.id = :userId")
+  Optional<Category> findUserCategory(@Param("id") Long id, @Param("userId") Long userId);
 
   int countCategoriesByUser(@Param("user") UserJpaEntity user);
 
@@ -33,4 +32,3 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
   List<Category> findCategoriesByUser(UserJpaEntity userJpaEntity);
 }
-

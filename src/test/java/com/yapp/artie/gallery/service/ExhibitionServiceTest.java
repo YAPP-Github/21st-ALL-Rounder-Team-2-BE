@@ -4,10 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.yapp.artie.category.domain.Category;
+import com.yapp.artie.category.domain.CategoryRepository;
 import com.yapp.artie.category.dto.CategoryDetailResponse;
 import com.yapp.artie.category.dto.CreateCategoryRequest;
-import com.yapp.artie.category.exception.NotOwnerOfCategoryException;
-import com.yapp.artie.category.repository.CategoryRepository;
+import com.yapp.artie.category.exception.CategoryNotFoundException;
 import com.yapp.artie.category.service.CategoryService;
 import com.yapp.artie.gallery.domain.entity.artwork.Artwork;
 import com.yapp.artie.gallery.domain.entity.exhibition.Exhibition;
@@ -124,7 +124,7 @@ class ExhibitionServiceTest {
 
     assertThatThrownBy(() -> {
       exhibitionService.create(exhibitRequestDto, userAnother.getId());
-    }).isInstanceOf(NotOwnerOfCategoryException.class);
+    }).isInstanceOf(CategoryNotFoundException.class);
   }
 
   @Test
@@ -209,7 +209,9 @@ class ExhibitionServiceTest {
   @Test
   public void getExhibitByMonthly_월_별로_전시를_조회한다() throws Exception {
     UserJpaEntity user = createUser("user", "tu");
-    Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
+    List<Category> categoriesByUser = categoryRepository.findCategoriesByUser(user);
+    Category defaultCategory = categoryService.findCategoryWithUser(
+        categoriesByUser.get(0).getId(), user.getId());
 
     for (int i = 1; i <= 5; i++) {
       Exhibition exhibition = Exhibition.create("test", LocalDate.now(), defaultCategory, user,
@@ -443,7 +445,9 @@ class ExhibitionServiceTest {
   @Test
   public void getExhibitsByDate_특정_일자의_전시_목록_조회() throws Exception {
     UserJpaEntity user = createUser("user", "tu");
-    Category defaultCategory = categoryRepository.findCategoryEntityGraphById(user.getId());
+    List<Category> categoriesByUser = categoryRepository.findCategoriesByUser(user);
+    Category defaultCategory = categoryService.findCategoryWithUser(
+        categoriesByUser.get(0).getId(), user.getId());
 
     for (int i = 1; i <= 2; i++) {
       exhibitionRepository.save(
